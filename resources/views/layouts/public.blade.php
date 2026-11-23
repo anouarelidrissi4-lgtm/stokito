@@ -8,6 +8,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <x-favicons />
         <meta name="google-site-verification" content="XEy0-r-vrdATmXb-MhIP0hg5zhoY9-tW4Q5uWn-H0zY" />
         <meta name="description" content="{{ $description ?? 'Stokito est un logiciel de gestion de stock, de ventes et d’achats pour les PME.' }}">
 

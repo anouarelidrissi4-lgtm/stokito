@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <x-favicons />
     <meta name="robots" content="noindex, follow">
     <title>{{ $title }} | Stokito</title>
     <link rel="preconnect" href="https://fonts.bunny.net">

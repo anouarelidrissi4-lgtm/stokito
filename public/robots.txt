@@ -5,6 +5,9 @@ Allow: /logiciel-gestion-de-stock-gratuit
 Allow: /build/
 Allow: /images/
 Allow: /docs/
+Allow: /favicon
+Allow: /apple-touch-icon.png
+Allow: /site.webmanifest
 Disallow: /
 
 Sitemap: https://stokito.com/sitemap.xml

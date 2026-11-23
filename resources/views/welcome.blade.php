@@ -23,6 +23,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <x-favicons />
     <title>{{ __('Logiciel de gestion de stock et de facturation gratuit | Stokito') }}</title>
     <meta name="description" content="{{ __('Stokito, logiciel de gestion de stock en ligne gratuit : devis, bons de livraison, factures, inventaire, alertes de stock bas et relances clients. Sans installation, sans carte bancaire.') }}">
     <link rel="canonical" href="https://stokito.com/">
@@ -35,6 +36,8 @@
     {!! json_encode([
         '@context' => 'https://schema.org',
         '@graph' => [
+            ['@type' => 'Organization', '@id' => 'https://stokito.com/#org', 'name' => 'Stokito', 'url' => 'https://stokito.com/', 'logo' => 'https://stokito.com/images/brand/icon-512.png', 'email' => 'contact@stokito.com'],
+            ['@type' => 'WebSite', 'name' => 'Stokito', 'url' => 'https://stokito.com/', 'publisher' => ['@id' => 'https://stokito.com/#org']],
             ['@type' => 'SoftwareApplication', 'name' => 'Stokito', 'applicationCategory' => 'BusinessApplication', 'operatingSystem' => 'Web', 'url' => 'https://stokito.com', 'inLanguage' => ['fr', 'ar', 'en'],
              'description' => 'Logiciel de gestion de stock et de facturation en ligne pour les PME.', 'offers' => ['@type' => 'Offer', 'price' => '0', 'priceCurrency' => 'EUR']],
             ['@type' => 'FAQPage', 'mainEntity' => array_map(fn ($f) => ['@type' => 'Question', 'name' => __($f[0]), 'acceptedAnswer' => ['@type' => 'Answer', 'text' => __($f[1])]], $faqs)],
