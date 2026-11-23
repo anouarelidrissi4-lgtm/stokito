@@ -27,6 +27,7 @@
     <meta name="description" content="{{ __('Stokito, logiciel de gestion de stock en ligne gratuit : devis, bons de livraison, factures, inventaire, alertes de stock bas et relances clients. Sans installation, sans carte bancaire.') }}">
     <link rel="canonical" href="https://stokito.com/">
     <meta name="google-site-verification" content="H8XthOFRDaYoH40nAZcc3p3AuApVdpXNPTAukNDdub8" />
+    <meta name="google-site-verification" content="XEy0-r-vrdATmXb-MhIP0hg5zhoY9-tW4Q5uWn-H0zY" />
     <meta property="og:title" content="Stokito">
     <meta property="og:description" content="{{ __('Gestion de stock, devis, bons de livraison et factures pour les PME. Gratuit, sans installation.') }}">
     <meta property="og:image" content="https://stokito.com/images/screens/screen-dashboard.webp?v=20261123">
