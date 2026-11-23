@@ -2,6 +2,7 @@ User-agent: *
 Allow: /$
 Allow: /blog
 Allow: /logiciel-gestion-de-stock-gratuit
+Allow: /logiciel-devis-facture-gratuit
 Allow: /build/
 Allow: /images/
 Allow: /docs/

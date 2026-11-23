@@ -15,11 +15,13 @@ Route::view('confidentialite', 'legal.privacy')->name('legal.privacy');
 
 // SEO pillar page (FR), 2026-11-23
 Route::view('logiciel-gestion-de-stock-gratuit', 'seo.logiciel-gratuit')->name('seo.logiciel-gratuit');
+Route::view('logiciel-devis-facture-gratuit', 'seo.logiciel-devis-facture')->name('seo.logiciel-devis-facture');
 
 Route::get('sitemap.xml', function () {
     $urls = collect([
         ['loc' => url('/'), 'lastmod' => now()->format('Y-m-d'), 'changefreq' => 'weekly', 'priority' => '1.0'],
         ['loc' => route('seo.logiciel-gratuit'), 'lastmod' => '2026-11-23', 'changefreq' => 'monthly', 'priority' => '0.9'],
+        ['loc' => route('seo.logiciel-devis-facture'), 'lastmod' => '2026-11-23', 'changefreq' => 'monthly', 'priority' => '0.9'],
         ['loc' => route('blog.index'), 'lastmod' => now()->format('Y-m-d'), 'changefreq' => 'daily', 'priority' => '0.8'],
     ]);
 
