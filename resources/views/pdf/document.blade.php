@@ -3,41 +3,44 @@
 <head>
 <meta charset="utf-8">
 <style>
-    @page { margin: 30px 35px; }
-    body { font-family: Helvetica, Arial, sans-serif; font-size: 12px; color: #1f2937; }
-    .header { width: 100%; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 2px solid #4f46e5; }
-    .header .logobox { text-align: center; margin-bottom: 14px; }
+    /* Stokito industrial style (2026-11-23): ink #111, safety yellow #ffcc00, paper #f4f2ec. Print-friendly: few dark fills. */
+    @page { margin: 26px 34px 40px; }
+    body { font-family: Helvetica, Arial, sans-serif; font-size: 11.5px; color: #111; }
+    .mono { font-family: Courier, monospace; }
+    .topbar { height: 6px; background: #ffcc00; border-bottom: 2px solid #111; margin-bottom: 16px; }
+    .header { width: 100%; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 2px solid #111; }
+    .header .logobox { text-align: left; margin-bottom: 10px; }
     .header .logobox img { max-height: 70px; max-width: 240px; }
     .header table.headrow { width: 100%; border-collapse: collapse; }
     .header table.headrow td { vertical-align: top; padding: 0; }
-    .header td.societe { width: 60%; text-align: left; }
-    .header td.docmeta { width: 40%; text-align: right; }
-    .societe h1 { margin: 0 0 4px; font-size: 18px; color: #111827; }
-    .societe p { margin: 1px 0; font-size: 10.5px; color: #4b5563; }
-    .docmeta h2 { margin: 0 0 6px; font-size: 16px; color: #4f46e5; text-transform: uppercase; letter-spacing: 1px; }
-    .docmeta p { margin: 1px 0; font-size: 11px; }
-    .clientbox { width: 100%; overflow: hidden; margin-bottom: 18px; }
-    .clientbox .inner { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 4px; padding: 10px 14px; width: 45%; }
-    .clientbox .label { font-size: 9.5px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
-    .clientbox .name { font-size: 13px; font-weight: bold; color: #111827; margin-bottom: 2px; }
-    .clientbox p { margin: 1px 0; font-size: 10.5px; color: #4b5563; }
-    table.items { width: 100%; border-collapse: collapse; margin-bottom: 18px; }
-    table.items th { background: #4f46e5; color: #fff; font-size: 10px; text-transform: uppercase; padding: 7px 8px; text-align: left; }
+    .header td.societe { width: 58%; text-align: left; }
+    .header td.docmeta { width: 42%; text-align: right; }
+    .societe h1 { margin: 0 0 5px; font-size: 17px; text-transform: uppercase; letter-spacing: .5px; }
+    .societe p { margin: 1px 0; font-size: 10px; color: #444; }
+    .doctitle { display: inline-block; background: #111; color: #fff; font-size: 17px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; padding: 5px 12px; margin-bottom: 8px; }
+    .docmeta p { margin: 2px 0; font-size: 10.5px; }
+    .docmeta .k { font-family: Courier, monospace; font-size: 9.5px; color: #555; text-transform: uppercase; }
+    .clientbox { width: 100%; margin-bottom: 18px; }
+    .clientbox .inner { border: 2px solid #111; padding: 9px 13px; width: 46%; }
+    .clientbox .label { font-family: Courier, monospace; font-size: 9px; color: #555; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+    .clientbox .name { font-size: 13px; font-weight: bold; margin-bottom: 2px; }
+    .clientbox p { margin: 1px 0; font-size: 10px; color: #444; }
+    table.items { width: 100%; border-collapse: collapse; margin-bottom: 16px; border: 2px solid #111; }
+    table.items th { background: #111; color: #fff; font-size: 9px; text-transform: uppercase; letter-spacing: 1px; padding: 7px 8px; text-align: left; }
     table.items th.num { text-align: right; }
-    table.items td { padding: 7px 8px; font-size: 11px; border-bottom: 1px solid #e5e7eb; }
-    table.items td.num { text-align: right; }
-    table.items tr:nth-child(even) td { background: #f9fafb; }
-    .totals { width: 100%; overflow: hidden; }
-    .totals table { float: right; width: 260px; border-collapse: collapse; }
-    .totalsbox td { padding: 5px 8px; font-size: 11px; }
-    .totalsbox td.lbl { color: #6b7280; }
-    .totalsbox td.val { text-align: right; font-weight: bold; white-space: nowrap; }
-    .totalsbox tr.grand td { border-top: 2px solid #4f46e5; font-size: 13px; color: #4f46e5; padding-top: 8px; }
-    .notes { margin-top: 20px; font-size: 10.5px; color: #6b7280; }
-    .words { margin-top: 14px; font-size: 11px; color: #111827; }
-    .conditions { margin-top: 10px; font-size: 10px; color: #4b5563; }
-    .legal { font-size: 8.5px; color: #6b7280; margin-bottom: 2px; }
-    .footer { position: fixed; bottom: -15px; left: 0; right: 0; text-align: center; font-size: 9px; color: #9ca3af; }
+    table.items td { padding: 7px 8px; font-size: 10.5px; border-bottom: 1px solid #d6d3cc; }
+    table.items td.num { text-align: right; font-family: Courier, monospace; font-size: 10.5px; }
+    table.items tr:nth-child(even) td { background: #f4f2ec; }
+    .totalsbox td { padding: 5px 9px; font-size: 10.5px; border-bottom: 1px solid #d6d3cc; }
+    .totalsbox td.lbl { color: #444; }
+    .totalsbox td.val { text-align: right; font-weight: bold; white-space: nowrap; font-family: Courier, monospace; }
+    .totalsbox tr.grand td { background: #ffcc00; border-top: 2px solid #111; border-bottom: 2px solid #111; font-size: 13px; color: #111; padding: 8px 9px; font-weight: bold; }
+    .notes { margin-top: 12px; font-size: 10px; color: #444; }
+    .words { margin-top: 4px; font-size: 10.5px; border-left: 4px solid #ffcc00; padding: 4px 0 4px 9px; }
+    .conditions { margin-top: 10px; font-size: 9.5px; color: #444; }
+    .stamp { width: 220px; height: 100px; border: 2px dashed #111; text-align: center; vertical-align: top; font-family: Courier, monospace; font-size: 9px; color: #555; text-transform: uppercase; letter-spacing: 1px; padding-top: 6px; }
+    .legal { font-size: 8.5px; color: #555; margin-bottom: 2px; }
+    .footer { position: fixed; bottom: -22px; left: 0; right: 0; text-align: center; font-family: Courier, monospace; font-size: 8.5px; color: #777; border-top: 1px solid #d6d3cc; padding-top: 4px; }
 </style>
 </head>
 <body>
@@ -58,6 +61,7 @@
             $words = ucfirst($nf->format($dh)).' '.($dh > 1 ? $many : $one).($sub && $subs ? ' et '.$nf->format($subs).' '.$sub : '').' TTC';
         }
     @endphp
+    @if ($withHeader)<div class="topbar"></div>@endif
     <div class="header" @if (! $withHeader) style="border-bottom:0; padding-top:90px;" @endif>
         @if ($withHeader && $societe->logoDataUri())
             <div class="logobox">
@@ -71,18 +75,18 @@
                     <h1>{{ $societe->name }}</h1>
                     @if ($societe->address)<p>{{ $societe->address }}</p>@endif
                     <p>
-                        @if ($societe->phone) Tel: {{ $societe->phone }} @endif
+                        @if ($societe->phone) Tél. {{ $societe->phone }} @endif
                         @if ($societe->email) &middot; {{ $societe->email }} @endif
                     </p>
                     <p>{{ implode(' · ', \App\Support\Countries::legalParts($societe)) }}</p>
                     @endif
                 </td>
                 <td class="docmeta">
-                    <h2>{{ $title }}</h2>
-                    <p><strong>N&deg;</strong> {{ $numero }}</p>
-                    <p><strong>Date:</strong> {{ $date }}</p>
-                    @if (!empty($dueDate))<p><strong>Échéance:</strong> {{ $dueDate }}</p>@endif
-                    @if (!empty($status))<p><strong>Statut :</strong> {{ \App\Support\Fmt::status(str_replace(' ', '_', $status)) }}</p>@endif
+                    <div class="doctitle">{{ $title }}</div>
+                    <p><span class="k">N&deg;</span> <strong class="mono" style="font-size:12px;">{{ $numero }}</strong></p>
+                    <p><span class="k">Date</span> {{ $date }}</p>
+                    @if (!empty($dueDate))<p><span class="k">Échéance</span> {{ $dueDate }}</p>@endif
+                    @if (!empty($status))<p><span class="k">Statut</span> {{ \App\Support\Fmt::status(str_replace(' ', '_', $status)) }}</p>@endif
                 </td>
             </tr>
         </table>
@@ -93,7 +97,7 @@
             <div class="label">{{ $partyLabel }}</div>
             <div class="name">{{ $party->name }}</div>
             @if ($party->address ?? false)<p>{{ $party->address }}</p>@endif
-            @if ($party->phone ?? false)<p>Tel: {{ $party->phone }}</p>@endif
+            @if ($party->phone ?? false)<p>Tél. {{ $party->phone }}</p>@endif
             @if ($party->ice ?? false)<p>{{ $cty['client'] }} : {{ $party->ice }}</p>@endif
         </div>
     </div>
@@ -160,7 +164,7 @@
     <table style="width:100%; border-collapse:collapse; margin-top:40px; page-break-inside:avoid;">
         <tr>
             <td></td>
-            <td style="width:220px; height:100px; border:1px solid #d1d5db; text-align:center; vertical-align:top; font-size:9.5px; color:#9ca3af; padding-top:6px;">Cachet et signature</td>
+            <td class="stamp">Cachet et signature</td>
         </tr>
     </table>
 
