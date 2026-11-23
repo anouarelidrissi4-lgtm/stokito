@@ -1,0 +1,62 @@
+<div class="py-6 px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Commandes Fournisseurs</h1>
+        <a href="{{ route('commande-fournisseurs.create') }}" wire:navigate class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-700">+ Nouvelle Cmd Fournisseur</a>
+    </div>
+
+    @if (session('error'))
+        <div class="mb-4 bg-red-50 text-red-700 px-4 py-2 rounded-lg text-sm print:hidden">{{ session('error') }}</div>
+    @endif
+    @if (session('success'))
+        <div class="mb-4 bg-green-50 text-green-700 px-4 py-2 rounded-lg text-sm">{{ session('success') }}</div>
+    @endif
+
+    <div class="bg-white shadow rounded-lg overflow-hidden">
+        <div class="p-4 border-b">
+            <input wire:model.live.debounce.300ms="search" type="text" placeholder="Rechercher par numéro ou fournisseur..." class="w-full rounded-md border-gray-300 text-sm">
+        </div>
+        <div class="overflow-x-auto">
+<table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Numéro</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fournisseur</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Total</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Statut</th>
+                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                @forelse ($commandes as $commande)
+                    <tr wire:key="cf-{{ $commande->id }}">
+                        <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">{{ $commande->numero }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-700">{{ $commande->fournisseur->name ?? '-' }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">{{ $commande->date->format('d/m/Y') }}</td>
+                        <td class="px-6 py-4 text-sm text-right text-gray-900 whitespace-nowrap">{{ \App\Support\Fmt::money($commande->total) }}</td>
+                        <td class="px-6 py-4 text-sm">
+                            <span @class([
+                                'px-2 py-1 rounded-full text-xs font-semibold',
+                                'bg-gray-100 text-gray-600' => $commande->status === 'draft',
+                                'bg-blue-100 text-blue-700' => $commande->status === 'ordered',
+                                'bg-green-100 text-green-700' => $commande->status === 'received',
+                            ])>{{ \App\Support\Fmt::status($commande->status) }}</span>
+                        </td>
+                        <td class="px-6 py-4 text-right text-sm space-x-2 whitespace-nowrap">
+                            <a href="{{ route('commande-fournisseurs.pdf', $commande->id) }}" target="_blank" class="text-gray-500 hover:underline">PDF</a>
+                            <a href="{{ route('commande-fournisseurs.edit', $commande->id) }}" wire:navigate class="text-indigo-600 hover:underline">Modifier</a>
+                            @if ($commande->status !== 'received')
+                                <button wire:click="markReceived({{ $commande->id }})" wire:confirm="Marquer cette commande comme recue ? Le stock sera mis a jour." class="text-green-600 hover:underline">Marquer reçue</button>
+                            @endif
+                            <button wire:click="delete({{ $commande->id }})" wire:confirm="Supprimer cette commande ?" class="text-red-600 hover:underline">Supprimer</button>
+                        </td>
+                    </tr>
+                @empty
+                    <tr><td colspan="6" class="px-6 py-8 text-center text-sm text-gray-400">Aucune commande.</td></tr>
+                @endforelse
+            </tbody>
+        </table>
+</div>
+        <div class="p-4">{{ $commandes->links() }}</div>
+    </div>
+</div>

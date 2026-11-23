@@ -1,0 +1,92 @@
+<?php
+
+namespace App\Support;
+
+use App\Models\Societe;
+
+/**
+ * Country presets (2026-11-23, francophone markets first). A company picks its country at
+ * sign-up; currency, default VAT, decimals and the names of the legal identifiers follow.
+ * Identifier columns stay the same in the database (ice, identifiant_fiscal, registre_commerce,
+ * patente, cnss) — only their labels change; a null label hides the field.
+ * Client label = the identifier printed for the customer on documents.
+ */
+class Countries
+{
+    public const ALL = [
+        'MA' => ['name' => 'Maroc', 'currency' => 'MAD', 'vat' => 20, 'decimals' => 2,
+                 'labels' => ['ice' => 'ICE', 'identifiant_fiscal' => 'Identifiant fiscal (IF)', 'registre_commerce' => 'Registre de commerce (RC)', 'patente' => 'Taxe professionnelle (Patente)', 'cnss' => 'CNSS'],
+                 'short' => ['ice' => 'ICE', 'identifiant_fiscal' => 'IF', 'registre_commerce' => 'RC', 'patente' => 'TP', 'cnss' => 'CNSS'], 'client' => 'ICE'],
+        'FR' => ['name' => 'France', 'currency' => 'EUR', 'vat' => 20, 'decimals' => 2,
+                 'labels' => ['ice' => 'SIRET', 'identifiant_fiscal' => 'N° TVA intracommunautaire', 'registre_commerce' => 'RCS', 'patente' => null, 'cnss' => null],
+                 'short' => ['ice' => 'SIRET', 'identifiant_fiscal' => 'TVA', 'registre_commerce' => 'RCS'], 'client' => 'SIRET / N° TVA'],
+        'BE' => ['name' => 'Belgique', 'currency' => 'EUR', 'vat' => 21, 'decimals' => 2,
+                 'labels' => ['ice' => "N° d'entreprise (BCE)", 'identifiant_fiscal' => 'N° TVA', 'registre_commerce' => 'RPM', 'patente' => null, 'cnss' => null],
+                 'short' => ['ice' => 'BCE', 'identifiant_fiscal' => 'TVA', 'registre_commerce' => 'RPM'], 'client' => 'N° TVA'],
+        'CH' => ['name' => 'Suisse', 'currency' => 'CHF', 'vat' => 8.1, 'decimals' => 2,
+                 'labels' => ['ice' => 'IDE (CHE-…)', 'identifiant_fiscal' => 'N° TVA', 'registre_commerce' => 'Registre du commerce', 'patente' => null, 'cnss' => null],
+                 'short' => ['ice' => 'IDE', 'identifiant_fiscal' => 'TVA', 'registre_commerce' => 'RC'], 'client' => 'IDE'],
+        'LU' => ['name' => 'Luxembourg', 'currency' => 'EUR', 'vat' => 17, 'decimals' => 2,
+                 'labels' => ['ice' => 'Matricule', 'identifiant_fiscal' => 'N° TVA', 'registre_commerce' => 'RCS', 'patente' => null, 'cnss' => null],
+                 'short' => ['ice' => 'Matricule', 'identifiant_fiscal' => 'TVA', 'registre_commerce' => 'RCS'], 'client' => 'N° TVA'],
+        'SN' => ['name' => 'Sénégal', 'currency' => 'XOF', 'vat' => 18, 'decimals' => 0,
+                 'labels' => ['ice' => 'NINEA', 'identifiant_fiscal' => null, 'registre_commerce' => 'RCCM', 'patente' => null, 'cnss' => null],
+                 'short' => ['ice' => 'NINEA', 'registre_commerce' => 'RCCM'], 'client' => 'NINEA'],
+        'CI' => ['name' => "Côte d'Ivoire", 'currency' => 'XOF', 'vat' => 18, 'decimals' => 0,
+                 'labels' => ['ice' => 'NCC', 'identifiant_fiscal' => null, 'registre_commerce' => 'RCCM', 'patente' => null, 'cnss' => null],
+                 'short' => ['ice' => 'NCC', 'registre_commerce' => 'RCCM'], 'client' => 'NCC'],
+        'CM' => ['name' => 'Cameroun', 'currency' => 'XAF', 'vat' => 19.25, 'decimals' => 0,
+                 'labels' => ['ice' => 'NIU', 'identifiant_fiscal' => null, 'registre_commerce' => 'RCCM', 'patente' => null, 'cnss' => null],
+                 'short' => ['ice' => 'NIU', 'registre_commerce' => 'RCCM'], 'client' => 'NIU'],
+        'TN' => ['name' => 'Tunisie', 'currency' => 'TND', 'vat' => 19, 'decimals' => 3,
+                 'labels' => ['ice' => 'Matricule fiscal', 'identifiant_fiscal' => null, 'registre_commerce' => 'RNE', 'patente' => null, 'cnss' => 'CNSS'],
+                 'short' => ['ice' => 'MF', 'registre_commerce' => 'RNE', 'cnss' => 'CNSS'], 'client' => 'Matricule fiscal'],
+        'DZ' => ['name' => 'Algérie', 'currency' => 'DZD', 'vat' => 19, 'decimals' => 2,
+                 'labels' => ['ice' => 'NIF', 'identifiant_fiscal' => 'NIS', 'registre_commerce' => 'RC', 'patente' => "Article d'imposition (AI)", 'cnss' => null],
+                 'short' => ['ice' => 'NIF', 'identifiant_fiscal' => 'NIS', 'registre_commerce' => 'RC', 'patente' => 'AI'], 'client' => 'NIF'],
+        'XX' => ['name' => 'Autre pays', 'currency' => 'EUR', 'vat' => 20, 'decimals' => 2,
+                 'labels' => ['ice' => "N° d'identification de l'entreprise", 'identifiant_fiscal' => 'N° TVA', 'registre_commerce' => 'Registre du commerce', 'patente' => null, 'cnss' => null],
+                 'short' => ['ice' => 'ID', 'identifiant_fiscal' => 'TVA', 'registre_commerce' => 'RC'], 'client' => "N° d'identification"],
+    ];
+
+    /** Currency words for the amount in words on invoices: [singular, plural, sub-unit plural or null]. */
+    public const CURRENCY_WORDS = [
+        'MAD' => ['dirham', 'dirhams', 'centimes'], 'EUR' => ['euro', 'euros', 'centimes'], 'CHF' => ['franc suisse', 'francs suisses', 'centimes'],
+        'XOF' => ['franc CFA', 'francs CFA', null], 'XAF' => ['franc CFA', 'francs CFA', null], 'TND' => ['dinar', 'dinars', 'millimes'],
+        'DZD' => ['dinar', 'dinars', 'centimes'],
+    ];
+
+    public static function get(?string $code): array
+    {
+        return self::ALL[$code] ?? self::ALL['MA'];
+    }
+
+    public static function options(): array
+    {
+        return collect(self::ALL)->map(fn ($c) => $c['name'])->all();
+    }
+
+    public static function for(Societe $s): array
+    {
+        return self::get($s->country_code ?: 'MA');
+    }
+
+    /** "ICE : 0012… · IF : …" pieces for the PDF legal lines, using this country's short labels. */
+    public static function legalParts(Societe $s): array
+    {
+        $c = self::for($s);
+        $out = [];
+        foreach (['ice', 'identifiant_fiscal', 'registre_commerce', 'patente', 'cnss'] as $f) {
+            if ($s->{$f} && ($c['labels'][$f] ?? null)) {
+                $out[] = ($c['short'][$f] ?? $c['labels'][$f]).' : '.$s->{$f};
+            }
+        }
+
+        return $out;
+    }
+
+    public static function words(?string $currency): array
+    {
+        return self::CURRENCY_WORDS[strtoupper((string) $currency)] ?? [$currency, $currency, 'centimes'];
+    }
+}

@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /$
+Allow: /blog
+Allow: /logiciel-gestion-de-stock-gratuit
+Allow: /build/
+Allow: /images/
+Allow: /docs/
+Disallow: /
+
+Sitemap: https://stokito.com/sitemap.xml

@@ -1,0 +1,125 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+[x-cloak] {
+    display: none !important;
+}
+
+/*
+ * Dark mode: broad overrides of the common neutral utility classes used
+ * throughout the app, so pages don't each need per-element `dark:` classes.
+ * Scoped under html.dark (toggled by the moon/sun button, see layouts).
+ */
+html.dark body {
+    background-color: #0f172a;
+    color: #e5e7eb;
+}
+
+html.dark .bg-white { background-color: #1f2937 !important; }
+html.dark .bg-gray-50 { background-color: #111827 !important; }
+html.dark .bg-gray-100 { background-color: #1f2937 !important; }
+html.dark .bg-indigo-50,
+html.dark .bg-indigo-50\/60 { background-color: rgba(99, 102, 241, 0.08) !important; }
+html.dark .bg-amber-50 { background-color: rgba(245, 158, 11, 0.12) !important; }
+html.dark .bg-red-50 { background-color: rgba(239, 68, 68, 0.12) !important; }
+html.dark .bg-green-50 { background-color: rgba(34, 197, 94, 0.12) !important; }
+html.dark .bg-blue-50 { background-color: rgba(59, 130, 246, 0.12) !important; }
+
+html.dark .text-gray-900 { color: #f3f4f6 !important; }
+html.dark .text-gray-800 { color: #e5e7eb !important; }
+html.dark .text-gray-700 { color: #d1d5db !important; }
+html.dark .text-gray-600 { color: #cbd5e1 !important; }
+html.dark .text-gray-500 { color: #9ca3af !important; }
+html.dark .text-gray-400 { color: #6b7280 !important; }
+
+html.dark .border-gray-100,
+html.dark .border-gray-200,
+html.dark .border-gray-300,
+html.dark .border-indigo-100 { border-color: #374151 !important; }
+
+html.dark .divide-gray-100 > :not([hidden]) ~ :not([hidden]),
+html.dark .divide-gray-200 > :not([hidden]) ~ :not([hidden]) { border-color: #374151 !important; }
+
+html.dark input:not([type=checkbox]):not([type=radio]),
+html.dark select,
+html.dark textarea {
+    background-color: #1f2937 !important;
+    border-color: #4b5563 !important;
+    color: #f3f4f6 !important;
+}
+html.dark input::placeholder,
+html.dark textarea::placeholder { color: #6b7280 !important; }
+
+/* Sidebar reads as a lighter indigo panel in light mode; give it a dark slate tone instead of staying light */
+html.dark aside.bg-indigo-50\/60 { background-color: #0b1220 !important; }
+
+/* Hover states on sidebar/menu items (bg-indigo-100) */
+html.dark .hover\:bg-indigo-100:hover { background-color: rgba(99, 102, 241, 0.15) !important; }
+html.dark .hover\:bg-gray-50:hover,
+html.dark .hover\:bg-gray-100:hover { background-color: #27303f !important; }
+
+/* Dropdown menus (language switcher, column toggles, etc.) */
+html.dark .bg-white.rounded-lg.shadow-lg,
+html.dark .bg-white.rounded-lg.shadow-xl { background-color: #1f2937 !important; }
+
+/* App shell redesign 2026-11-22: sidebar + dashboard cards in dark mode */
+html.dark .sp-sidebar { background-color: #0b1220 !important; border-color: #1f2937 !important; }
+html.dark .sp-sidebar .text-slate-600,
+html.dark .sp-sidebar .text-slate-700 { color: #cbd5e1 !important; }
+html.dark .sp-sidebar .hover\:bg-white:hover { background-color: rgba(99, 102, 241, 0.15) !important; }
+html.dark .bg-slate-50 { background-color: #111827 !important; }
+html.dark .bg-slate-100 { background-color: #1f2937 !important; }
+html.dark .text-slate-900 { color: #f3f4f6 !important; }
+html.dark .text-slate-800 { color: #e5e7eb !important; }
+html.dark .text-slate-700 { color: #d1d5db !important; }
+html.dark .text-slate-500 { color: #9ca3af !important; }
+html.dark .border-slate-100,
+html.dark .border-slate-200,
+html.dark .border-slate-300 { border-color: #374151 !important; }
+html.dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]) { border-color: #374151 !important; }
+html.dark .hover\:bg-slate-50:hover { background-color: #27303f !important; }
+
+/* =====================================================================
+   Industrial / dépôt art direction (2026-11-23) — shared by landing,
+   login (guest layout, .sp-guest) and the app (.sp-app).
+   Ink #111, safety yellow #ffcc00, concrete #e6e3dc, paper #f4f2ec.
+   ===================================================================== */
+.ind-h { font-family: 'Barlow Condensed', 'Tajawal', sans-serif; font-weight: 800; }
+.ind-mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; }
+.ind-concrete { background-color: #e6e3dc; }
+.ind-hazard { background: repeating-linear-gradient(-45deg, #ffcc00 0 14px, #111 14px 28px); }
+.ind-bc { background: repeating-linear-gradient(90deg, #111 0 2px, transparent 2px 4px, #111 4px 5px, transparent 5px 7px, #111 7px 10px, transparent 10px 11px, #111 11px 12px, transparent 12px 15px); }
+
+/* ---- app (logged-in pages) ---- */
+.sp-app { font-family: 'Barlow', 'Tajawal', sans-serif; }
+[dir=rtl] .sp-app { font-family: 'Tajawal', 'Barlow', sans-serif; }
+html:not(.dark) .sp-app { background: #f4f2ec; }
+.sp-app main h1, .sp-app main h1.text-2xl { font-family: 'Barlow Condensed', 'Tajawal', sans-serif; font-weight: 800; text-transform: uppercase; letter-spacing: .01em; }
+/* primary buttons: ink + yellow, square */
+.sp-app .bg-indigo-600 { background-color: #111 !important; color: #ffcc00 !important; }
+.sp-app .hover\:bg-indigo-700:hover, .sp-app .hover\:bg-indigo-500:hover { background-color: #000 !important; }
+.sp-app main .bg-indigo-600, .sp-app main a.bg-indigo-600, .sp-app main button.bg-indigo-600 { border-radius: 2px !important; font-weight: 700; }
+/* links that used indigo */
+.sp-app main .text-indigo-600, .sp-app main .text-indigo-700 { color: #111 !important; text-decoration: underline; text-decoration-color: #ffcc00; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+/* cards & panels: flatter, inked edge */
+html:not(.dark) .sp-app main .bg-white.shadow,
+html:not(.dark) .sp-app main .bg-white.shadow-sm,
+html:not(.dark) .sp-app main .bg-white.rounded-xl,
+html:not(.dark) .sp-app main .bg-white.rounded-lg { box-shadow: none !important; border: 1.5px solid #111 !important; border-radius: 3px !important; }
+/* table heads */
+html:not(.dark) .sp-app main thead.bg-gray-50, html:not(.dark) .sp-app main thead .bg-gray-50 { background: #111 !important; }
+html:not(.dark) .sp-app main thead.bg-gray-50 th, html:not(.dark) .sp-app main thead .bg-gray-50 th { color: #ffcc00 !important; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 500; letter-spacing: .02em; }
+/* form fields */
+.sp-app main input:not([type=checkbox]):not([type=radio]), .sp-app main select, .sp-app main textarea { border-radius: 2px !important; }
+.sp-app main input:focus, .sp-app main select:focus, .sp-app main textarea:focus { border-color: #111 !important; box-shadow: 0 0 0 2px #ffcc00 !important; }
+.sp-app main input[type=checkbox] { color: #111; }
+
+/* ---- guest pages (login, register, password) ---- */
+.sp-guest { font-family: 'Barlow', 'Tajawal', sans-serif; }
+.sp-guest input:not([type=checkbox]) { border: 2px solid #111 !important; border-radius: 0 !important; box-shadow: none !important; }
+.sp-guest input:focus { box-shadow: 0 0 0 3px #ffcc00 !important; }
+.sp-guest label { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px !important; text-transform: uppercase; color: #444 !important; }
+.sp-guest button[type=submit] { background: #111 !important; color: #ffcc00 !important; border: 2px solid #111 !important; border-radius: 0 !important; font-family: 'Barlow Condensed', sans-serif !important; font-weight: 800 !important; font-size: 17px !important; letter-spacing: .06em; padding: 10px 22px !important; box-shadow: 4px 4px 0 #ffcc00; }
+.sp-guest button[type=submit]:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0 #ffcc00; }
+.sp-guest input[type=checkbox] { border-radius: 0 !important; color: #111 !important; }
