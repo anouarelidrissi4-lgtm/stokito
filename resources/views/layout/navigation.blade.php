@@ -33,6 +33,7 @@
     <nav class="p-3 space-y-1">
         <div class="px-3 pt-2 pb-1 text-[11px] font-semibold uppercase tracking-wider text-slate-400">{{ __('Administration globale') }}</div>
         <a href="{{ route('projects.index') }}" wire:navigate class="{{ $linkClass(request()->routeIs('projects.index')) }}"><x-sp-icon name="folder" class="w-4 h-4" /> {{ __('Projets') }}</a>
+        <a href="{{ route('inscriptions.index') }}" wire:navigate class="{{ $linkClass(request()->routeIs('inscriptions.index')) }}"><x-sp-icon name="chart" class="w-4 h-4" /> {{ __('Inscriptions') }}</a>
         <a href="{{ route('blog-admin.index') }}" wire:navigate class="{{ $linkClass(request()->routeIs('blog-admin.*')) }}"><x-sp-icon name="doc" class="w-4 h-4" /> {{ __('Blog (site public)') }}</a>
         <a href="{{ route('profile') }}" wire:navigate class="{{ $linkClass(request()->routeIs('profile')) }}"><x-sp-icon name="user" class="w-4 h-4" /> {{ __('Profil') }}</a>
     </nav>
@@ -67,7 +68,7 @@
             @php
                 $items = $visible($section['items'])->reject(fn ($i) => in_array($i['key'], $quickKeys, true))->values();
                 $super = $key === 'administration' && $user->isSuperAdmin();
-                $hasActive = $items->contains(fn ($i) => $isActive($i)) || ($super && request()->routeIs('projects.index', 'blog-admin.*'));
+                $hasActive = $items->contains(fn ($i) => $isActive($i)) || ($super && request()->routeIs('projects.index', 'inscriptions.index', 'blog-admin.*'));
                 $icon = $sectionIcons[$key] ?? 'folder';
             @endphp
             @continue($items->isEmpty() && ! $super)
@@ -91,6 +92,7 @@
                         @endforeach
                         @if ($super)
                             <a href="{{ route('projects.index') }}" wire:navigate class="{{ $linkClass(request()->routeIs('projects.index')) }} !py-1.5">{{ __('Projets (global)') }}</a>
+                            <a href="{{ route('inscriptions.index') }}" wire:navigate class="{{ $linkClass(request()->routeIs('inscriptions.index')) }} !py-1.5">{{ __('Inscriptions') }}</a>
                             <a href="{{ route('blog-admin.index') }}" wire:navigate class="{{ $linkClass(request()->routeIs('blog-admin.*')) }} !py-1.5">{{ __('Blog (site public)') }}</a>
                         @endif
                     </div>

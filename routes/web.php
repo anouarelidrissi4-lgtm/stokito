@@ -341,6 +341,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('utilisateurs/create', \App\Livewire\Utilisateurs\Form::class)->name('utilisateurs.create');
     Route::get('utilisateurs/{userId}/edit', \App\Livewire\Utilisateurs\Form::class)->name('utilisateurs.edit');
     Route::get('projets', \App\Livewire\Projects\Index::class)->name('projects.index');
+    Route::get('inscriptions', \App\Livewire\Inscriptions\Index::class)->name('inscriptions.index');
 
     Route::get('blog-admin', \App\Livewire\BlogAdmin\Index::class)->name('blog-admin.index');
     Route::get('blog-admin/create', \App\Livewire\BlogAdmin\Form::class)->name('blog-admin.create');
