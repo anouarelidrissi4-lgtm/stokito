@@ -70,6 +70,9 @@ class CommandeFournisseur extends Model
 
     public function markReceived(): void
     {
+        if ($this->status === 'received') {
+            return; // already in stock: never add the goods twice
+        }
         foreach ($this->items as $item) {
             $product = $item->product;
             $product->increment('stock_qty', $item->quantity);

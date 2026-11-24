@@ -115,6 +115,28 @@ class InvoiceScannerTest extends TestCase
         $this->assertEquals(170, (float) $cmd->total_ht);
     }
 
+    public function test_saving_with_status_received_adds_the_goods_to_the_stock_once(): void
+    {
+        $this->companyUser('FR');
+        $f = Fournisseur::create(['name' => 'Fournisseur Stock']);
+        $p = $this->product('REC-1', 10);
+
+        $c = Livewire::test(Form::class)
+            ->set('fournisseur_id', $f->id)
+            ->set('items', [['product_id' => $p->id, 'quantity' => 4, 'unit_price' => 5]])
+            ->set('status', 'received')
+            ->call('save')
+            ->assertHasNoErrors();
+        $cmd = CommandeFournisseur::sole();
+        $this->assertSame('received', $cmd->status);
+        $this->assertEquals(14, (float) $p->fresh()->stock_qty);
+
+        // editing it again, or clicking "Marquer reçue", must not add the stock a second time
+        Livewire::test(Form::class, ['commandeId' => $cmd->id])->call('save')->assertHasNoErrors();
+        $cmd->fresh()->load('items.product')->markReceived();
+        $this->assertEquals(14, (float) $p->fresh()->stock_qty);
+    }
+
     public function test_unknown_supplier_is_offered_for_creation(): void
     {
         $this->companyUser('MA');

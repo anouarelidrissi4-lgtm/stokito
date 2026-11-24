@@ -34,7 +34,7 @@
                     <input type="file" wire:model="scanFile" accept="image/*,application/pdf" class="sr-only">
                 </label>
             </div>
-            <div x-show="uploading" x-cloak class="mt-3 text-sm text-gray-700">Envoi du fichier… <span x-text="progress"></span> %</div>
+            <div x-show="uploading && progress < 100" x-cloak class="mt-3 text-sm text-gray-700">Envoi du fichier… <span x-text="progress"></span> %</div>
             <div wire:loading.flex wire:target="scanFile" class="mt-3 items-center gap-2 text-sm font-medium text-gray-900">
                 <svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" class="opacity-25"/><path d="M22 12a10 10 0 0 0-10-10" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
                 Lecture de la facture en cours (10 à 40 secondes)…

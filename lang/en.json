@@ -393,5 +393,7 @@
     "À vérifier": "To check",
     "Créer ce produit": "Create this product",
     "Puis-je saisir une facture fournisseur en la prenant en photo ?": "Can I enter a supplier invoice by taking a photo of it?",
-    "Oui. Dans « Nouveau bon de commande », touchez « Photo ou PDF » : Stokito lit le fournisseur, la date, le numéro et les lignes de la facture, puis retrouve vos produits. Vous vérifiez avant d’enregistrer. 30 factures par mois sont incluses gratuitement.": "Yes. In “New purchase order”, tap “Photo ou PDF”: Stokito reads the supplier, the date, the number and the lines of the invoice, then finds your products. You check before saving. 30 invoices a month are included for free."
+    "Oui. Dans « Nouveau bon de commande », touchez « Photo ou PDF » : Stokito lit le fournisseur, la date, le numéro et les lignes de la facture, puis retrouve vos produits. Vous vérifiez avant d’enregistrer. 30 factures par mois sont incluses gratuitement.": "Yes. In “New purchase order”, tap “Photo ou PDF”: Stokito reads the supplier, the date, the number and the lines of the invoice, then finds your products. You check before saving. 30 invoices a month are included for free.",
+    "Scanner de factures fournisseurs": "Supplier invoice scanner",
+    "En savoir plus": "Learn more"
 }

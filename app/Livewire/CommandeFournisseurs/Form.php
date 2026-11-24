@@ -122,6 +122,9 @@ class Form extends Component
 
     public function updatedItems($value, $key)
     {
+        if (substr_count((string) $key, '.') !== 1) {
+            return; // whole array replaced, nothing to sync
+        }
         [$index, $field] = explode('.', $key);
         if ($field === 'product_id' && $value) {
             $product = Product::find($value);
@@ -451,6 +454,13 @@ class Form extends Component
             'reference_fournisseur' => trim((string) $this->reference_fournisseur) ?: null,
         ];
 
+        // Choosing "Reçue" in the form must add the goods to the stock, like "Marquer reçue" in the list
+        // (2026-11-24: it used to only change the status, and the list then hid the button, so stock never moved).
+        $receiveNow = $this->status === 'received' && ($this->commande?->status ?? null) !== 'received';
+        if ($receiveNow) {
+            $data['status'] = $this->commande->status ?? 'ordered';
+        }
+
         if ($this->commande) {
             $this->commande->update($data);
             $this->commande->items()->delete();
@@ -470,6 +480,13 @@ class Form extends Component
         }
 
         $this->commande->recalculateTotals();
+
+        if ($receiveNow) {
+            $this->commande->load('items.product')->markReceived();
+            session()->flash('success', 'Bon de commande enregistré et reçu : stock mis à jour.');
+
+            return $this->redirect(route('commande-fournisseurs.index'), navigate: true);
+        }
 
         session()->flash('success', 'Bon de commande enregistré.');
 

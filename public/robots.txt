@@ -3,6 +3,7 @@ Allow: /$
 Allow: /blog
 Allow: /logiciel-gestion-de-stock-gratuit
 Allow: /logiciel-devis-facture-gratuit
+Allow: /scanner-facture-fournisseur
 Allow: /build/
 Allow: /images/
 Allow: /docs/

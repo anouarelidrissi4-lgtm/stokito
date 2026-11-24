@@ -495,6 +495,7 @@
             </ul>
             <div class="mt-8 flex flex-wrap items-center gap-3">
                 <a href="{{ route('register') }}" class="ind-btn bg-[#111] text-[#ffcc00]">{{ __('Créer un compte gratuit') }} <span aria-hidden="true">{{ $rtl ? '←' : '→' }}</span></a>
+                <a href="{{ route('seo.scanner-facture') }}" class="ind-btn bg-white text-[#111]">{{ __('En savoir plus') }}</a>
             </div>
             <p class="mt-4 ind-mono text-[11px] text-[#666]">{{ __('30 factures par mois incluses gratuitement · photo JPG, PNG ou PDF · 10 Mo max.') }}</p>
         </div>
