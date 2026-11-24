@@ -12,6 +12,9 @@ class Permissions
     public const ALL = [
         // --- Colonne 1 ---
         'bons_chargement' => 'Bons de chargement',
+        'caisse' => 'Caisse : Encaisser',
+        'caisse_annuler' => 'Caisse : Annuler un ticket',
+        'caisse_cloturer' => 'Caisse : Clôtures (Z)',
         'bl_consulter' => 'Bons Livraison : Consulter',
         'bl_creer' => 'Bons Livraison : Creer',
         'bl_edition' => 'Bons Livraison : Edition',

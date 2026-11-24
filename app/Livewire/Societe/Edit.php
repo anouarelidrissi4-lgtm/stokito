@@ -64,6 +64,8 @@ class Edit extends Component
 
     public $bons_chargement_enabled = true;
 
+    public $caisse_enabled = false;
+
     // French invoice mentions (2026-11-24)
     public $tva_franchise = false;
 
@@ -114,6 +116,7 @@ class Edit extends Component
         $this->show_ref_facture = $this->societe->show_ref_facture === null ? true : (bool) $this->societe->show_ref_facture;
         $this->show_ref_bl = $this->societe->show_ref_bl === null ? true : (bool) $this->societe->show_ref_bl;
         $this->bons_chargement_enabled = $this->societe->bons_chargement_enabled === null ? true : (bool) $this->societe->bons_chargement_enabled;
+        $this->caisse_enabled = (bool) $this->societe->caisse_enabled;
         $this->tva_franchise = (bool) $this->societe->tva_franchise;
         $this->penalites_taux = $this->societe->penalites_taux ?? '';
         $this->indemnite_40 = (bool) $this->societe->indemnite_40;
@@ -191,6 +194,7 @@ class Edit extends Component
             'show_ref_facture' => $this->show_ref_facture,
             'show_ref_bl' => $this->show_ref_bl,
             'bons_chargement_enabled' => $this->bons_chargement_enabled,
+            'caisse_enabled' => (bool) $this->caisse_enabled,
             'tva_franchise' => (bool) $this->tva_franchise,
             'penalites_taux' => trim((string) $this->penalites_taux) ?: null,
             'indemnite_40' => (bool) $this->indemnite_40,

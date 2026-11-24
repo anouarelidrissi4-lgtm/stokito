@@ -274,6 +274,17 @@
                     <span class="text-sm text-gray-600">Activer les bons de chargement</span>
                 </label>
             </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Caisse (vente au comptoir)</label>
+                <label class="inline-flex items-center gap-2 cursor-pointer">
+                    <span class="relative inline-block w-10 h-5">
+                        <input wire:model="caisse_enabled" type="checkbox" class="peer sr-only">
+                        <span class="absolute inset-0 border-2 border-[#111] bg-white peer-checked:bg-[#ffcc00] transition-colors"></span>
+                        <span class="absolute left-0.5 top-0.5 w-4 h-4 bg-[#111] transition-transform peer-checked:translate-x-5"></span>
+                    </span>
+                    <span class="text-sm text-gray-600">Activer la caisse : tickets, paiements et clôtures Z</span>
+                </label>
+            </div>
         </div>
 
         <div class="p-6 flex justify-end">

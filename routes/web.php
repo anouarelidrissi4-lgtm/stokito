@@ -227,6 +227,24 @@ Route::middleware(['auth'])->group(function () {
     Route::get('inventaire/nouveau', \App\Livewire\Inventaire\Form::class)->name('inventaire.create');
     Route::get('inventaire/{inventaireId}', \App\Livewire\Inventaire\Form::class)->whereNumber('inventaireId')->name('inventaire.show');
     Route::get('products', \App\Livewire\Products\Index::class)->name('products.index');
+    // Caisse / point of sale (2026-11-25)
+    Route::get('caisse', \App\Livewire\Caisse\Pos::class)->name('caisse.pos');
+    Route::get('caisse/tickets', \App\Livewire\Caisse\Tickets::class)->name('caisse.tickets');
+    Route::get('caisse/clotures', \App\Livewire\Caisse\Clotures::class)->name('caisse.clotures');
+    Route::get('caisse/tickets/{id}/imprimer', function (int $id) {
+        \App\Livewire\Caisse\Pos::guard();
+        $t = \App\Models\CaisseTicket::with(['lignes', 'paiements', 'annule'])->findOrFail($id);
+        $dup = \App\Support\Caisse::impression($t);
+
+        return view('caisse.ticket-print', ['t' => $t, 'dup' => $dup, 's' => \App\Models\Societe::current()]);
+    })->whereNumber('id')->name('caisse.tickets.print');
+    Route::get('caisse/clotures/{id}/imprimer', function (int $id) {
+        \App\Livewire\Caisse\Pos::guard('caisse_cloturer');
+        $c = \App\Models\CaisseCloture::findOrFail($id);
+        \App\Support\Caisse::journal('IMPRESSION_Z', 'Impression de la clôture '.$c->type.' n° '.$c->sequence, ['cloture_id' => $c->id]);
+
+        return view('caisse.cloture-print', ['c' => $c, 's' => \App\Models\Societe::current()]);
+    })->whereNumber('id')->name('caisse.clotures.print');
     Route::get('brands', \App\Livewire\Brands\Index::class)->name('brands.index');
     Route::get('clients', \App\Livewire\Clients\Index::class)->name('clients.index');
     Route::get('fournisseurs', \App\Livewire\Fournisseurs\Index::class)->name('fournisseurs.index');

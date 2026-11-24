@@ -17,7 +17,7 @@ class Societe extends Model
         'currency', 'tva_rate_default', 'qty_decimals', 'price_decimals',
         'tva_franchise', 'penalites_taux', 'indemnite_40', 'escompte_neant', 'tva_debits', 'nature_operation_default', 'devis_validite_jours', 'relances_auto',
         'stock_threshold_default', 'facture_type', 'stock_verification',
-        'show_ref_facture', 'show_ref_bl', 'bons_chargement_enabled', 'menu_config',
+        'show_ref_facture', 'show_ref_bl', 'bons_chargement_enabled', 'caisse_enabled', 'menu_config',
     ];
 
     protected $casts = [

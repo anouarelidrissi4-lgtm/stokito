@@ -42,6 +42,7 @@ class MenuItems
 
         'inventaire.index' => ['label' => 'Inventaire', 'route' => 'inventaire.index', 'active' => 'inventaire.*', 'permission' => 'inventaire', 'module' => null, 'admin_override' => false, 'section' => 'catalogue', 'order' => 40],
 
+        'caisse.pos' => ['label' => 'Caisse', 'route' => 'caisse.pos', 'active' => 'caisse.*', 'permission' => 'caisse', 'module' => 'caisse_enabled', 'admin_override' => false, 'section' => 'ventes', 'order' => 5],
         'clients.index' => ['label' => 'Clients', 'route' => 'clients.index', 'active' => 'clients.index', 'permission' => 'gestion_clients', 'module' => null, 'admin_override' => false, 'section' => 'ventes', 'order' => 10],
         'devis.index' => ['label' => 'Devis Clients', 'route' => 'devis.index', 'active' => ['devis.index', 'devis.edit'], 'permission' => 'devis_consulter', 'module' => null, 'admin_override' => false, 'section' => 'ventes', 'order' => 20],
         'devis.create' => ['label' => 'Nouveau Devis', 'route' => 'devis.create', 'active' => 'devis.create', 'permission' => 'devis_creer', 'module' => null, 'admin_override' => false, 'section' => 'ventes', 'order' => 30],

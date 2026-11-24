@@ -37,6 +37,7 @@ class DemoReset extends Command
 
     /** Tables holding tenant data, children first. */
     protected array $tables = [
+        'caisse_journal', 'caisse_clotures', 'caisse_tickets',
         'reglements_clients', 'reglements_fournisseurs', 'avoirs_clients', 'avoirs_fournisseurs',
         'cheques_effets_fournisseurs', 'mouvements_bancaires', 'bons_de_chargement',
         'factures', 'bon_livraisons', 'devis', 'commande_fournisseurs', 'stock_movements',
@@ -45,6 +46,8 @@ class DemoReset extends Command
     ];
 
     protected array $children = [
+        'caisse_ticket_lignes' => ['ticket_id', 'caisse_tickets'],
+        'caisse_paiements' => ['ticket_id', 'caisse_tickets'],
         'devis_items' => ['devis_id', 'devis'],
         'bon_livraison_items' => ['bon_livraison_id', 'bon_livraisons'],
         'facture_items' => ['facture_id', 'factures'],
@@ -288,6 +291,30 @@ class DemoReset extends Command
             foreach ($lines as [$ref, $qty]) {
                 $c->items()->create(['product_id' => $products[$ref]->id, 'quantity' => $qty, 'unit_price' => $products[$ref]->purchase_price, 'total' => $products[$ref]->purchase_price * $qty]);
             }
+        }
+
+        // counter sales at the caisse over the last 3 days; the past days are closed by a Z (2026-11-25)
+        $societe->update(['caisse_enabled' => true]);
+        $base = now();
+        $sales = [
+            [2, '09:40', [['DISQ-115', 4], ['ELEC-25', 1]], 'especes'], [2, '15:10', [['PEIN-GLY-BL', 2]], 'carte'],
+            [1, '10:05', [['DILU-1', 3], ['DISQ-115', 2]], 'especes'], [1, '17:30', [['COR-40', 2]], 'carte'],
+            [0, '09:15', [['ELEC-25', 1], ['DILU-1', 1]], 'especes'],
+        ];
+        try {
+            foreach ($sales as [$ago, $time, $lines, $mode]) {
+                \Illuminate\Support\Carbon::setTestNow($base->copy()->subDays($ago)->setTimeFromTimeString($time));
+                $cart = collect($lines)->map(fn ($l) => \App\Support\Caisse::lineFor($products[$l[0]], $l[1]))->all();
+                $total = \App\Support\Caisse::compute($cart)['total_ttc'];
+                \App\Support\Caisse::encaisser($cart, [$mode => $mode === 'especes' ? ceil($total / 10) * 10 : $total]);
+            }
+            foreach ([2, 1] as $ago) {
+                $day = $base->copy()->subDays($ago)->startOfDay();
+                \Illuminate\Support\Carbon::setTestNow($day->copy()->setTime(20, 0));
+                \App\Support\Caisse::cloturerJour($day->copy()->addDay(), $day->toDateString());
+            }
+        } finally {
+            \Illuminate\Support\Carbon::setTestNow();
         }
     }
 }
