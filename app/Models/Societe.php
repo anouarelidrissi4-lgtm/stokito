@@ -15,7 +15,7 @@ class Societe extends Model
         'name', 'country', 'country_code', 'city', 'address', 'phone', 'phone2', 'fax', 'email', 'ice',
         'identifiant_fiscal', 'registre_commerce', 'patente', 'cnss', 'conditions_paiement', 'logo_path',
         'currency', 'tva_rate_default', 'qty_decimals', 'price_decimals',
-        'tva_franchise', 'penalites_taux', 'indemnite_40', 'escompte_neant', 'tva_debits', 'nature_operation_default',
+        'tva_franchise', 'penalites_taux', 'indemnite_40', 'escompte_neant', 'tva_debits', 'nature_operation_default', 'devis_validite_jours',
         'stock_threshold_default', 'facture_type', 'stock_verification',
         'show_ref_facture', 'show_ref_bl', 'bons_chargement_enabled', 'menu_config',
     ];

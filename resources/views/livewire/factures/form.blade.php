@@ -245,6 +245,9 @@
 
                 <label class="block text-sm font-medium text-gray-700 mb-1 mt-4">Notes</label>
                 <textarea wire:model="notes" rows="2" class="w-full rounded-md border-gray-300 text-sm"></textarea>
+                @if ($devis_numero)
+                <p class="mt-4 text-sm text-gray-600">Facture établie à partir du devis <strong>{{ $devis_numero }}</strong>. Le stock sortira à l’enregistrement.</p>
+                @endif
                 <label class="block text-sm font-medium text-gray-700 mb-1 mt-4">Adresse de livraison <span class="text-gray-400 font-normal">(si différente de celle du client)</span></label>
                 <textarea wire:model="adresse_livraison" rows="2" class="w-full rounded-md border-gray-300 text-sm"></textarea>
                 @if ((\App\Models\Societe::current()->country_code ?? '') === 'FR')

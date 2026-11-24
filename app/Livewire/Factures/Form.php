@@ -21,6 +21,12 @@ class Form extends Component
 
     public ?int $bon_livraison_id = null;
 
+    #[\Livewire\Attributes\Locked]
+    public ?int $devis_id = null;
+
+    #[\Livewire\Attributes\Locked]
+    public string $devis_numero = '';
+
     #[Validate('required|date')]
     public $date;
 
@@ -94,6 +100,8 @@ class Form extends Component
             $this->facture = Facture::with('items')->findOrFail($factureId);
             $this->client_id = $this->facture->client_id;
             $this->bon_livraison_id = $this->facture->bon_livraison_id;
+            $this->devis_id = $this->facture->devis_id;
+            $this->devis_numero = (string) ($this->facture->devis?->numero ?? '');
             $this->date = $this->facture->date->format('Y-m-d');
             $this->due_date = optional($this->facture->due_date)->format('Y-m-d') ?? '';
             $this->tva_rate = $this->facture->tva_rate;
@@ -123,6 +131,16 @@ class Form extends Component
                 'unit_price' => (float) ($i->unit_price ?? 0),
                 'tva_rate' => $i->tva_rate !== null ? (float) $i->tva_rate : (float) $this->tva_rate,
             ])->toArray();
+        } elseif ($devisId = (int) request()->query('devis')) {
+            // invoice straight from an accepted quote (no delivery note): same lines, VAT and discount
+            $devis = \App\Models\Devis::findOrFail($devisId);
+            $this->devis_id = $devis->id;
+            $this->devis_numero = $devis->numero;
+            $this->client_id = $devis->client_id;
+            $this->tva_rate = (float) $devis->tva_rate;
+            $this->remise_type = $devis->remise_type ?? 'percent';
+            $this->remise_value = (float) ($devis->remise_value ?? 0);
+            $this->items = $devis->linesForConversion();
         } else {
             $this->tva_rate = $this->defaultVatRate();
             $this->addItem();
@@ -403,6 +421,7 @@ class Form extends Component
         $data = [
             'client_id' => $this->client_id,
             'bon_livraison_id' => $this->bon_livraison_id,
+            'devis_id' => $this->devis_id,
             'date' => $this->date,
             'due_date' => $this->due_date ?: null,
             'tva_rate' => $this->tva_rate,

@@ -77,6 +77,8 @@ class Edit extends Component
 
     public $nature_operation_default = '';
 
+    public $devis_validite_jours = 30;
+
     #[Validate('nullable|image|max:2048')]
     public $logo;
 
@@ -116,6 +118,7 @@ class Edit extends Component
         $this->escompte_neant = (bool) $this->societe->escompte_neant;
         $this->tva_debits = (bool) $this->societe->tva_debits;
         $this->nature_operation_default = $this->societe->nature_operation_default ?? '';
+        $this->devis_validite_jours = $this->societe->devis_validite_jours ?? 30;
     }
 
     public function updatedCountryCode($code): void
@@ -155,6 +158,7 @@ class Edit extends Component
             'facture_type' => 'required|in:sans_entete,avec_entete',
             'penalites_taux' => 'nullable|string|max:255',
             'nature_operation_default' => 'nullable|in:biens,services,mixte',
+            'devis_validite_jours' => 'required|integer|min:1|max:365',
             'logo' => 'nullable|image|max:2048',
         ]);
 
@@ -190,6 +194,7 @@ class Edit extends Component
             'escompte_neant' => (bool) $this->escompte_neant,
             'tva_debits' => (bool) $this->tva_debits,
             'nature_operation_default' => $this->nature_operation_default ?: null,
+            'devis_validite_jours' => (int) $this->devis_validite_jours,
         ];
 
         if ($this->logo) {

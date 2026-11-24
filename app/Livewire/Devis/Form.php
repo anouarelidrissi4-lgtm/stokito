@@ -25,6 +25,8 @@ class Form extends Component
 
     public $status = 'draft';
 
+    public $valid_until = '';
+
     public $notes = '';
 
     #[Validate('required|in:percent,fixed')]
@@ -95,6 +97,7 @@ class Form extends Component
             $this->devis = Devis::with('items')->findOrFail($devisId);
             $this->client_id = $this->devis->client_id;
             $this->date = $this->devis->date->format('Y-m-d');
+            $this->valid_until = optional($this->devis->valid_until)->format('Y-m-d') ?? '';
             $this->tva_rate = $this->devis->tva_rate;
             $this->status = $this->devis->status;
             $this->notes = $this->devis->notes ?? '';
@@ -110,6 +113,7 @@ class Form extends Component
             ])->toArray();
         } else {
             $this->tva_rate = $this->defaultVatRate();
+            $this->valid_until = now()->addDays((int) (\App\Models\Societe::current()->devis_validite_jours ?: 30))->format('Y-m-d');
             $this->addItem();
         }
     }
@@ -460,6 +464,7 @@ class Form extends Component
         $this->validate([
             'client_id' => 'required|exists:clients,id',
             'date' => 'required|date',
+            'valid_until' => 'nullable|date|after_or_equal:date',
             'remise_type' => 'required|in:percent,fixed',
             'remise_value' => 'nullable|numeric|min:0',
         ]);
@@ -480,6 +485,7 @@ class Form extends Component
         $data = [
             'client_id' => $this->client_id,
             'date' => $this->date,
+            'valid_until' => $this->valid_until ?: null,
             'tva_rate' => $this->tva_rate,
             'status' => $this->status,
             'notes' => $this->notes,
@@ -527,6 +533,17 @@ class Form extends Component
         $bl = $this->devis->fresh()->toBonLivraison();
 
         return $this->redirect(route('bon-livraisons.edit', $bl->id), navigate: true);
+    }
+
+    /** Invoice straight from the quote (no delivery note): opens the invoice form pre-filled; stock moves when it is saved. */
+    public function convertToFacture()
+    {
+        if (! $this->devis) {
+            return;
+        }
+        $this->requirePermission('devis_valider');
+
+        return $this->redirect(route('factures.create').'?devis='.$this->devis->id, navigate: true);
     }
 
     public function render()

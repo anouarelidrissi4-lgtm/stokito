@@ -191,6 +191,7 @@ Route::middleware(['auth'])->group(function () {
             'numero' => $devis->numero,
             'date' => $devis->date->format('d/m/Y'),
             'dueDate' => null,
+            'validUntil' => optional($devis->valid_until)->format('d/m/Y'),
             'status' => $devis->status,
             'partyLabel' => 'Client',
             'party' => $devis->client,
@@ -335,6 +336,7 @@ Route::middleware(['auth'])->group(function () {
             ],
             'notes' => $facture->notes,
             'facture' => $facture,
+            'devisRef' => $facture->devis?->numero,
         ]);
 
         return $pdf->download($facture->numero.'.pdf');

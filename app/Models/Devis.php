@@ -14,13 +14,14 @@ class Devis extends Model
     protected $table = 'devis';
 
     protected $fillable = [
-        'client_id', 'numero', 'date', 'status',
+        'client_id', 'numero', 'date', 'valid_until', 'status',
         'total_ht', 'tva_rate', 'total_ttc', 'notes',
         'remise_type', 'remise_value',
     ];
 
     protected $casts = [
         'date' => 'date',
+        'valid_until' => 'date',
     ];
 
     public function client(): BelongsTo
@@ -31,6 +32,36 @@ class Devis extends Model
     public function items(): HasMany
     {
         return $this->hasMany(DevisItem::class);
+    }
+
+    public function factures(): HasMany
+    {
+        return $this->hasMany(Facture::class);
+    }
+
+    /** Still a proposal and past its validity date. */
+    public function isExpired(): bool
+    {
+        return $this->valid_until && in_array($this->status, ['draft', 'sent'], true) && $this->valid_until->lt(today());
+    }
+
+    /** Lines for an invoice/BL made from this quote: a per-line discount is carried in the net unit price. */
+    public function linesForConversion(): array
+    {
+        return $this->items()->get()->map(function ($item) {
+            $qty = (float) $item->quantity;
+            $price = (float) $item->unit_price;
+            if ($qty > 0 && (float) $item->remise_value > 0) {
+                $price = round((float) $item->total / $qty, 2);
+            }
+
+            return [
+                'product_id' => $item->product_id,
+                'quantity' => $qty,
+                'unit_price' => $price,
+                'tva_rate' => (float) ($item->tva_rate ?? $this->tva_rate),
+            ];
+        })->all();
     }
 
     public function bonLivraisons(): HasMany
@@ -141,18 +172,8 @@ class Devis extends Model
             'total' => $this->total_ttc,
         ]);
 
-        foreach ($this->items()->get() as $item) {
-            $qty = (float) $item->quantity;
-            $price = (float) $item->unit_price;
-            if ($qty > 0 && (float) $item->remise_value > 0) {
-                $price = round((float) $item->total / $qty, 2);
-            }
-            $bl->items()->create([
-                'product_id' => $item->product_id,
-                'quantity' => $item->quantity,
-                'unit_price' => $price,
-                'tva_rate' => $item->tva_rate ?? $this->tva_rate,
-            ]);
+        foreach ($this->linesForConversion() as $line) {
+            $bl->items()->create($line);
         }
 
         $bl->load('items');

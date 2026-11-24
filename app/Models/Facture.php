@@ -18,7 +18,7 @@ class Facture extends Model
     }
 
     protected $fillable = [
-        'client_id', 'bon_livraison_id', 'numero', 'date', 'due_date',
+        'client_id', 'bon_livraison_id', 'devis_id', 'numero', 'date', 'due_date',
         'total_ht', 'tva_rate', 'total_ttc', 'montant_paye', 'status', 'notes', 'adresse_livraison', 'nature_operation',
         'remise_type', 'remise_value',
     ];
@@ -31,6 +31,11 @@ class Facture extends Model
     public function client(): BelongsTo
     {
         return $this->belongsTo(Client::class);
+    }
+
+    public function devis(): BelongsTo
+    {
+        return $this->belongsTo(Devis::class);
     }
 
     public function bonLivraison(): BelongsTo

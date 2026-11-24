@@ -46,9 +46,12 @@
             <h2 class="text-lg font-semibold text-gray-900 mb-1">Devis {{ $devis->numero }} enregistre</h2>
             <p class="text-sm text-gray-500 mb-6">Total devis : {{ \App\Support\Fmt::money($devis->total_ttc) }}</p>
             <div class="flex items-center justify-center gap-3 flex-wrap">
-                @if ($devis->status === 'accepted' && ! $devis->bonLivraisons()->exists())
+                @if ($devis->status === 'accepted' && ! $devis->bonLivraisons()->exists() && ! $devis->factures()->exists())
                     <button wire:click="convertToBonLivraison" class="bg-indigo-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-indigo-700">
                         Suivant : Convertir en Bon de Livraison &rarr;
+                    </button>
+                    <button wire:click="convertToFacture" class="bg-green-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-green-700">
+                        Facturer directement &rarr;
                     </button>
                 @endif
                 <a href="{{ route('devis.pdf', $devis->id) }}" target="_blank" class="border border-gray-300 text-gray-700 px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-gray-50">
@@ -122,6 +125,11 @@
                         </span>
                         <span class="text-sm text-gray-600">En Gros</span>
                     </label>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Valable jusqu’au</label>
+                    <input wire:model="valid_until" type="date" class="w-full rounded-md border-gray-300 text-sm">
+                    @error('valid_until') <p class="text-red-600 text-xs mt-1">La date de validité doit être après la date du devis.</p> @enderror
                 </div>
                 <div class="sm:col-span-2">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Autre réduction</label>

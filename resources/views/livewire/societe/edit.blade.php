@@ -204,6 +204,11 @@
                     <input wire:model="tva_rate_default" type="number" step="0.01" class="w-full rounded-md border-gray-300 text-sm">
                     @error('tva_rate_default') <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Validité des devis (jours)</label>
+                    <input wire:model="devis_validite_jours" type="number" min="1" max="365" class="w-full rounded-md border-gray-300 text-sm">
+                    @error('devis_validite_jours') <p class="text-red-600 text-xs mt-1">Entre 1 et 365 jours.</p> @enderror
+                </div>
             </div>
         </div>
 

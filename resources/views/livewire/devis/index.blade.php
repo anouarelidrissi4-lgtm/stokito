@@ -50,12 +50,14 @@
                                 'bg-green-100 text-green-700' => $devis->status === 'accepted',
                                 'bg-red-100 text-red-700' => $devis->status === 'rejected',
                             ])>{{ \App\Support\Fmt::status($devis->status) }}</span>
+                            @if ($devis->isExpired())<span class="ms-1 px-2 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800" title="Valable jusqu’au {{ $devis->valid_until->format('d/m/Y') }}">Expiré</span>@endif
                         </td>
                         <td class="px-6 py-4 text-right text-sm space-x-2 whitespace-nowrap">
                             <a href="{{ route('devis.edit', $devis->id) }}" wire:navigate class="text-indigo-600 hover:underline">Modifier</a>
                             <a href="{{ route('devis.pdf', $devis->id) }}" target="_blank" class="text-gray-500 hover:underline">PDF</a>
-                            @if ($devis->status === 'accepted' && ! $devis->bonLivraisons()->exists())
+                            @if ($devis->status === 'accepted' && ! $devis->bonLivraisons()->exists() && ! $devis->factures()->exists())
                                 <button wire:click="convertToBonLivraison({{ $devis->id }})" class="text-green-600 hover:underline">Convertir en BL</button>
+                                <button wire:click="convertToFacture({{ $devis->id }})" class="text-green-700 font-semibold hover:underline">Facturer</button>
                             @endif
                             <button wire:click="delete({{ $devis->id }})" wire:confirm="Supprimer ce devis ?" class="text-red-600 hover:underline">Supprimer</button>
                         </td>

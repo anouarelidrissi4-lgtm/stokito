@@ -43,6 +43,14 @@ class Index extends Component
         }
     }
 
+    public function convertToFacture($id)
+    {
+        $this->requirePermission('devis_valider');
+        $devis = Devis::findOrFail($id);
+
+        return $this->redirect(route('factures.create').'?devis='.$devis->id, navigate: true);
+    }
+
     public function convertToBonLivraison($id)
     {
         $this->requirePermission('devis_valider');

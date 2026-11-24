@@ -103,6 +103,8 @@
                     <p><span class="k">N&deg;</span> <strong class="mono" style="font-size:12px;">{{ $numero }}</strong></p>
                     <p><span class="k">Date</span> {{ $date }}</p>
                     @if (!empty($dueDate))<p><span class="k">Échéance</span> {{ $dueDate }}</p>@endif
+                    @if (!empty($validUntil))<p><span class="k">Valable jusqu’au</span> {{ $validUntil }}</p>@endif
+                    @if (!empty($devisRef))<p><span class="k">Devis</span> {{ $devisRef }}</p>@endif
                     @if (!empty($status))<p><span class="k">Statut</span> {{ \App\Support\Fmt::status(str_replace(' ', '_', $status)) }}</p>@endif
                 </td>
             </tr>
@@ -199,8 +201,15 @@
 
     <table style="width:100%; border-collapse:collapse; margin-top:40px; page-break-inside:avoid;">
         <tr>
+            @if ($title === 'Devis')
+            <td></td>
+            <td class="stamp">Cachet de l’entreprise</td>
+            <td style="width:20px;"></td>
+            <td class="stamp">Bon pour accord<br><span style="text-transform:none; letter-spacing:0;">date et signature du client</span></td>
+            @else
             <td></td>
             <td class="stamp">Cachet et signature</td>
+            @endif
         </tr>
     </table>
 
