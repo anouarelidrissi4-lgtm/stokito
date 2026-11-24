@@ -14,7 +14,7 @@ class Devis extends Model
     protected $table = 'devis';
 
     protected $fillable = [
-        'client_id', 'numero', 'date', 'valid_until', 'status',
+        'client_id', 'numero', 'date', 'valid_until', 'status', 'sent_at',
         'total_ht', 'tva_rate', 'total_ttc', 'notes',
         'remise_type', 'remise_value',
     ];
@@ -22,6 +22,7 @@ class Devis extends Model
     protected $casts = [
         'date' => 'date',
         'valid_until' => 'date',
+        'sent_at' => 'datetime',
     ];
 
     public function client(): BelongsTo

@@ -55,6 +55,7 @@
                         <td class="px-6 py-4 text-right text-sm space-x-2 whitespace-nowrap">
                             <a href="{{ route('devis.edit', $devis->id) }}" wire:navigate class="text-indigo-600 hover:underline">Modifier</a>
                             <a href="{{ route('devis.pdf', $devis->id) }}" target="_blank" class="text-gray-500 hover:underline">PDF</a>
+                            <button wire:click="openSend({{ $devis->id }})" class="text-gray-700 hover:underline" title="{{ $devis->sent_at ? 'Envoyé le '.$devis->sent_at->format('d/m/Y H:i') : 'Envoyer par email' }}">{{ $devis->sent_at ? 'Renvoyer' : 'Envoyer' }}</button>
                             @if ($devis->status === 'accepted' && ! $devis->bonLivraisons()->exists() && ! $devis->factures()->exists())
                                 <button wire:click="convertToBonLivraison({{ $devis->id }})" class="text-green-600 hover:underline">Convertir en BL</button>
                                 <button wire:click="convertToFacture({{ $devis->id }})" class="text-green-700 font-semibold hover:underline">Facturer</button>
@@ -70,4 +71,5 @@
 </div>
         <div class="p-4">{{ $devisList->links() }}</div>
     </div>
+    @include('livewire.partials.send-document-modal')
 </div>

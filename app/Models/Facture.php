@@ -19,13 +19,15 @@ class Facture extends Model
 
     protected $fillable = [
         'client_id', 'bon_livraison_id', 'devis_id', 'numero', 'date', 'due_date',
-        'total_ht', 'tva_rate', 'total_ttc', 'montant_paye', 'status', 'notes', 'adresse_livraison', 'nature_operation',
+        'total_ht', 'tva_rate', 'total_ttc', 'montant_paye', 'status', 'sent_at', 'relance_niveau', 'relance_at', 'notes', 'adresse_livraison', 'nature_operation',
         'remise_type', 'remise_value',
     ];
 
     protected $casts = [
         'date' => 'date',
         'due_date' => 'date',
+        'sent_at' => 'datetime',
+        'relance_at' => 'datetime',
     ];
 
     public function client(): BelongsTo

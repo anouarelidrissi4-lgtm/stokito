@@ -9,6 +9,12 @@ use Livewire\WithPagination;
 class Index extends Component
 {
     use WithPagination, RequiresPermission;
+    use \App\Livewire\Concerns\SendsDocument;
+
+    protected function sendModelClass(): string
+    {
+        return \App\Models\Devis::class;
+    }
 
     public string $search = '';
 

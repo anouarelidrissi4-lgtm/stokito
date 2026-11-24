@@ -85,6 +85,7 @@
                         <td class="px-4 py-4 text-right text-sm space-x-2 whitespace-nowrap">
                             <a href="{{ route('factures.edit', $facture->id) }}" wire:navigate class="text-indigo-600 hover:underline">Modifier</a>
                             <a href="{{ route('factures.pdf', $facture->id) }}" target="_blank" class="text-gray-500 hover:underline">PDF</a>
+                            <button wire:click="openSend({{ $facture->id }})" class="text-gray-700 hover:underline" title="{{ $facture->sent_at ? 'Envoyée le '.$facture->sent_at->format('d/m/Y H:i') : 'Envoyer par email' }}">{{ $facture->sent_at ? 'Renvoyer' : 'Envoyer' }}</button>
                             @if ($facture->resteAPayer() > 0)
                                 <a href="{{ route('reglements-clients.create', ['factureId' => $facture->id]) }}" wire:navigate class="text-green-600 hover:underline">Encaisser</a>
                                 @if ($wa = \App\Support\Relance::whatsappUrl($facture))
@@ -102,4 +103,5 @@
 </div>
         <div class="p-4">{{ $factures->links() }}</div>
     </div>
+    @include('livewire.partials.send-document-modal')
 </div>
