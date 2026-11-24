@@ -197,6 +197,12 @@
                         <input wire:model="wholesale_price" type="number" step="0.01" class="w-full rounded-md border-gray-300 text-sm">
                     </div>
                     <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">TVA du produit (%)</label>
+                        <input wire:model="tva_rate" type="number" step="0.01" min="0" max="100" list="tva-rates-product" placeholder="Par défaut : {{ \App\Support\DocTotals::label(\App\Models\Societe::current()->tva_rate_default) }} %" class="w-full rounded-md border-gray-300 text-sm">
+                        <datalist id="tva-rates-product">@foreach (\App\Support\Countries::for(\App\Models\Societe::current())['rates'] ?? [] as $r)<option value="{{ $r }}"></option>@endforeach</datalist>
+                        @error('tva_rate') <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Stock {{ $editingId ? '' : 'initial' }}</label>
                         <input wire:model="stock_qty" type="number" class="w-full rounded-md border-gray-300 text-sm">
                     </div>

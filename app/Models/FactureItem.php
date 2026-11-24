@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class FactureItem extends Model
 {
-    protected $fillable = ['facture_id', 'product_id', 'quantity', 'unit_price', 'total'];
+    protected $fillable = ['facture_id', 'product_id', 'quantity', 'unit_price', 'tva_rate', 'total'];
 
     public function facture(): BelongsTo
     {

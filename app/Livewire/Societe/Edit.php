@@ -64,6 +64,19 @@ class Edit extends Component
 
     public $bons_chargement_enabled = true;
 
+    // French invoice mentions (2026-11-24)
+    public $tva_franchise = false;
+
+    public $penalites_taux = '';
+
+    public $indemnite_40 = false;
+
+    public $escompte_neant = false;
+
+    public $tva_debits = false;
+
+    public $nature_operation_default = '';
+
     #[Validate('nullable|image|max:2048')]
     public $logo;
 
@@ -97,6 +110,12 @@ class Edit extends Component
         $this->show_ref_facture = $this->societe->show_ref_facture === null ? true : (bool) $this->societe->show_ref_facture;
         $this->show_ref_bl = $this->societe->show_ref_bl === null ? true : (bool) $this->societe->show_ref_bl;
         $this->bons_chargement_enabled = $this->societe->bons_chargement_enabled === null ? true : (bool) $this->societe->bons_chargement_enabled;
+        $this->tva_franchise = (bool) $this->societe->tva_franchise;
+        $this->penalites_taux = $this->societe->penalites_taux ?? '';
+        $this->indemnite_40 = (bool) $this->societe->indemnite_40;
+        $this->escompte_neant = (bool) $this->societe->escompte_neant;
+        $this->tva_debits = (bool) $this->societe->tva_debits;
+        $this->nature_operation_default = $this->societe->nature_operation_default ?? '';
     }
 
     public function updatedCountryCode($code): void
@@ -134,6 +153,8 @@ class Edit extends Component
             'price_decimals' => 'required|integer|min:0|max:6',
             'stock_threshold_default' => 'nullable|integer|min:0',
             'facture_type' => 'required|in:sans_entete,avec_entete',
+            'penalites_taux' => 'nullable|string|max:255',
+            'nature_operation_default' => 'nullable|in:biens,services,mixte',
             'logo' => 'nullable|image|max:2048',
         ]);
 
@@ -163,6 +184,12 @@ class Edit extends Component
             'show_ref_facture' => $this->show_ref_facture,
             'show_ref_bl' => $this->show_ref_bl,
             'bons_chargement_enabled' => $this->bons_chargement_enabled,
+            'tva_franchise' => (bool) $this->tva_franchise,
+            'penalites_taux' => trim((string) $this->penalites_taux) ?: null,
+            'indemnite_40' => (bool) $this->indemnite_40,
+            'escompte_neant' => (bool) $this->escompte_neant,
+            'tva_debits' => (bool) $this->tva_debits,
+            'nature_operation_default' => $this->nature_operation_default ?: null,
         ];
 
         if ($this->logo) {

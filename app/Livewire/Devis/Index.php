@@ -48,23 +48,7 @@ class Index extends Component
         $this->requirePermission('devis_valider');
         $devis = Devis::with('items')->findOrFail($id);
 
-        $bl = \App\Models\BonLivraison::create([
-            'client_id' => $devis->client_id,
-            'devis_id' => $devis->id,
-            'numero' => \App\Support\Tenant::nextNumero(\App\Models\BonLivraison::class, 'BL-'),
-            'date' => now()->format('Y-m-d'),
-            'show_prices' => true,
-            'status' => 'draft',
-            'total' => $devis->total_ttc,
-        ]);
-
-        foreach ($devis->items as $item) {
-            $bl->items()->create([
-                'product_id' => $item->product_id,
-                'quantity' => $item->quantity,
-                'unit_price' => $item->unit_price,
-            ]);
-        }
+        $bl = $devis->toBonLivraison();
 
         session()->flash('success', 'Bon de livraison '.$bl->numero.' cree a partir du devis.');
         return $this->redirect(route('bon-livraisons.index'), navigate: true);

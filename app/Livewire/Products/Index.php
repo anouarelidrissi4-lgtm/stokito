@@ -50,6 +50,8 @@ class Index extends Component
 
     public $wholesale_price = null;
 
+    public $tva_rate = null;
+
     #[Validate('required|integer|min:0')]
     public $stock_qty = 0;
 
@@ -79,6 +81,7 @@ class Index extends Component
         $this->purchase_price = auth()->user()->hasPermission('produits_prix_achat') ? $p->purchase_price : 0;
         $this->sale_price = $p->sale_price;
         $this->wholesale_price = $p->wholesale_price;
+        $this->tva_rate = $p->tva_rate;
         $this->stock_qty = $p->stock_qty;
         $this->stock_alert_threshold = $p->stock_alert_threshold;
         $this->showModal = true;
@@ -113,6 +116,7 @@ class Index extends Component
             'purchase_price' => 'required|numeric|min:0',
             'sale_price' => 'required|numeric|min:0',
             'wholesale_price' => 'nullable|numeric|min:0',
+            'tva_rate' => 'nullable|numeric|min:0|max:100',
             'stock_qty' => 'required|integer|min:0',
             'stock_alert_threshold' => 'nullable|integer|min:0',
         ]);
@@ -128,6 +132,7 @@ class Index extends Component
             'purchase_price' => auth()->user()->hasPermission('produits_prix_achat') ? $this->purchase_price : ($this->editingId ? Product::find($this->editingId)?->purchase_price ?? 0 : 0),
             'sale_price' => $this->sale_price,
             'wholesale_price' => $this->wholesale_price ?: null,
+            'tva_rate' => $this->tva_rate === '' || $this->tva_rate === null ? null : $this->tva_rate,
             'stock_qty' => $this->stock_qty,
             'stock_alert_threshold' => $this->stock_alert_threshold,
         ]);
@@ -148,6 +153,7 @@ class Index extends Component
     public function resetForm(): void
     {
         $this->editingId = null;
+        $this->tva_rate = null;
         $this->reference = '';
         $this->barcode = '';
         $this->name = '';

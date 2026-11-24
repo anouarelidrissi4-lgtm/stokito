@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class DevisItem extends Model
 {
     protected $fillable = [
-        'devis_id', 'product_id', 'quantity', 'unit_price',
+        'devis_id', 'product_id', 'quantity', 'unit_price', 'tva_rate',
         'remise_type', 'remise_value', 'total',
     ];
 

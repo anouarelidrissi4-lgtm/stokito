@@ -11,6 +11,7 @@ use Livewire\Component;
 class Form extends Component
 {
     use RequiresPermission;
+    use \App\Livewire\Concerns\HasLineVat;
 
     public ?Devis $devis = null;
 
@@ -103,11 +104,12 @@ class Form extends Component
                 'product_id' => $i->product_id,
                 'quantity' => (float) $i->quantity,
                 'unit_price' => (float) $i->unit_price,
+                'tva_rate' => $i->tva_rate !== null ? (float) $i->tva_rate : (float) $this->tva_rate,
                 'remise_type' => $i->remise_type ?? 'percent',
                 'remise_value' => (float) ($i->remise_value ?? 0),
             ])->toArray();
         } else {
-            $this->tva_rate = \App\Models\Societe::current()->tva_rate_default;
+            $this->tva_rate = $this->defaultVatRate();
             $this->addItem();
         }
     }
@@ -115,7 +117,7 @@ class Form extends Component
     public function addItem()
     {
         $this->items[] = [
-            'product_id' => '', 'quantity' => 1, 'unit_price' => 0,
+            'product_id' => '', 'quantity' => 1, 'unit_price' => 0, 'tva_rate' => (float) $this->tva_rate,
             'remise_type' => 'percent', 'remise_value' => 0,
         ];
     }
@@ -139,7 +141,7 @@ class Form extends Component
             ? (float) $product->wholesale_price
             : (float) $product->sale_price;
 
-        return round($ttc / (1 + ((float) $this->tva_rate) / 100), 2);
+        return round($ttc / (1 + $this->productRate($product) / 100), 2);
     }
 
     public function updatedItems($value, $key)
@@ -149,6 +151,7 @@ class Form extends Component
             $product = Product::find($value);
             if ($product) {
                 $this->items[$index]['unit_price'] = $this->priceForProduct($product);
+                $this->items[$index]['tva_rate'] = $this->productRate($product);
             }
         }
     }
@@ -173,6 +176,8 @@ class Form extends Component
             }
 
             $this->items[$index]['unit_price'] = $this->priceForProduct($products[$item['product_id']]);
+
+            $this->items[$index]['tva_rate'] = $this->productRate($products[$item['product_id']]);
         }
     }
 
@@ -198,6 +203,7 @@ class Form extends Component
             if (empty($item['product_id'])) {
                 $this->items[$index]['product_id'] = $product->id;
                 $this->items[$index]['unit_price'] = $this->priceForProduct($product);
+                $this->items[$index]['tva_rate'] = $this->productRate($product);
 
                 return;
             }
@@ -207,6 +213,7 @@ class Form extends Component
             'product_id' => $product->id,
             'quantity' => 1,
             'unit_price' => $this->priceForProduct($product),
+            'tva_rate' => $this->productRate($product),
             'remise_type' => 'percent',
             'remise_value' => 0,
         ];
@@ -337,11 +344,13 @@ class Form extends Component
         if (! is_null($this->productModalItemIndex) && isset($this->items[$this->productModalItemIndex])) {
             $this->items[$this->productModalItemIndex]['product_id'] = $product->id;
             $this->items[$this->productModalItemIndex]['unit_price'] = $this->priceForProduct($product);
+            $this->items[$this->productModalItemIndex]['tva_rate'] = $this->productRate($product);
         } else {
             $this->items[] = [
                 'product_id' => $product->id,
                 'quantity' => 1,
                 'unit_price' => $this->priceForProduct($product),
+                'tva_rate' => $this->productRate($product),
                 'remise_type' => 'percent',
                 'remise_value' => 0,
             ];
@@ -421,7 +430,7 @@ class Form extends Component
 
     public function getTotalTtcProperty()
     {
-        return $this->totalHt * (1 + ((float) $this->tva_rate) / 100);
+        return $this->vat['ttc'];
     }
 
     public function getMargeTotaleProperty()
@@ -465,6 +474,7 @@ class Form extends Component
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.quantity' => 'required|numeric|min:0.01',
             'items.*.unit_price' => 'required|numeric|min:0',
+            'items.*.tva_rate' => 'nullable|numeric|min:0|max:100',
         ]);
 
         $data = [
@@ -490,6 +500,7 @@ class Form extends Component
                 'product_id' => $item['product_id'],
                 'quantity' => $item['quantity'],
                 'unit_price' => $item['unit_price'],
+                'tva_rate' => $this->lineRate($item),
                 'remise_type' => $item['remise_type'] ?? 'percent',
                 'remise_value' => $item['remise_value'] ?? 0,
                 'total' => $this->ligneTotal($item),
@@ -513,25 +524,7 @@ class Form extends Component
             return;
         }
 
-        $devis = $this->devis->fresh('items');
-
-        $bl = \App\Models\BonLivraison::create([
-            'client_id' => $devis->client_id,
-            'devis_id' => $devis->id,
-            'numero' => \App\Support\Tenant::nextNumero(\App\Models\BonLivraison::class, 'BL-'),
-            'date' => now()->format('Y-m-d'),
-            'show_prices' => true,
-            'status' => 'draft',
-            'total' => $devis->total_ttc,
-        ]);
-
-        foreach ($devis->items as $item) {
-            $bl->items()->create([
-                'product_id' => $item->product_id,
-                'quantity' => $item->quantity,
-                'unit_price' => $item->unit_price,
-            ]);
-        }
+        $bl = $this->devis->fresh()->toBonLivraison();
 
         return $this->redirect(route('bon-livraisons.edit', $bl->id), navigate: true);
     }

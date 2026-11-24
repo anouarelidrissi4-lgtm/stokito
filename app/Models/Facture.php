@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Facture extends Model
 {
     use ScopedToDemoMode;
+    use Concerns\HasVatLines;
 
     protected static function booted(): void
     {
@@ -18,7 +19,7 @@ class Facture extends Model
 
     protected $fillable = [
         'client_id', 'bon_livraison_id', 'numero', 'date', 'due_date',
-        'total_ht', 'tva_rate', 'total_ttc', 'montant_paye', 'status', 'notes',
+        'total_ht', 'tva_rate', 'total_ttc', 'montant_paye', 'status', 'notes', 'adresse_livraison', 'nature_operation',
         'remise_type', 'remise_value',
     ];
 
@@ -76,7 +77,7 @@ class Facture extends Model
             : min((float) $this->remise_value, $brutHt);
 
         $totalHt = $brutHt - $remise;
-        $totalTtc = $totalHt * (1 + $this->tva_rate / 100);
+        $totalTtc = $this->vatTotals()['ttc'];
 
         $this->update(['total_ht' => $totalHt, 'total_ttc' => $totalTtc]);
     }

@@ -50,6 +50,23 @@
         $withHeader = $showHeader ?? true;
         $legal = implode(' · ', \App\Support\Countries::legalParts($societe));
         $cty = \App\Support\Countries::for($societe);
+        $isFr = ($societe->country_code ?? '') === 'FR';
+        $groups = $totals['groups'] ?? null;
+        $multiVat = $showPrices && is_array($groups) && count($groups) > 1;
+        $franchise = $isFr && $societe->tva_franchise && in_array($title, ['Facture', 'Devis'], true);
+        // French invoice mentions (2026-11-24), printed only on invoices of French companies
+        $mentions = [];
+        if ($franchise) { $mentions[] = 'TVA non applicable, art. 293 B du CGI.'; }
+        if ($isFr && $title === 'Facture') {
+            $f = $facture ?? null;
+            $nat = ['biens' => 'livraison de biens', 'services' => 'prestation de services', 'mixte' => 'livraison de biens et prestation de services'];
+            if ($f && $f->nature_operation && isset($nat[$f->nature_operation])) { $mentions[] = 'Nature des opérations : '.$nat[$f->nature_operation].'.'; }
+            if ($societe->tva_debits) { $mentions[] = 'Option pour le paiement de la taxe d’après les débits.'; }
+            if ($societe->penalites_taux) { $mentions[] = 'Pénalités de retard : '.rtrim($societe->penalites_taux, '. ').', exigibles sans rappel.'; }
+            if ($societe->indemnite_40) { $mentions[] = 'Indemnité forfaitaire pour frais de recouvrement en cas de retard de paiement : 40 € (clients professionnels).'; }
+            if ($societe->escompte_neant) { $mentions[] = 'Escompte pour paiement anticipé : néant.'; }
+        }
+        $deliveryAddress = ($title === 'Facture' && isset($facture) && $facture->adresse_livraison) ? $facture->adresse_livraison : null;
         $words = null;
         if (! empty($totals['ttc']) && in_array($title, ['Facture', 'Devis'], true) && class_exists(\NumberFormatter::class)) {
             $nf = new \NumberFormatter('fr', \NumberFormatter::SPELLOUT);
@@ -100,6 +117,12 @@
             @if ($party->phone ?? false)<p>Tél. {{ $party->phone }}</p>@endif
             @if ($party->ice ?? false)<p>{{ $cty['client'] }} : {{ $party->ice }}</p>@endif
         </div>
+        @if ($deliveryAddress)
+        <div class="inner" style="margin-top:8px;">
+            <div class="label">Adresse de livraison</div>
+            <p>{!! nl2br(e($deliveryAddress)) !!}</p>
+        </div>
+        @endif
     </div>
 
     <table class="items">
@@ -109,6 +132,7 @@
                 <th class="num">Quantité</th>
                 @if ($showPrices)
                     <th class="num">Prix unitaire{{ isset($totals['ht']) ? ' HT' : '' }}</th>
+                    @if ($multiVat)<th class="num">TVA</th>@endif
                     <th class="num">Total{{ isset($totals['ht']) ? ' HT' : '' }}</th>
                 @endif
             </tr>
@@ -120,6 +144,7 @@
                     <td class="num">{{ \App\Support\Fmt::qty($item['quantity']) }} {{ $item['unit'] ?? '' }}</td>
                     @if ($showPrices)
                         <td class="num">{{ \App\Support\Fmt::money($item['unit_price']) }}</td>
+                        @if ($multiVat)<td class="num">{{ \App\Support\DocTotals::label($item['tva_rate'] ?? 0) }} %</td>@endif
                         <td class="num">{{ \App\Support\Fmt::money($item['total']) }}</td>
                     @endif
                 </tr>
@@ -140,6 +165,9 @@
                 @if (!empty($notes))
                     <div class="notes"><strong>Notes :</strong> {{ $notes }}</div>
                 @endif
+                @if ($mentions)
+                    <div class="conditions">@foreach ($mentions as $m){{ $m }}@if (! $loop->last)<br>@endif @endforeach</div>
+                @endif
             </td>
             @if ($showPrices && $totals)
             <td style="vertical-align:top; width:270px; padding:0;">
@@ -150,7 +178,15 @@
                             <tr><td class="lbl">Remise</td><td class="val">- {{ \App\Support\Fmt::money($totals['remise']) }} {{ $societe->currency }}</td></tr>
                         @endif
                         <tr><td class="lbl">Total HT</td><td class="val">{{ \App\Support\Fmt::money($totals['ht']) }} {{ $societe->currency }}</td></tr>
-                        <tr><td class="lbl">TVA ({{ rtrim(rtrim(number_format($totals['tva_rate'], 2), '0'), '.') }} %)</td><td class="val">{{ \App\Support\Fmt::money($totals['ttc'] - $totals['ht']) }} {{ $societe->currency }}</td></tr>
+                        @if ($franchise && (float) $totals['ttc'] === (float) $totals['ht'])
+                            <tr><td class="lbl">TVA</td><td class="val">non applicable</td></tr>
+                        @elseif (is_array($groups) && count($groups))
+                            @foreach ($groups as $g)
+                                <tr><td class="lbl">TVA {{ \App\Support\DocTotals::label($g['rate']) }} %@if ($multiVat)<br><span style="font-size:9px;">sur {{ \App\Support\Fmt::money($g['base']) }}</span>@endif</td><td class="val">{{ \App\Support\Fmt::money($g['tva']) }} {{ $societe->currency }}</td></tr>
+                            @endforeach
+                        @else
+                            <tr><td class="lbl">TVA ({{ rtrim(rtrim(number_format($totals['tva_rate'], 2), '0'), '.') }} %)</td><td class="val">{{ \App\Support\Fmt::money($totals['ttc'] - $totals['ht']) }} {{ $societe->currency }}</td></tr>
+                        @endif
                         <tr class="grand"><td class="lbl">Total TTC</td><td class="val">{{ \App\Support\Fmt::money($totals['ttc']) }} {{ $societe->currency }}</td></tr>
                     @else
                         <tr class="grand"><td class="lbl">Total</td><td class="val">{{ \App\Support\Fmt::money($totals['ttc']) }} {{ $societe->currency }}</td></tr>

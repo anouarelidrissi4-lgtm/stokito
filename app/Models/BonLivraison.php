@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class BonLivraison extends Model
 {
     use ScopedToDemoMode;
+    use Concerns\HasVatLines;
 
     protected static function booted(): void
     {
@@ -79,7 +80,7 @@ class BonLivraison extends Model
             : min((float) $this->remise_value, $brutHt);
 
         $totalHt = $brutHt - $remise;
-        $totalTtc = $totalHt * (1 + $this->tva_rate / 100);
+        $totalTtc = $this->vatTotals()['ttc'];
 
         $this->update(['total_ht' => $totalHt, 'total' => $totalTtc]);
     }

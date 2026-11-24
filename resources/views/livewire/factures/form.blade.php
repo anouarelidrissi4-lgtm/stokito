@@ -106,9 +106,10 @@
 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Produit</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase min-w-[12rem]">Produit</th>
                             <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase w-28">Quantité</th>
                             <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase w-32">Prix U. HT</th>
+                            <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase w-20">TVA %</th>
                             <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase w-32">Total</th>
                             @if (auth()->user()->hasPermission('marges'))
                             <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase w-28">Marge</th>
@@ -201,6 +202,12 @@
                                 <td class="px-4 py-2">
                                     <input wire:model.live="items.{{ $index }}.unit_price" type="number" step="0.01" class="w-full rounded-md border-gray-300 text-sm text-right">
                                 </td>
+                                <td class="px-1 py-2">
+                                    @php $rateOpts = collect($this->vatRateOptions())->push($this->lineRate($item))->map(fn ($r) => (float) $r)->unique()->sortDesc(); @endphp
+                                    <select wire:model.live="items.{{ $index }}.tva_rate" class="w-full min-w-[4.75rem] rounded-md border-gray-300 text-sm ps-2 pe-7">
+                                        @foreach ($rateOpts as $r)<option value="{{ \App\Support\DocTotals::key($r) }}">{{ \App\Support\DocTotals::label($r) }}</option>@endforeach
+                                    </select>
+                                </td>
                                 <td class="px-4 py-2 text-right text-sm text-gray-900">
                                     {{ \App\Support\Fmt::money((float) ($item['quantity'] ?? 0) * (float) ($item['unit_price'] ?? 0)) }}
                                 </td>
@@ -238,6 +245,17 @@
 
                 <label class="block text-sm font-medium text-gray-700 mb-1 mt-4">Notes</label>
                 <textarea wire:model="notes" rows="2" class="w-full rounded-md border-gray-300 text-sm"></textarea>
+                <label class="block text-sm font-medium text-gray-700 mb-1 mt-4">Adresse de livraison <span class="text-gray-400 font-normal">(si différente de celle du client)</span></label>
+                <textarea wire:model="adresse_livraison" rows="2" class="w-full rounded-md border-gray-300 text-sm"></textarea>
+                @if ((\App\Models\Societe::current()->country_code ?? '') === 'FR')
+                <label class="block text-sm font-medium text-gray-700 mb-1 mt-4">Nature des opérations</label>
+                <select wire:model="nature_operation" class="w-full rounded-md border-gray-300 text-sm">
+                    <option value="">—</option>
+                    <option value="biens">Livraison de biens</option>
+                    <option value="services">Prestation de services</option>
+                    <option value="mixte">Biens et services</option>
+                </select>
+                @endif
             </div>
 
             <div class="w-full sm:w-64 space-y-2">
@@ -255,10 +273,12 @@
                     <span class="text-gray-500">Total HT</span>
                     <span class="font-medium text-gray-900">{{ \App\Support\Fmt::money($this->totalHt) }}</span>
                 </div>
+                @foreach ($this->vat['groups'] as $g)
                 <div class="flex items-center justify-between text-sm">
-                    <span class="text-gray-500">TVA ({{ rtrim(rtrim(number_format($tva_rate, 2), '0'), '.') }}%)</span>
-                    <span class="font-medium text-gray-900">{{ \App\Support\Fmt::money($this->totalTtc - $this->totalHt) }}</span>
+                    <span class="text-gray-500">TVA {{ \App\Support\DocTotals::label($g['rate']) }} %@if (count($this->vat['groups']) > 1) <span class="text-xs">sur {{ \App\Support\Fmt::money($g['base']) }}</span>@endif</span>
+                    <span class="font-medium text-gray-900">{{ \App\Support\Fmt::money($g['tva']) }}</span>
                 </div>
+                @endforeach
                 <div class="flex items-center justify-between text-base font-bold border-t pt-2">
                     <span>Total TTC</span>
                     <span>{{ \App\Support\Fmt::money($this->totalTtc) }}</span>

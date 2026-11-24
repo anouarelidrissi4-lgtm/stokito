@@ -12,6 +12,7 @@ use Livewire\Component;
 class Form extends Component
 {
     use RequiresPermission;
+    use \App\Livewire\Concerns\HasLineVat;
 
     public ?Facture $facture = null;
 
@@ -30,6 +31,10 @@ class Form extends Component
     public $status = 'brouillon';
 
     public $notes = '';
+
+    public $adresse_livraison = '';
+
+    public $nature_operation = '';
 
     #[Validate('required|in:percent,fixed')]
     public $remise_type = 'percent';
@@ -83,6 +88,7 @@ class Form extends Component
 
         $this->date = now()->format('Y-m-d');
         $this->due_date = now()->addDays(30)->format('Y-m-d');
+        $this->nature_operation = \App\Models\Societe::current()->nature_operation_default ?? '';
 
         if ($factureId) {
             $this->facture = Facture::with('items')->findOrFail($factureId);
@@ -93,32 +99,39 @@ class Form extends Component
             $this->tva_rate = $this->facture->tva_rate;
             $this->status = $this->facture->status;
             $this->notes = $this->facture->notes ?? '';
+            $this->adresse_livraison = $this->facture->adresse_livraison ?? '';
+            $this->nature_operation = $this->facture->nature_operation ?? '';
             $this->remise_type = $this->facture->remise_type ?? 'percent';
             $this->remise_value = $this->facture->remise_value ?? 0;
             $this->items = $this->facture->items->map(fn ($i) => [
                 'product_id' => $i->product_id,
                 'quantity' => (float) $i->quantity,
                 'unit_price' => (float) $i->unit_price,
+                'tva_rate' => $i->tva_rate !== null ? (float) $i->tva_rate : (float) $this->tva_rate,
             ])->toArray();
         } elseif ($blId) {
             $bl = BonLivraison::with('items')->findOrFail($blId);
             $this->client_id = $bl->client_id;
             $this->bon_livraison_id = $bl->id;
-            $this->tva_rate = \App\Models\Societe::current()->tva_rate_default;
+            // keep the delivery note's VAT and discount, so the invoice matches what was agreed
+            $this->tva_rate = $bl->tva_rate !== null ? (float) $bl->tva_rate : $this->defaultVatRate();
+            $this->remise_type = $bl->remise_type ?? 'percent';
+            $this->remise_value = (float) ($bl->remise_value ?? 0);
             $this->items = $bl->items->map(fn ($i) => [
                 'product_id' => $i->product_id,
                 'quantity' => (float) $i->quantity,
                 'unit_price' => (float) ($i->unit_price ?? 0),
+                'tva_rate' => $i->tva_rate !== null ? (float) $i->tva_rate : (float) $this->tva_rate,
             ])->toArray();
         } else {
-            $this->tva_rate = \App\Models\Societe::current()->tva_rate_default;
+            $this->tva_rate = $this->defaultVatRate();
             $this->addItem();
         }
     }
 
     public function addItem()
     {
-        $this->items[] = ['product_id' => '', 'quantity' => 1, 'unit_price' => 0];
+        $this->items[] = ['product_id' => '', 'quantity' => 1, 'unit_price' => 0, 'tva_rate' => (float) $this->tva_rate];
     }
 
     public function removeItem($index)
@@ -140,7 +153,7 @@ class Form extends Component
             ? (float) $product->wholesale_price
             : (float) $product->sale_price;
 
-        return round($ttc / (1 + ((float) $this->tva_rate) / 100), 2);
+        return round($ttc / (1 + $this->productRate($product) / 100), 2);
     }
 
     public function updatedItems($value, $key)
@@ -150,6 +163,7 @@ class Form extends Component
             $product = Product::find($value);
             if ($product) {
                 $this->items[$index]['unit_price'] = $this->priceForProduct($product);
+                $this->items[$index]['tva_rate'] = $this->productRate($product);
             }
         }
     }
@@ -174,6 +188,8 @@ class Form extends Component
             }
 
             $this->items[$index]['unit_price'] = $this->priceForProduct($products[$item['product_id']]);
+
+            $this->items[$index]['tva_rate'] = $this->productRate($products[$item['product_id']]);
         }
     }
 
@@ -266,11 +282,13 @@ class Form extends Component
         if (! is_null($this->productModalItemIndex) && isset($this->items[$this->productModalItemIndex])) {
             $this->items[$this->productModalItemIndex]['product_id'] = $product->id;
             $this->items[$this->productModalItemIndex]['unit_price'] = $this->priceForProduct($product);
+            $this->items[$this->productModalItemIndex]['tva_rate'] = $this->productRate($product);
         } else {
             $this->items[] = [
                 'product_id' => $product->id,
                 'quantity' => 1,
                 'unit_price' => $this->priceForProduct($product),
+                'tva_rate' => $this->productRate($product),
             ];
         }
 
@@ -301,7 +319,7 @@ class Form extends Component
 
     public function getTotalTtcProperty()
     {
-        return $this->totalHt * (1 + ((float) $this->tva_rate) / 100);
+        return $this->vat['ttc'];
     }
 
     public function getMargeTotaleProperty()
@@ -375,6 +393,7 @@ class Form extends Component
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.quantity' => 'required|numeric|min:0.01',
             'items.*.unit_price' => 'required|numeric|min:0',
+            'items.*.tva_rate' => 'nullable|numeric|min:0|max:100',
         ]);
 
         if (! $this->checkStockAvailability()) {
@@ -389,6 +408,8 @@ class Form extends Component
             'tva_rate' => $this->tva_rate,
             'status' => $this->status,
             'notes' => $this->notes,
+            'adresse_livraison' => trim((string) $this->adresse_livraison) ?: null,
+            'nature_operation' => in_array($this->nature_operation, ['biens', 'services', 'mixte'], true) ? $this->nature_operation : null,
             'remise_type' => $this->remise_type,
             'remise_value' => $this->remise_value ?: 0,
         ];
@@ -407,6 +428,7 @@ class Form extends Component
                 'product_id' => $item['product_id'],
                 'quantity' => $item['quantity'],
                 'unit_price' => $item['unit_price'],
+                'tva_rate' => $this->lineRate($item),
                 'total' => $total,
             ]);
         }

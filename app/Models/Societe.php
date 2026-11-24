@@ -15,12 +15,17 @@ class Societe extends Model
         'name', 'country', 'country_code', 'city', 'address', 'phone', 'phone2', 'fax', 'email', 'ice',
         'identifiant_fiscal', 'registre_commerce', 'patente', 'cnss', 'conditions_paiement', 'logo_path',
         'currency', 'tva_rate_default', 'qty_decimals', 'price_decimals',
+        'tva_franchise', 'penalites_taux', 'indemnite_40', 'escompte_neant', 'tva_debits', 'nature_operation_default',
         'stock_threshold_default', 'facture_type', 'stock_verification',
         'show_ref_facture', 'show_ref_bl', 'bons_chargement_enabled', 'menu_config',
     ];
 
     protected $casts = [
         'stock_verification' => 'boolean',
+        'tva_franchise' => 'boolean',
+        'indemnite_40' => 'boolean',
+        'escompte_neant' => 'boolean',
+        'tva_debits' => 'boolean',
         'show_ref_facture' => 'boolean',
         'show_ref_bl' => 'boolean',
         'bons_chargement_enabled' => 'boolean',

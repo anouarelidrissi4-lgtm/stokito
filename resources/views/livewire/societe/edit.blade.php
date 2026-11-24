@@ -207,6 +207,48 @@
             </div>
         </div>
 
+        @if ($country_code === 'FR')
+        <!-- Mentions sur les factures (France) -->
+        <div class="p-6">
+            <h2 class="text-sm font-semibold text-indigo-600 uppercase tracking-wide mb-1">Mentions sur les factures (France)</h2>
+            <p class="text-xs text-gray-500 mb-4">Ajoutées automatiquement en bas de vos factures PDF. Vérifiez-les avec votre expert-comptable.</p>
+            <div class="space-y-3">
+                <label class="flex items-start gap-3 cursor-pointer">
+                    <input wire:model="tva_franchise" type="checkbox" class="mt-1 rounded border-gray-300">
+                    <span class="text-sm text-gray-700"><strong>Franchise en base de TVA</strong> (micro-entreprise) : les nouveaux documents sont à 0 % et la facture porte « TVA non applicable, art. 293 B du CGI ».</span>
+                </label>
+                <label class="flex items-start gap-3 cursor-pointer">
+                    <input wire:model="indemnite_40" type="checkbox" class="mt-1 rounded border-gray-300">
+                    <span class="text-sm text-gray-700">Indemnité forfaitaire de <strong>40 €</strong> pour frais de recouvrement en cas de retard de paiement (clients professionnels).</span>
+                </label>
+                <label class="flex items-start gap-3 cursor-pointer">
+                    <input wire:model="escompte_neant" type="checkbox" class="mt-1 rounded border-gray-300">
+                    <span class="text-sm text-gray-700">« Escompte pour paiement anticipé : néant ».</span>
+                </label>
+                <label class="flex items-start gap-3 cursor-pointer">
+                    <input wire:model="tva_debits" type="checkbox" class="mt-1 rounded border-gray-300">
+                    <span class="text-sm text-gray-700">Option pour le paiement de la TVA d’après les débits.</span>
+                </label>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Taux des pénalités de retard</label>
+                    <input wire:model="penalites_taux" type="text" maxlength="255" class="w-full rounded-md border-gray-300 text-sm" placeholder="Ex. 3 fois le taux d’intérêt légal">
+                    @error('penalites_taux') <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nature des opérations (par défaut)</label>
+                    <select wire:model="nature_operation_default" class="w-full rounded-md border-gray-300 text-sm">
+                        <option value="">—</option>
+                        <option value="biens">Livraison de biens</option>
+                        <option value="services">Prestation de services</option>
+                        <option value="mixte">Biens et services</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        @endif
+
         <!-- Modules actifs -->
         <div class="p-6">
             <h2 class="text-sm font-semibold text-indigo-600 uppercase tracking-wide mb-4">Modules actifs</h2>
