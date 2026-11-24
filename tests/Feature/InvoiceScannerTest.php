@@ -59,9 +59,9 @@ class InvoiceScannerTest extends TestCase
             'date' => '2026-11-18',
             'devise' => 'EUR',
             'lignes' => [
-                ['designation' => 'Vis inox 4x40 (boîte 100)', 'reference' => 'VIS-440', 'code_barres' => null, 'quantite' => 10, 'prix_unitaire_ht' => 6.5, 'taux_tva' => 20, 'total_ht' => 65],
-                ['designation' => 'Cheville nylon 8mm', 'reference' => null, 'code_barres' => null, 'quantite' => 5, 'prix_unitaire_ht' => 3.2, 'taux_tva' => 20, 'total_ht' => 16],
-                ['designation' => 'Perceuse sans fil 18V', 'reference' => 'PSF18', 'code_barres' => null, 'quantite' => 1, 'prix_unitaire_ht' => 89, 'taux_tva' => 20, 'total_ht' => 89],
+                ['designation' => 'Vis inox 4x40 (boîte 100)', 'reference' => 'VIS-440', 'code_barres' => '', 'quantite' => 10, 'prix_unitaire_ht' => 6.5, 'taux_tva' => 20, 'total_ht' => 65],
+                ['designation' => 'Cheville nylon 8mm', 'reference' => '', 'code_barres' => '', 'quantite' => 5, 'prix_unitaire_ht' => 3.2, 'taux_tva' => 20, 'total_ht' => 16],
+                ['designation' => 'Perceuse sans fil 18V', 'reference' => 'PSF18', 'code_barres' => '', 'quantite' => 1, 'prix_unitaire_ht' => 89, 'taux_tva' => 20, 'total_ht' => 89],
             ],
             'remise_globale_ht' => null, 'total_ht' => 170, 'total_tva' => 34, 'total_ttc' => 204,
         ], $over);
@@ -199,5 +199,21 @@ class InvoiceScannerTest extends TestCase
             }
         };
         $walk(InvoiceScanner::schema());
+
+        // the API refuses schemas with more than 16 nullable / union-typed fields
+        $unions = 0;
+        $count = function (array $node) use (&$count, &$unions) {
+            if (is_array($node['type'] ?? null) || isset($node['anyOf'])) {
+                $unions++;
+            }
+            foreach (($node['properties'] ?? []) as $p) {
+                $count($p);
+            }
+            if (isset($node['items'])) {
+                $count($node['items']);
+            }
+        };
+        $count(InvoiceScanner::schema());
+        $this->assertLessThanOrEqual(16, $unions);
     }
 }

@@ -60,6 +60,7 @@ class InvoiceScanner
         } catch (\Anthropic\Core\Exceptions\APITimeoutException|\Anthropic\Core\Exceptions\APIConnectionException $e) {
             throw new InvoiceScanException('La lecture a pris trop de temps. Réessayez, ou envoyez une photo plus nette.', 0, $e);
         } catch (\Anthropic\Core\Exceptions\BadRequestException|\Anthropic\Core\Exceptions\ContentTooLargeException $e) {
+            report($e);
             throw new InvoiceScanException('Ce fichier n’a pas pu être lu. Essayez une photo (JPG) ou un PDF plus léger.', 0, $e);
         } catch (\Anthropic\Core\Exceptions\AnthropicException $e) {
             report($e);
@@ -119,7 +120,7 @@ class InvoiceScanner
 
     public const SYSTEM = <<<'TXT'
 Tu lis des factures fournisseurs (photo ou PDF) pour un logiciel de gestion de stock utilisé en France et au Maroc.
-Recopie ce qui est écrit sur le document, sans rien inventer : une information absente ou illisible vaut null.
+Recopie ce qui est écrit sur le document, sans rien inventer : un texte absent ou illisible vaut "" (chaîne vide), un nombre absent ou illisible vaut null.
 - fournisseur : l'entreprise qui émet la facture (pas le client destinataire). identifiant = son ICE, SIRET, SIREN ou n° de TVA intracommunautaire, tel qu'écrit.
 - date : la date de la facture, au format AAAA-MM-JJ.
 - lignes : un élément par article facturé, dans l'ordre du document. Les frais facturés (transport, emballage…) sont aussi des lignes. Ignore les sous-totaux, acomptes et lignes de texte.
@@ -132,7 +133,7 @@ TXT;
 
     public static function schema(): array
     {
-        $s = ['type' => ['string', 'null']];
+        $s = ['type' => 'string']; // empty string when absent (the API allows max 16 nullable fields)
         $n = ['type' => ['number', 'null']];
 
         return [
