@@ -82,19 +82,21 @@
                                 'bg-red-100 text-red-700' => $facture->status === 'en_retard',
                             ])>{{ \App\Support\Fmt::status($facture->status) }}</span>
                         </td>
-                        <td class="px-4 py-4 text-right text-sm"><div class="flex flex-wrap justify-end gap-x-2 gap-y-1 min-w-[10rem] max-w-[16rem] ms-auto">
-                            <a href="{{ route('factures.edit', $facture->id) }}" wire:navigate class="text-indigo-600 hover:underline">Modifier</a>
-                            <a href="{{ route('factures.pdf', $facture->id) }}" target="_blank" class="text-gray-500 hover:underline">PDF</a>
-                            <button wire:click="openSend({{ $facture->id }})" class="text-gray-700 hover:underline" title="{{ $facture->sent_at ? 'Envoyée le '.$facture->sent_at->format('d/m/Y H:i') : 'Envoyer par email' }}">{{ $facture->sent_at ? 'Renvoyer' : 'Envoyer' }}</button>
-                            @if (\App\Support\WhatsAppShare::isLate($facture) && ($wa = \App\Support\Relance::whatsappUrl($facture)))
-                                <a href="{{ $wa }}" target="_blank" rel="noopener" class="text-emerald-700 font-semibold hover:underline" title="Relancer le client sur WhatsApp (avec le lien vers la facture)">Relancer</a>
-                            @else
-                                <a href="{{ \App\Support\WhatsAppShare::url($facture) }}" target="_blank" rel="noopener" class="text-emerald-700 font-semibold hover:underline" title="Envoyer la facture sur WhatsApp (lien vers le PDF)">WhatsApp</a>
-                            @endif
-                            @if ($facture->resteAPayer() > 0)
-                                <a href="{{ route('reglements-clients.create', ['factureId' => $facture->id]) }}" wire:navigate class="text-green-600 hover:underline">Encaisser</a>
-                            @endif
-                            <button wire:click="delete({{ $facture->id }})" wire:confirm="Supprimer cette facture ?" class="text-red-600 hover:underline">Supprimer</button>
+                        <td class="px-4 py-4 text-right text-sm whitespace-nowrap"><div class="inline-flex items-center gap-2">
+                            <a href="{{ route('factures.pdf', $facture->id) }}" target="_blank" title="Ouvrir le PDF" class="inline-flex items-center gap-1 border-2 border-[#111] bg-[#d92d20] text-white px-2 py-1 text-xs font-bold hover:bg-[#b42318]"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h1.5a1.5 1.5 0 0 1 0 3H8v-3zm0 3v2M13 13v5h1a2 2 0 0 0 2-2v-1a2 2 0 0 0-2-2h-1z" stroke-width="1.4"/></svg>PDF</a>
+                            <x-row-actions>
+                                <a href="{{ route('factures.edit', $facture->id) }}" wire:navigate>Modifier</a>
+                                @if ($facture->resteAPayer() > 0)
+                                    <a href="{{ route('reglements-clients.create', ['factureId' => $facture->id]) }}" wire:navigate class="!font-bold">Encaisser</a>
+                                @endif
+                                <button type="button" wire:click="openSend({{ $facture->id }})" title="{{ $facture->sent_at ? 'Envoyée le '.$facture->sent_at->format('d/m/Y H:i') : 'Envoyer par email' }}">{{ $facture->sent_at ? 'Renvoyer par email' : 'Envoyer par email' }}</button>
+                                @if (\App\Support\WhatsAppShare::isLate($facture) && ($wa = \App\Support\Relance::whatsappUrl($facture)))
+                                    <a href="{{ $wa }}" target="_blank" rel="noopener" class="!text-[#0a6b37]" title="Relancer le client sur WhatsApp (avec le lien vers la facture)">Relancer sur WhatsApp</a>
+                                @else
+                                    <a href="{{ \App\Support\WhatsAppShare::url($facture) }}" target="_blank" rel="noopener" class="!text-[#0a6b37]" title="Envoyer la facture sur WhatsApp (lien vers le PDF)">WhatsApp</a>
+                                @endif
+                                <button type="button" wire:click="delete({{ $facture->id }})" wire:confirm="Supprimer cette facture ?" class="!text-[#b42318] border-t border-[#e3e0d8]">Supprimer</button>
+                            </x-row-actions>
                         </div></td>
                     </tr>
                 @empty

@@ -41,18 +41,22 @@
                                 'bg-green-100 text-green-700' => $bl->status === 'delivered',
                             ])>{{ \App\Support\Fmt::status($bl->status) }}</span>
                         </td>
-                        <td class="px-6 py-4 text-right text-sm space-x-2 whitespace-nowrap">
-                            <a href="{{ route('bon-livraisons.edit', $bl->id) }}" wire:navigate class="text-indigo-600 hover:underline">Modifier</a>
-                            <a href="{{ route('bon-livraisons.pdf', $bl->id) }}" target="_blank" class="text-gray-500 hover:underline">PDF</a>
-                            @if ($bl->status === 'draft')
-                                <button wire:click="markDelivered({{ $bl->id }})" wire:confirm="Marquer ce bon comme livré ? Les quantités seront retirées du stock." class="text-green-600 hover:underline">Marquer livré</button>
-                            @endif
-                            @if ($bl->facture)
-                                <a href="{{ route('factures.edit', $bl->facture->id) }}" wire:navigate class="text-slate-500 hover:underline">{{ $bl->facture->numero }}</a>
-                            @elseif (auth()->user()->hasPermission('bl_facturer'))
-                                <a href="{{ route('factures.create', ['blId' => $bl->id]) }}" wire:navigate class="text-green-600 hover:underline">Facturer</a>
-                            @endif
-                            <button wire:click="delete({{ $bl->id }})" wire:confirm="Supprimer ce bon de livraison ?" class="text-red-600 hover:underline">Supprimer</button>
+                        <td class="px-6 py-4 text-right text-sm whitespace-nowrap">
+                            <div class="inline-flex items-center gap-2">
+                            <a href="{{ route('bon-livraisons.pdf', $bl->id) }}" target="_blank" title="Ouvrir le PDF" class="inline-flex items-center gap-1 border-2 border-[#111] bg-[#d92d20] text-white px-2 py-1 text-xs font-bold hover:bg-[#b42318]"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h1.5a1.5 1.5 0 0 1 0 3H8v-3zm0 3v2M13 13v5h1a2 2 0 0 0 2-2v-1a2 2 0 0 0-2-2h-1z" stroke-width="1.4"/></svg>PDF</a>
+                            <x-row-actions>
+                                <a href="{{ route('bon-livraisons.edit', $bl->id) }}" wire:navigate>Modifier</a>
+                                @if ($bl->status === 'draft')
+                                    <button type="button" wire:click="markDelivered({{ $bl->id }})" wire:confirm="Marquer ce bon comme livré ? Les quantités seront retirées du stock." class="!font-bold">Marquer livré</button>
+                                @endif
+                                @if ($bl->facture)
+                                    <a href="{{ route('factures.edit', $bl->facture->id) }}" wire:navigate>Voir la facture {{ $bl->facture->numero }}</a>
+                                @elseif (auth()->user()->hasPermission('bl_facturer'))
+                                    <a href="{{ route('factures.create', ['blId' => $bl->id]) }}" wire:navigate class="!font-bold">Facturer</a>
+                                @endif
+                                <button type="button" wire:click="delete({{ $bl->id }})" wire:confirm="Supprimer ce bon de livraison ?" class="!text-[#b42318] border-t border-[#e3e0d8]">Supprimer</button>
+                            </x-row-actions>
+                            </div>
                         </td>
                     </tr>
                 @empty
