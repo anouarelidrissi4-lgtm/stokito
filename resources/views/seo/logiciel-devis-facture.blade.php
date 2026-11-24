@@ -150,7 +150,7 @@
                 <div class="text-[15px] leading-relaxed text-[#333]">L’obligation d’émettre des factures électroniques s’étend aux PME et aux micro-entreprises.</div>
             </div>
         </div>
-        <p>Une facture électronique non émise alors qu’elle était due coûte 50 € par facture, dans la limite de 15 000 € par an. Avant de choisir un logiciel de devis et facture, demandez à l’éditeur comment il compte se connecter à une plateforme agréée.</p>
+        <p>Une facture électronique non émise alors qu’elle était due coûte 50 € par facture, dans la limite de 15 000 € par an. Avant de choisir un logiciel de devis et facture, demandez à l’éditeur comment il compte se connecter à une plateforme agréée. Le détail du calendrier, des plateformes et des sanctions est dans notre article <a href="{{ route('blog.show', 'facture-electronique-obligatoire-2026-2027') }}">facture électronique obligatoire 2026-2027</a>.</p>
 
         <h2 id="criteres">6 critères pour choisir un logiciel de devis et facture</h2>
         <div class="my-6 grid sm:grid-cols-2 gap-4">
@@ -215,7 +215,7 @@
             <h3>{{ $q }}</h3>
             <p>{{ $a }}</p>
         @endforeach
-        <p>À lire aussi : <a href="{{ $diff }}">Différence entre devis et facture</a> · <a href="{{ route('seo.logiciel-gratuit') }}">Logiciel de gestion de stock gratuit</a> · <a href="{{ route('blog.index') }}">tous les guides du blog</a>.</p>
+        <p>À lire aussi : <a href="{{ $diff }}">Différence entre devis et facture</a> · <a href="{{ route('blog.show', 'transformer-devis-en-facture') }}">Transformer un devis en facture</a> · <a href="{{ route('blog.show', 'facture-electronique-obligatoire-2026-2027') }}">Facture électronique 2026-2027</a> · <a href="{{ route('seo.logiciel-gratuit') }}">Logiciel de gestion de stock gratuit</a> · <a href="{{ route('blog.index') }}">tous les guides du blog</a>.</p>
         <p class="text-sm text-[#666]">Sources : Service-Public Entreprendre, fiches <a href="{{ $sp }}F23208" target="_blank" rel="noopener">« Tout savoir sur la facturation »</a>, <a href="{{ $sp }}F31808" target="_blank" rel="noopener">« Mentions obligatoires d’une facture »</a> et <a href="{{ $sp }}F31144" target="_blank" rel="noopener">« Devis obligatoire »</a>, consultées en novembre 2026. Ce guide ne remplace pas l’avis d’un expert-comptable.</p>
     </article>
 </div>
