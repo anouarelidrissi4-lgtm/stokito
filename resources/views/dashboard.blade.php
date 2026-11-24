@@ -24,6 +24,9 @@
                 @if ($u->hasPermission('bl_creer'))
                     <a href="{{ route('bon-livraisons.create') }}" wire:navigate class="inline-flex items-center gap-1.5 bg-white border-2 border-[#111] px-3.5 py-2 ind-h text-lg uppercase tracking-wider hover:bg-[#ffcc00]"><x-sp-icon name="plus" class="w-4 h-4" /> {{ __('Bon de livraison') }}</a>
                 @endif
+                @if ($u->hasPermission('gestion_commandes_fournisseurs'))
+                    <a href="{{ route('commande-fournisseurs.create') }}" wire:navigate class="inline-flex items-center gap-1.5 bg-white border-2 border-[#111] px-3.5 py-2 ind-h text-lg uppercase tracking-wider hover:bg-[#ffcc00]"><x-sp-icon name="plus" class="w-4 h-4" /> {{ __('Bon de commande') }}</a>
+                @endif
             </div>
         </div>
 

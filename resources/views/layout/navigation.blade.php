@@ -4,8 +4,8 @@
       the burger in the top bar, state `nav` lives on <body> in layouts/app).
     - Sections come from the "Menu latéral" config (Societe::menu_config), so the
       mobile menu now follows that config too.
-    - Create buttons (devis, facture, BL, commande) sit at the top, always visible (2026-11-24),
-      and the "Nouveau ..." items are menu rows under their list (like Nouveau Devis under Devis). Sections fold; the one holding the current page is open.
+    - The "Nouveau ..." items are menu rows under their list (like Nouveau Devis under Devis);
+      quick create buttons live on the dashboard (2026-11-24). Sections fold; the one holding the current page is open.
 --}}
 @php
     $rtl = app()->getLocale() === 'ar';
@@ -47,28 +47,6 @@
         $unsectioned = $visible($menu['unsectioned'])->values();
     @endphp
     <nav class="p-3 space-y-1">
-        {{-- 2026-11-24: create buttons always visible (was a "+ Nouveau" dropdown), by permission --}}
-        @php
-            $creates = collect([
-                ['devis.create', 'Devis', 'devis_creer'],
-                ['factures.create', 'Facture', 'factures_consulter'],
-                ['bon-livraisons.create', 'Bon de livraison', 'bl_creer'],
-                ['commande-fournisseurs.create', 'Bon de commande', 'gestion_commandes_fournisseurs'],
-            ])->filter(fn ($c) => $user->hasPermission($c[2]))->values();
-        @endphp
-        @if ($creates->isNotEmpty())
-            <div class="mb-3">
-                <div class="px-1 pb-1.5 ind-mono text-[10px] uppercase tracking-wider text-[#666]">+ {{ __('Nouveau') }}</div>
-                <div class="grid grid-cols-2 gap-1.5">
-                    @foreach ($creates as [$cRoute, $cLabel])
-                        <a href="{{ route($cRoute) }}" wire:navigate
-                           class="{{ $loop->index >= 2 ? 'col-span-2' : '' }} flex items-center justify-center gap-1 h-10 px-1.5 border-2 border-[#111] ind-h text-[15px] uppercase tracking-wide whitespace-nowrap {{ $loop->index === 0 ? 'bg-[#111] text-[#ffcc00] shadow-[2px_2px_0_#ffcc00] hover:bg-black' : ($loop->index === 1 ? 'bg-[#ffcc00] text-[#111] hover:bg-white' : 'bg-white text-[#111] hover:bg-[#ffcc00]') }}">
-                            <x-sp-icon name="plus" class="w-3.5 h-3.5 shrink-0" /> {{ __($cLabel) }}
-                        </a>
-                    @endforeach
-                </div>
-            </div>
-        @endif
 
         @foreach ($unsectioned as $item)
             <a href="{{ route($item['route']) }}" wire:navigate class="{{ $linkClass($isActive($item)) }}">{{ __($item['label']) }}</a>
