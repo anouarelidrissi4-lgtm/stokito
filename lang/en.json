@@ -361,5 +361,12 @@
     "pour choisir": "to choose",
     "pour ouvrir": "to open",
     "Bons de livraison": "Delivery notes",
-    "Mon espace": "My space"
+    "Mon espace": "My space",
+    "Facture": "Invoice",
+    "Livraison": "Delivery",
+    "Commande": "Order",
+    "Nouveau devis": "New quote",
+    "Nouvelle facture": "New invoice",
+    "Nouveau bon de livraison": "New delivery note",
+    "Nouvelle commande fournisseur": "New supplier order"
 }

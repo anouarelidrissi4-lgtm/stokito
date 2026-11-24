@@ -380,5 +380,12 @@
     "pour choisir": "للاختيار",
     "pour ouvrir": "للفتح",
     "Bons de livraison": "سندات التسليم",
-    "Mon espace": "فضائي"
+    "Mon espace": "فضائي",
+    "Facture": "فاتورة",
+    "Livraison": "تسليم",
+    "Commande": "طلبية",
+    "Nouveau devis": "عرض سعر جديد",
+    "Nouvelle facture": "فاتورة جديدة",
+    "Nouveau bon de livraison": "وصل تسليم جديد",
+    "Nouvelle commande fournisseur": "طلبية مورد جديدة"
 }

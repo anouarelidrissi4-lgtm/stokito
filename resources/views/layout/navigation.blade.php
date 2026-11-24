@@ -4,14 +4,21 @@
       the burger in the top bar, state `nav` lives on <body> in layouts/app).
     - Sections come from the "Menu latéral" config (Societe::menu_config), so the
       mobile menu now follows that config too.
-    - "Nouveau devis / BL / commande" links are shown in the "+ Nouveau" button,
-      not as menu rows. Sections fold; the one holding the current page is open.
+    - Create buttons (devis, facture, BL, commande) sit at the top, always visible (2026-11-24),
+      plus a small "+" next to each list link; the "Nouveau ..." catalog items are not menu rows. Sections fold; the one holding the current page is open.
 --}}
 @php
     $rtl = app()->getLocale() === 'ar';
     $user = auth()->user();
     $sectionIcons = ['tableau_de_bord' => 'home', 'catalogue' => 'cube', 'ventes' => 'cart', 'achats' => 'truck', 'tresorerie' => 'wallet', 'administration' => 'cog'];
     $quickKeys = ['devis.create', 'bon-livraisons.create', 'commande-fournisseurs.create'];
+    // small "+" next to a list link in the menu: list key => [create route, permission, label]
+    $createFor = [
+        'devis.index' => ['devis.create', 'devis_creer', 'Nouveau devis'],
+        'factures.index' => ['factures.create', 'factures_consulter', 'Nouvelle facture'],
+        'bon-livraisons.index' => ['bon-livraisons.create', 'bl_creer', 'Nouveau bon de livraison'],
+        'commande-fournisseurs.index' => ['commande-fournisseurs.create', 'gestion_commandes_fournisseurs', 'Nouvelle commande fournisseur'],
+    ];
     $isActive = fn ($item) => $item['active'] && request()->routeIs($item['active']);
     // industrial style (2026-11-23): active = yellow label with ink border
     $linkClass = fn ($on) => 'flex items-center gap-2.5 px-3 py-2 text-[14px] transition-colors border-2 '
@@ -47,14 +54,24 @@
         $unsectioned = $visible($menu['unsectioned'])->reject(fn ($i) => in_array($i['key'], $quickKeys, true))->values();
     @endphp
     <nav class="p-3 space-y-1">
-        @if ($quick->isNotEmpty())
-            <div x-data="{ q: false }" class="relative mb-3">
-                <button type="button" @click="q = !q" class="w-full flex items-center justify-center gap-2 bg-[#111] text-[#ffcc00] border-2 border-[#111] px-3 py-2.5 ind-h text-lg uppercase tracking-wider shadow-[3px_3px_0_#ffcc00] hover:bg-black">
-                    <x-sp-icon name="plus" class="w-4 h-4" /> {{ __('Nouveau') }}
-                </button>
-                <div x-show="q" x-cloak @click.outside="q = false" class="absolute inset-x-0 mt-2 border-2 border-[#111] bg-white py-1 z-10">
-                    @foreach ($quick as $item)
-                        <a href="{{ route($item['route']) }}" wire:navigate class="block px-3 py-2 text-sm font-semibold hover:bg-[#ffcc00]">+ {{ __($item['label']) }}</a>
+        {{-- 2026-11-24: create buttons always visible (was a "+ Nouveau" dropdown), by permission --}}
+        @php
+            $creates = collect([
+                ['devis.create', 'Devis', 'devis_creer'],
+                ['factures.create', 'Facture', 'factures_consulter'],
+                ['bon-livraisons.create', 'Livraison', 'bl_creer'],
+                ['commande-fournisseurs.create', 'Commande', 'gestion_commandes_fournisseurs'],
+            ])->filter(fn ($c) => $user->hasPermission($c[2]))->values();
+        @endphp
+        @if ($creates->isNotEmpty())
+            <div class="mb-3">
+                <div class="px-1 pb-1.5 ind-mono text-[10px] uppercase tracking-wider text-[#666]">+ {{ __('Nouveau') }}</div>
+                <div class="grid grid-cols-2 gap-1.5">
+                    @foreach ($creates as [$cRoute, $cLabel])
+                        <a href="{{ route($cRoute) }}" wire:navigate
+                           class="flex items-center justify-center gap-1 h-10 px-1.5 border-2 border-[#111] ind-h text-[15px] uppercase tracking-wide whitespace-nowrap {{ $loop->index === 0 ? 'bg-[#111] text-[#ffcc00] shadow-[2px_2px_0_#ffcc00] hover:bg-black' : ($loop->index === 1 ? 'bg-[#ffcc00] text-[#111] hover:bg-white' : 'bg-white text-[#111] hover:bg-[#ffcc00]') }}">
+                            <x-sp-icon name="plus" class="w-3.5 h-3.5 shrink-0" /> {{ __($cLabel) }}
+                        </a>
                     @endforeach
                 </div>
             </div>
@@ -88,7 +105,16 @@
                     </button>
                     <div x-show="open" x-collapse.duration.150ms class="mt-0.5 space-y-0.5 {{ $rtl ? 'pr-7' : 'pl-7' }}">
                         @foreach ($items as $item)
-                            <a href="{{ route($item['route']) }}" wire:navigate class="{{ $linkClass($isActive($item)) }} !py-1.5">{{ __($item['label']) }}</a>
+                            @php $plus = $createFor[$item['key']] ?? null; @endphp
+                            @if ($plus && $user->hasPermission($plus[1]))
+                                <div class="flex items-stretch gap-1">
+                                    <a href="{{ route($item['route']) }}" wire:navigate class="{{ $linkClass($isActive($item)) }} !py-1.5 flex-1 min-w-0">{{ __($item['label']) }}</a>
+                                    <a href="{{ route($plus[0]) }}" wire:navigate title="{{ __($plus[2]) }}" aria-label="{{ __($plus[2]) }}"
+                                       class="grid place-items-center w-8 shrink-0 border-2 border-transparent text-[#333] hover:bg-[#ffcc00] hover:border-[#111]"><x-sp-icon name="plus" class="w-4 h-4" /></a>
+                                </div>
+                            @else
+                                <a href="{{ route($item['route']) }}" wire:navigate class="{{ $linkClass($isActive($item)) }} !py-1.5">{{ __($item['label']) }}</a>
+                            @endif
                         @endforeach
                         @if ($super)
                             <a href="{{ route('projects.index') }}" wire:navigate class="{{ $linkClass(request()->routeIs('projects.index')) }} !py-1.5">{{ __('Projets (global)') }}</a>

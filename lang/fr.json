@@ -238,5 +238,12 @@
     "Clients": "Clients",
     "Fournisseurs": "Fournisseurs",
     "Stock": "Stock",
-    "Mon espace": "Mon espace"
+    "Mon espace": "Mon espace",
+    "Facture": "Facture",
+    "Livraison": "Livraison",
+    "Commande": "Commande",
+    "Nouveau devis": "Nouveau devis",
+    "Nouvelle facture": "Nouvelle facture",
+    "Nouveau bon de livraison": "Nouveau bon de livraison",
+    "Nouvelle commande fournisseur": "Nouvelle commande fournisseur"
 }
