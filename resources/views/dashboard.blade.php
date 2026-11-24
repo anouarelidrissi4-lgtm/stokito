@@ -87,6 +87,34 @@
             </a>
         </div>
 
+        {{-- KPIs, second row (2026-11-24) --}}
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            @if ($u->hasPermission('marges'))
+            <div class="{{ $card }} p-4 sm:p-5">
+                <div class="flex items-center gap-2 ind-mono text-[11px] uppercase text-[#666]"><x-sp-icon name="chart" class="w-4 h-4 text-[#111]" /> {{ __('Marge brute du mois') }}</div>
+                <div class="mt-2 ind-h text-3xl sm:text-4xl leading-none {{ $margeMois < 0 ? 'text-rose-600' : 'text-emerald-700' }}">{{ $money($margeMois) }} <span class="text-sm font-medium text-slate-400">{{ $currency }}</span></div>
+                <div class="mt-1 text-xs text-slate-400">{{ $margePct !== null ? $margePct.' % '.__('du CA HT') : __('Aucune facture ce mois') }}</div>
+            </div>
+            @endif
+            @if ($u->hasPermission('produits_prix_achat'))
+            <a href="{{ route('products.index') }}" wire:navigate class="{{ $card }} p-4 sm:p-5 hover:bg-[#ffcc00]">
+                <div class="flex items-center gap-2 ind-mono text-[11px] uppercase text-[#666]"><x-sp-icon name="cube" class="w-4 h-4 text-[#111]" /> {{ __('Valeur du stock') }}</div>
+                <div class="mt-2 ind-h text-3xl sm:text-4xl leading-none text-slate-900">{{ $money($valeurStock) }} <span class="text-sm font-medium text-slate-400">{{ $currency }}</span></div>
+                <div class="mt-1 text-xs {{ $dormants ? 'text-amber-700 font-semibold' : 'text-slate-400' }}">{{ $dormants ? $dormants.' '.__('produits sans vente depuis 90 j') : __('Au prix d’achat HT') }}</div>
+            </a>
+            @endif
+            <a href="{{ route('devis.index') }}" wire:navigate class="{{ $card }} p-4 sm:p-5 hover:bg-[#ffcc00]">
+                <div class="flex items-center gap-2 ind-mono text-[11px] uppercase text-[#666]"><x-sp-icon name="doc" class="w-4 h-4 text-[#111]" /> {{ __('Devis en attente') }}</div>
+                <div class="mt-2 ind-h text-3xl sm:text-4xl leading-none text-slate-900">{{ $money($devisAttenteMontant) }} <span class="text-sm font-medium text-slate-400">{{ $currency }}</span></div>
+                <div class="mt-1 text-xs text-slate-400">{{ $devisAttenteCount }} {{ __('devis') }}@if ($tauxAcceptation !== null) · {{ $tauxAcceptation }} % {{ __('acceptés (90 j)') }}@endif</div>
+            </a>
+            <div class="{{ $card }} p-4 sm:p-5">
+                <div class="flex items-center gap-2 ind-mono text-[11px] uppercase text-[#666]"><x-sp-icon name="coins" class="w-4 h-4 text-[#111]" /> {{ __('TVA facturée ce mois') }}</div>
+                <div class="mt-2 ind-h text-3xl sm:text-4xl leading-none text-slate-900">{{ $money($tvaMois) }} <span class="text-sm font-medium text-slate-400">{{ $currency }}</span></div>
+                <div class="mt-1 text-xs text-slate-400">{{ __('Sur les factures du mois') }}</div>
+            </div>
+        </div>
+
         <div class="grid lg:grid-cols-5 gap-4 sm:gap-6">
             {{-- 6-month sales chart --}}
             <div class="{{ $card }} p-5 lg:col-span-3">
@@ -109,7 +137,10 @@
             {{-- unpaid invoices --}}
             <div class="{{ $card }} lg:col-span-2 overflow-hidden">
                 <div class="px-5 py-4 border-b-2 border-[#111] flex items-center justify-between">
-                    <h2 class="ind-h text-xl uppercase tracking-wide">{{ __('À encaisser') }}</h2>
+                    <div>
+                        <h2 class="ind-h text-xl uppercase tracking-wide">{{ __('À encaisser') }}</h2>
+                        @if ($aEncaisser30 > 0)<div class="text-xs text-slate-500">{{ __('Sous 30 jours') }} : <strong class="text-slate-900">{{ $money($aEncaisser30) }} {{ $currency }}</strong></div>@endif
+                    </div>
                     <a href="{{ route('factures.index') }}" wire:navigate class="ind-mono text-[11px] uppercase underline decoration-[#ffcc00] decoration-2 underline-offset-4">{{ __('Toutes les factures') }}</a>
                 </div>
                 <ul class="divide-y divide-slate-100">
@@ -139,6 +170,30 @@
                     @endforelse
                 </ul>
             </div>
+        </div>
+
+        {{-- top products / clients, last 90 days (2026-11-24) --}}
+        <div class="grid lg:grid-cols-2 gap-4 sm:gap-6">
+            @foreach ([[__('Top produits'), $topProduits, __('CA HT')], [__('Top clients'), $topClients, __('CA TTC')]] as [$titre, $rows, $unite])
+                @php $topMax = max(1, $rows->max('ca')); @endphp
+                <div class="{{ $card }} overflow-hidden">
+                    <div class="px-5 py-4 border-b-2 border-[#111] flex items-center justify-between">
+                        <h2 class="ind-h text-xl uppercase tracking-wide">{{ $titre }}</h2>
+                        <span class="ind-mono text-[11px] uppercase text-[#666]">{{ __('90 derniers jours') }} · {{ $unite }}</span>
+                    </div>
+                    @forelse ($rows as $i => $r)
+                        <div class="px-5 py-3 {{ $loop->last ? '' : 'border-b border-slate-100' }}">
+                            <div class="flex items-center justify-between gap-3">
+                                <span class="text-sm text-slate-800 truncate"><span class="ind-mono text-[11px] text-[#666] me-2">{{ sprintf('%02d', $i + 1) }}</span>{{ $r['name'] }}</span>
+                                <span class="text-sm font-semibold text-slate-900 shrink-0">{{ $money($r['ca']) }}</span>
+                            </div>
+                            <div class="mt-2 h-2 border border-[#111] bg-white overflow-hidden"><div class="h-full {{ $i === 0 ? 'bg-[#ffcc00]' : 'bg-[#111]' }}" style="width: {{ max(3, round($r['ca'] / $topMax * 100)) }}%"></div></div>
+                        </div>
+                    @empty
+                        <div class="px-5 py-10 text-center text-sm text-slate-400">{{ __('Aucune vente sur la période') }}</div>
+                    @endforelse
+                </div>
+            @endforeach
         </div>
 
         {{-- low stock --}}

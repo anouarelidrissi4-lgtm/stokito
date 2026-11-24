@@ -144,12 +144,44 @@ Route::get('dashboard', function () {
         ];
     });
 
+    // widgets (2026-11-24): margin, stock value, quotes, VAT, cash-in within 30 days, top products / clients
+    $facIds = fn ($from) => \App\Models\Facture::where('date', '>=', $from)->select('id'); // tenant-scoped subquery
+    $htMois = (float) \App\Models\Facture::where('date', '>=', $monthStart)->sum('total_ht');
+    $coutMois = (float) \App\Models\FactureItem::query()
+        ->join('products', 'products.id', '=', 'facture_items.product_id')
+        ->whereIn('facture_items.facture_id', $facIds($monthStart))
+        ->sum(\Illuminate\Support\Facades\DB::raw('facture_items.quantity * products.purchase_price'));
+    $from90 = now()->subDays(90)->startOfDay();
+    $devisAttente = \App\Models\Devis::whereIn('status', ['draft', 'sent']);
+    $devis90 = \App\Models\Devis::where('date', '>=', $from90)->whereIn('status', ['sent', 'accepted', 'rejected']);
+    $devis90Total = (clone $devis90)->count();
+    $topProduits = \App\Models\FactureItem::query()
+        ->selectRaw('product_id, SUM(total) as ca, SUM(quantity) as qty')
+        ->whereIn('facture_id', $facIds($from90))
+        ->groupBy('product_id')->orderByDesc('ca')->limit(5)->get();
+    $topNoms = Product::whereIn('id', $topProduits->pluck('product_id'))->pluck('name', 'id');
+    $today = now()->startOfDay();
+
     return view('dashboard', [
+        'margeMois' => $htMois - $coutMois,
+        'margePct' => $htMois > 0 ? round(($htMois - $coutMois) / $htMois * 100) : null,
+        'valeurStock' => (float) Product::where('stock_qty', '>', 0)->sum(\Illuminate\Support\Facades\DB::raw('stock_qty * purchase_price')),
+        'dormants' => Product::where('stock_qty', '>', 0)->where('created_at', '<', $from90)
+            ->whereNotIn('id', \App\Models\FactureItem::whereIn('facture_id', $facIds($from90))->select('product_id'))->count(),
+        'devisAttenteCount' => (clone $devisAttente)->count(),
+        'devisAttenteMontant' => (float) (clone $devisAttente)->sum('total_ttc'),
+        'tauxAcceptation' => $devis90Total > 0 ? round((clone $devis90)->where('status', 'accepted')->count() / $devis90Total * 100) : null,
+        'tvaMois' => $caMois - $htMois,
+        'topProduits' => $topProduits->map(fn ($r) => ['name' => $topNoms[$r->product_id] ?? '-', 'ca' => (float) $r->ca, 'qty' => (float) $r->qty]),
+        'topClients' => \App\Models\Facture::with('client')->where('date', '>=', $from90)
+            ->selectRaw('client_id, SUM(total_ttc) as ca, COUNT(*) as nb')->groupBy('client_id')->orderByDesc('ca')->limit(5)->get()
+            ->map(fn ($r) => ['name' => $r->client->name ?? '-', 'ca' => (float) $r->ca, 'nb' => (int) $r->nb]),
         'caMois' => $caMois,
         'caEvolution' => $caPrev > 0 ? round(($caMois - $caPrev) / $caPrev * 100) : null,
         'encaisseMois' => (float) \App\Models\ReglementClient::where('date', '>=', $monthStart)->sum('montant'),
         'impayes' => $impayes,
         'totalImpayes' => $impayes->sum(fn ($f) => $f->total_ttc - $f->montant_paye),
+        'aEncaisser30' => $impayes->filter(fn ($f) => $f->due_date && $f->due_date->between($today, $today->copy()->addDays(30)))->sum(fn ($f) => $f->total_ttc - $f->montant_paye),
         'months' => $months,
         'achatsMois' => (float) CommandeFournisseur::where('date', '>=', $monthStart)->sum('total'),
         'lowStock' => $lowStock,
