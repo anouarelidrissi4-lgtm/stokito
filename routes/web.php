@@ -65,6 +65,23 @@ Route::get('locale/{locale}', function (string $locale) {
 // The demo account only ever sees/creates data flagged is_demo = true
 // (see App\Models\Concerns\ScopedToDemoMode), so nothing here can touch
 // or expose the real company's data.
+// Signed public PDF of a quote / invoice for the customer (WhatsApp link, 2026-11-24). The signature makes the
+// id impossible to change; the document is rendered in the context of its own company.
+Route::get('d/{type}/{id}', function (string $type, int $id) {
+    $cls = $type === 'devis' ? \App\Models\Devis::class : \App\Models\Facture::class;
+    $raw = $cls::withoutGlobalScopes()->findOrFail($id);
+    $owner = \App\Models\User::where('project_id', $raw->project_id)->where('is_demo', (bool) $raw->is_demo)
+        ->orderByRaw("role = 'admin' desc")->orderBy('id')->firstOrFail();
+    \Illuminate\Support\Facades\Auth::setUser($owner); // this request only, no session login
+    $doc = $cls::findOrFail($id);
+    $pdf = $type === 'devis' ? \App\Support\DocumentPdf::devis($doc) : \App\Support\DocumentPdf::facture($doc);
+
+    $response = $pdf->stream($doc->numero.'.pdf');
+    \Illuminate\Support\Facades\Auth::forgetUser(); // never leave the owner attached to the visitor's request
+
+    return $response;
+})->where('type', 'devis|facture')->whereNumber('id')->middleware(['signed', 'throttle:30,1'])->name('documents.public');
+
 Route::get('demo', function () {
     $demo = \App\Models\User::where('email', 'demo@stockpilot.cloud')->where('is_demo', true)->first();
 

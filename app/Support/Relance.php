@@ -51,7 +51,7 @@ class Relance
             .'Nous vous rappelons que la facture '.$f->numero.' du '.$f->date->format('d/m/Y')
             .' ('.Fmt::money($f->total_ttc).' '.$cur.' TTC) présente un reste à payer de '.Fmt::money($reste).' '.$cur
             .($f->due_date ? ($late ? ', échue depuis le '.$f->due_date->format('d/m/Y') : ', échéance le '.$f->due_date->format('d/m/Y')) : '')
-            .".\n\nMerci de nous indiquer la date de règlement prévue. Nous pouvons vous renvoyer la facture si besoin.\n\n"
+            .".\n\nLa facture : ".WhatsAppShare::pdfLink($f)."\n\nMerci de nous indiquer la date de règlement prévue.\n\n"
             .'Cordialement,'."\n".$s->name;
 
         return 'https://wa.me/'.$phone.'?text='.rawurlencode($msg);

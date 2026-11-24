@@ -86,11 +86,13 @@
                             <a href="{{ route('factures.edit', $facture->id) }}" wire:navigate class="text-indigo-600 hover:underline">Modifier</a>
                             <a href="{{ route('factures.pdf', $facture->id) }}" target="_blank" class="text-gray-500 hover:underline">PDF</a>
                             <button wire:click="openSend({{ $facture->id }})" class="text-gray-700 hover:underline" title="{{ $facture->sent_at ? 'Envoyée le '.$facture->sent_at->format('d/m/Y H:i') : 'Envoyer par email' }}">{{ $facture->sent_at ? 'Renvoyer' : 'Envoyer' }}</button>
+                            @if (\App\Support\WhatsAppShare::isLate($facture) && ($wa = \App\Support\Relance::whatsappUrl($facture)))
+                                <a href="{{ $wa }}" target="_blank" rel="noopener" class="text-emerald-700 font-semibold hover:underline" title="Relancer le client sur WhatsApp (avec le lien vers la facture)">Relancer</a>
+                            @else
+                                <a href="{{ \App\Support\WhatsAppShare::url($facture) }}" target="_blank" rel="noopener" class="text-emerald-700 font-semibold hover:underline" title="Envoyer la facture sur WhatsApp (lien vers le PDF)">WhatsApp</a>
+                            @endif
                             @if ($facture->resteAPayer() > 0)
                                 <a href="{{ route('reglements-clients.create', ['factureId' => $facture->id]) }}" wire:navigate class="text-green-600 hover:underline">Encaisser</a>
-                                @if ($wa = \App\Support\Relance::whatsappUrl($facture))
-                                    <a href="{{ $wa }}" target="_blank" rel="noopener" class="text-emerald-700 hover:underline" title="Relancer le client sur WhatsApp">Relancer</a>
-                                @endif
                             @endif
                             <button wire:click="delete({{ $facture->id }})" wire:confirm="Supprimer cette facture ?" class="text-red-600 hover:underline">Supprimer</button>
                         </div></td>
