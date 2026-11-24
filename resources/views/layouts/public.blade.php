@@ -16,7 +16,7 @@
         <link rel="canonical" href="{{ $canonical ?? url()->current() }}">
 
         <meta property="og:site_name" content="Stokito">
-        <meta property="og:image" content="{{ $ogImage ?? 'https://stokito.com/images/screens/screen-dashboard.webp?v=20261123' }}">
+        <meta property="og:image" content="{{ $ogImage ?? 'https://stokito.com/images/screens/screen-dashboard.webp?v=20261124' }}">
         <meta property="og:title" content="{{ $title ?? 'Stokito' }}">
         <meta property="og:description" content="{{ $description ?? 'Logiciel de gestion de stock, ventes et achats pour les PME.' }}">
         <meta property="og:type" content="{{ $ogType ?? 'website' }}">
