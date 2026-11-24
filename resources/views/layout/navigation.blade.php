@@ -5,20 +5,13 @@
     - Sections come from the "Menu latéral" config (Societe::menu_config), so the
       mobile menu now follows that config too.
     - Create buttons (devis, facture, BL, commande) sit at the top, always visible (2026-11-24),
-      plus a small "+" next to each list link; the "Nouveau ..." catalog items are not menu rows. Sections fold; the one holding the current page is open.
+      and the "Nouveau ..." items are menu rows under their list (like Nouveau Devis under Devis). Sections fold; the one holding the current page is open.
 --}}
 @php
     $rtl = app()->getLocale() === 'ar';
     $user = auth()->user();
     $sectionIcons = ['tableau_de_bord' => 'home', 'catalogue' => 'cube', 'ventes' => 'cart', 'achats' => 'truck', 'tresorerie' => 'wallet', 'administration' => 'cog'];
     $quickKeys = ['devis.create', 'bon-livraisons.create', 'commande-fournisseurs.create'];
-    // small "+" next to a list link in the menu: list key => [create route, permission, label]
-    $createFor = [
-        'devis.index' => ['devis.create', 'devis_creer', 'Nouveau devis'],
-        'factures.index' => ['factures.create', 'factures_consulter', 'Nouvelle facture'],
-        'bon-livraisons.index' => ['bon-livraisons.create', 'bl_creer', 'Nouveau bon de livraison'],
-        'commande-fournisseurs.index' => ['commande-fournisseurs.create', 'gestion_commandes_fournisseurs', 'Nouvelle commande fournisseur'],
-    ];
     $isActive = fn ($item) => $item['active'] && request()->routeIs($item['active']);
     // industrial style (2026-11-23): active = yellow label with ink border
     $linkClass = fn ($on) => 'flex items-center gap-2.5 px-3 py-2 text-[14px] transition-colors border-2 '
@@ -51,7 +44,7 @@
         $visible = fn ($items) => collect($items)->filter(fn ($i) => \App\Support\MenuItems::visibleFor($i, $user, $societe));
         $all = $visible($menu['unsectioned'])->concat(collect($menu['sections'])->flatMap(fn ($s) => $visible($s['items'])));
         $quick = $all->filter(fn ($i) => in_array($i['key'], $quickKeys, true))->values();
-        $unsectioned = $visible($menu['unsectioned'])->reject(fn ($i) => in_array($i['key'], $quickKeys, true))->values();
+        $unsectioned = $visible($menu['unsectioned'])->values();
     @endphp
     <nav class="p-3 space-y-1">
         {{-- 2026-11-24: create buttons always visible (was a "+ Nouveau" dropdown), by permission --}}
@@ -83,7 +76,7 @@
 
         @foreach ($menu['sections'] as $key => $section)
             @php
-                $items = $visible($section['items'])->reject(fn ($i) => in_array($i['key'], $quickKeys, true))->values();
+                $items = $visible($section['items'])->values();
                 $super = $key === 'administration' && $user->isSuperAdmin();
                 $hasActive = $items->contains(fn ($i) => $isActive($i)) || ($super && request()->routeIs('projects.index', 'inscriptions.index', 'blog-admin.*'));
                 $icon = $sectionIcons[$key] ?? 'folder';
@@ -105,16 +98,7 @@
                     </button>
                     <div x-show="open" x-collapse.duration.150ms class="mt-0.5 space-y-0.5 {{ $rtl ? 'pr-7' : 'pl-7' }}">
                         @foreach ($items as $item)
-                            @php $plus = $createFor[$item['key']] ?? null; @endphp
-                            @if ($plus && $user->hasPermission($plus[1]))
-                                <div class="flex items-stretch gap-1">
-                                    <a href="{{ route($item['route']) }}" wire:navigate class="{{ $linkClass($isActive($item)) }} !py-1.5 flex-1 min-w-0">{{ __($item['label']) }}</a>
-                                    <a href="{{ route($plus[0]) }}" wire:navigate title="{{ __($plus[2]) }}" aria-label="{{ __($plus[2]) }}"
-                                       class="grid place-items-center w-8 shrink-0 border-2 border-transparent text-[#333] hover:bg-[#ffcc00] hover:border-[#111]"><x-sp-icon name="plus" class="w-4 h-4" /></a>
-                                </div>
-                            @else
-                                <a href="{{ route($item['route']) }}" wire:navigate class="{{ $linkClass($isActive($item)) }} !py-1.5">{{ __($item['label']) }}</a>
-                            @endif
+                            <a href="{{ route($item['route']) }}" wire:navigate class="{{ $linkClass($isActive($item)) }} !py-1.5">@if (str_ends_with($item['key'], '.create'))<x-sp-icon name="plus" class="w-3.5 h-3.5 -ms-0.5 shrink-0" />@endif{{ __($item['label']) }}</a>
                         @endforeach
                         @if ($super)
                             <a href="{{ route('projects.index') }}" wire:navigate class="{{ $linkClass(request()->routeIs('projects.index')) }} !py-1.5">{{ __('Projets (global)') }}</a>
