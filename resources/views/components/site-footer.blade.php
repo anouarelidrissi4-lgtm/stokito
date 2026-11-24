@@ -35,9 +35,9 @@
         <div>
             <h3 class="ind-h text-lg uppercase tracking-wider text-white">{{ __('Ressources') }}</h3>
             <ul class="mt-3 space-y-2">
-                <li><a href="/docs/guide-stockpilot-fr.pdf" target="_blank" rel="noopener" class="hover:text-[#ffcc00]">{{ __('Guide en français (PDF)') }}</a></li>
-                <li><a href="/docs/guide-stockpilot-ar.pdf" target="_blank" rel="noopener" class="hover:text-[#ffcc00]" dir="rtl">الدليل بالعربية (PDF)</a></li>
-                <li><a href="/docs/guide-stockpilot-en.pdf" target="_blank" rel="noopener" class="hover:text-[#ffcc00]">User guide in English (PDF)</a></li>
+                <li><a href="/docs/guide-stokito-fr.pdf" target="_blank" rel="noopener" class="hover:text-[#ffcc00]">{{ __('Guide en français (PDF)') }}</a></li>
+                <li><a href="/docs/guide-stokito-ar.pdf" target="_blank" rel="noopener" class="hover:text-[#ffcc00]" dir="rtl">الدليل بالعربية (PDF)</a></li>
+                <li><a href="/docs/guide-stokito-en.pdf" target="_blank" rel="noopener" class="hover:text-[#ffcc00]">User guide in English (PDF)</a></li>
                 <li><a href="{{ $wa }}" target="_blank" rel="noopener" class="hover:text-[#ffcc00] ind-mono" dir="ltr">WhatsApp +212 676 035 777</a></li>
                 <li><a href="{{ route('login') }}" class="hover:text-[#ffcc00]">{{ __('Se connecter') }}</a></li>
             </ul>

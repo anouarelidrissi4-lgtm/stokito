@@ -54,9 +54,9 @@
                 <div class="text-sm font-semibold text-slate-900">{{ __("Guide d'utilisation") }}</div>
                 <div class="text-xs text-slate-500">{{ __('Tout Stokito expliqué pas à pas, à garder ou à partager avec votre équipe.') }}</div>
             </div>
-            <a href="/docs/guide-stockpilot-fr.pdf" target="_blank" rel="noopener" class="inline-flex items-center bg-white border-2 border-[#111] px-3 py-1.5 text-sm font-bold hover:bg-[#111] hover:text-[#ffcc00]">Français (PDF)</a>
-            <a href="/docs/guide-stockpilot-ar.pdf" target="_blank" rel="noopener" class="inline-flex items-center bg-white border-2 border-[#111] px-3 py-1.5 text-sm font-bold hover:bg-[#111] hover:text-[#ffcc00]" dir="rtl">العربية (PDF)</a>
-            <a href="/docs/guide-stockpilot-en.pdf" target="_blank" rel="noopener" class="inline-flex items-center bg-white border-2 border-[#111] px-3 py-1.5 text-sm font-bold hover:bg-[#111] hover:text-[#ffcc00]">English (PDF)</a>
+            <a href="/docs/guide-stokito-fr.pdf" target="_blank" rel="noopener" class="inline-flex items-center bg-white border-2 border-[#111] px-3 py-1.5 text-sm font-bold hover:bg-[#111] hover:text-[#ffcc00]">Français (PDF)</a>
+            <a href="/docs/guide-stokito-ar.pdf" target="_blank" rel="noopener" class="inline-flex items-center bg-white border-2 border-[#111] px-3 py-1.5 text-sm font-bold hover:bg-[#111] hover:text-[#ffcc00]" dir="rtl">العربية (PDF)</a>
+            <a href="/docs/guide-stokito-en.pdf" target="_blank" rel="noopener" class="inline-flex items-center bg-white border-2 border-[#111] px-3 py-1.5 text-sm font-bold hover:bg-[#111] hover:text-[#ffcc00]">English (PDF)</a>
         </div>
 
         {{-- KPIs --}}

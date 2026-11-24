@@ -1,7 +1,7 @@
 @php
     $locale = app()->getLocale();
     $rtl = $locale === 'ar';
-    $guide = $rtl ? '/docs/guide-stockpilot-ar.pdf' : '/docs/guide-stockpilot-fr.pdf';
+    $guide = $rtl ? '/docs/guide-stokito-ar.pdf' : '/docs/guide-stokito-fr.pdf';
     $wa = 'https://wa.me/212676035777';
     $faqs = [
         ['Stokito fonctionne-t-il sur téléphone ?', "Oui. Stokito s'ouvre dans le navigateur de votre ordinateur, de votre tablette ou de votre téléphone. Il n'y a rien à installer."],
@@ -502,9 +502,9 @@
             <h2 class="mt-2 ind-h text-4xl uppercase leading-[0.95]">{{ __("Guide d'utilisation gratuit") }}</h2>
             <p class="mt-3 text-[#444]">{{ __("Tout Stokito expliqué simplement, avec des captures d'écran : produits, devis, bons de livraison, factures, encaissements, inventaire. Idéal pour former votre équipe.") }}</p>
             <div class="mt-6 flex flex-wrap gap-3">
-                <a href="/docs/guide-stockpilot-fr.pdf" target="_blank" rel="noopener" class="ind-btn bg-[#111] text-[#ffcc00]"><x-sp-icon name="doc" class="w-5 h-5" /> {{ __('Guide en français (PDF)') }}</a>
-                <a href="/docs/guide-stockpilot-ar.pdf" target="_blank" rel="noopener" class="ind-btn bg-white text-[#111]"><x-sp-icon name="doc" class="w-5 h-5" /> <span dir="rtl">الدليل بالعربية (PDF)</span></a>
-                <a href="/docs/guide-stockpilot-en.pdf" target="_blank" rel="noopener" class="ind-btn bg-white text-[#111]"><x-sp-icon name="doc" class="w-5 h-5" /> English (PDF)</a>
+                <a href="/docs/guide-stokito-fr.pdf" target="_blank" rel="noopener" class="ind-btn bg-[#111] text-[#ffcc00]"><x-sp-icon name="doc" class="w-5 h-5" /> {{ __('Guide en français (PDF)') }}</a>
+                <a href="/docs/guide-stokito-ar.pdf" target="_blank" rel="noopener" class="ind-btn bg-white text-[#111]"><x-sp-icon name="doc" class="w-5 h-5" /> <span dir="rtl">الدليل بالعربية (PDF)</span></a>
+                <a href="/docs/guide-stokito-en.pdf" target="_blank" rel="noopener" class="ind-btn bg-white text-[#111]"><x-sp-icon name="doc" class="w-5 h-5" /> English (PDF)</a>
             </div>
         </div>
     </div>

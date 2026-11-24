@@ -196,7 +196,7 @@
             <li>Ce n’est <strong>pas une plateforme de facturation électronique agréée</strong> : les factures sont produites en PDF.</li>
             <li>Pas de durée de validité dédiée sur le devis (à indiquer dans les notes), ni de factures de situation pour les chantiers.</li>
         </ul>
-        <p>Pour voir chaque écran pas à pas, téléchargez le <a href="/docs/guide-stockpilot-fr.pdf" target="_blank" rel="noopener">guide d’utilisation (PDF)</a> ou ouvrez la <a href="{{ route('demo.login') }}">démo avec des données fictives</a>.</p>
+        <p>Pour voir chaque écran pas à pas, téléchargez le <a href="/docs/guide-stokito-fr.pdf" target="_blank" rel="noopener">guide d’utilisation (PDF)</a> ou ouvrez la <a href="{{ route('demo.login') }}">démo avec des données fictives</a>.</p>
 
         <div class="my-12 bg-[#111] text-white border-2 border-[#111] shadow-[8px_8px_0_#ffcc00]">
             <div class="ind-hazard h-2"></div>

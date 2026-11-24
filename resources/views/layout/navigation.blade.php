@@ -101,7 +101,7 @@
         @endforeach
 
         <div class="pt-3 mt-3 border-t-2 border-[#111] space-y-0.5">
-            <a href="/docs/guide-stockpilot-{{ in_array(app()->getLocale(), ['ar', 'en'], true) ? app()->getLocale() : 'fr' }}.pdf" target="_blank" rel="noopener" class="{{ $linkClass(false) }}">
+            <a href="/docs/guide-stokito-{{ in_array(app()->getLocale(), ['ar', 'en'], true) ? app()->getLocale() : 'fr' }}.pdf" target="_blank" rel="noopener" class="{{ $linkClass(false) }}">
                 <x-sp-icon name="doc" class="w-[18px] h-[18px]" /> {{ __("Guide d'utilisation") }}
             </a>
             <a href="{{ route('profile') }}" wire:navigate class="{{ $linkClass(request()->routeIs('profile')) }}">

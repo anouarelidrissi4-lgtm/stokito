@@ -168,7 +168,7 @@
             <img src="/images/screens/screen-inventaire.webp?v=20261123" width="1400" height="871" loading="lazy" alt="Écran d’inventaire du logiciel de gestion de stock Stokito : stock système, quantité comptée et écart par produit" class="w-full">
             <figcaption class="px-4 py-2 border-t-2 border-[#111] text-sm text-[#444]">L’inventaire dans Stokito : l’écart apparaît avant de corriger le stock (démo, données fictives).</figcaption>
         </figure>
-        <p>Pour voir chaque écran pas à pas, téléchargez le <a href="/docs/guide-stockpilot-fr.pdf" target="_blank" rel="noopener">guide d’utilisation (PDF)</a>, ou ouvrez la <a href="{{ route('demo.login') }}">démo avec des données fictives</a>.</p>
+        <p>Pour voir chaque écran pas à pas, téléchargez le <a href="/docs/guide-stokito-fr.pdf" target="_blank" rel="noopener">guide d’utilisation (PDF)</a>, ou ouvrez la <a href="{{ route('demo.login') }}">démo avec des données fictives</a>.</p>
 
         <div class="my-12 bg-[#111] text-white border-2 border-[#111] shadow-[8px_8px_0_#ffcc00]">
             <div class="ind-hazard h-2"></div>

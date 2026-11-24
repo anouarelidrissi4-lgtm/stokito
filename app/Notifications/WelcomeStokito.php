@@ -25,7 +25,7 @@ class WelcomeStokito extends Notification
             ->line(__('2. Ajoutez vos produits, un par un ou en important votre fichier Excel.'))
             ->line(__('3. Faites votre premier devis, puis transformez-le en bon de livraison et en facture.'))
             ->action(__('Ouvrir mon espace'), route('dashboard'))
-            ->line(__('Le guide d’utilisation explique chaque écran : :url', ['url' => url('/docs/guide-stockpilot-fr.pdf')]))
+            ->line(__('Le guide d’utilisation explique chaque écran : :url', ['url' => url('/docs/guide-stokito-fr.pdf')]))
             ->line(__('Une question ? Répondez simplement à cet email ou écrivez-nous sur WhatsApp au +212 676 035 777.'))
             ->salutation(__('L’équipe Stokito'));
     }
