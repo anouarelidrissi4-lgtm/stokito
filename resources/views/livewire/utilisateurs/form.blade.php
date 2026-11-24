@@ -77,7 +77,7 @@
 
         <div class="flex justify-end gap-2 pt-2 border-t">
             <a href="{{ route('utilisateurs.index') }}" wire:navigate class="px-4 py-2 text-sm text-gray-600 rounded-lg border border-gray-300">Annuler</a>
-            <button wire:click="save" class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-700">
+            <button wire:click="save" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-700">
                 Enregistrer
             </button>
         </div>

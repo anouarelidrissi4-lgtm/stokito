@@ -93,7 +93,7 @@
                     @endif
                     <!-- Page Heading -->
                     @if (isset($header))
-                        <div class="bg-white border-b border-gray-200 px-4 sm:px-6 lg:px-8 py-4 print:hidden">
+                        <div class="px-4 sm:px-6 lg:px-8 pt-6 lg:pt-8 print:hidden">
                             {{ $header }}
                         </div>
                     @endif

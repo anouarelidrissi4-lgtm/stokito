@@ -36,7 +36,7 @@
             <button wire:click="create" class="flex items-center gap-1.5 bg-indigo-600 text-white px-3 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-700">
                 <span>+</span> Nouveau produit
             </button>
-            <button wire:click="exportCsv" class="flex items-center gap-1.5 bg-green-600 text-white px-3 py-2 rounded-lg text-sm font-semibold hover:bg-green-700">
+            <button wire:click="exportCsv" class="flex items-center gap-1.5 bg-white text-[#111] border-2 border-[#111] px-3 py-2 text-sm font-semibold hover:bg-[#ffcc00]">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
                 Exporter Excel
             </button>
@@ -44,7 +44,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm6.293 4.293a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 10.414V18a1 1 0 11-2 0v-7.586l-1.293 1.293a1 1 0 01-1.414-1.414l3-3z" clip-rule="evenodd" /></svg>
                 Importer Excel
             </button>
-            <button onclick="window.print()" type="button" class="flex items-center gap-1.5 bg-gray-600 text-white px-3 py-2 rounded-lg text-sm font-semibold hover:bg-gray-700">
+            <button onclick="window.print()" type="button" class="flex items-center gap-1.5 bg-white text-[#111] border-2 border-[#111] px-3 py-2 text-sm font-semibold hover:bg-[#ffcc00]">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a1 1 0 001 1h8a1 1 0 001-1v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a1 1 0 00-1-1H6a1 1 0 00-1 1zm2 0h6v3H7V4zm6 10v3H7v-5h6v2z" /></svg>
                 Imprimer
             </button>

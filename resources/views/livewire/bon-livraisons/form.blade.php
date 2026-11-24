@@ -25,7 +25,7 @@
             @if ($numeroSearchPerformed)
                 <div class="mt-3 border rounded-md divide-y divide-gray-100 max-h-56 overflow-y-auto">
                     @forelse ($numeroSearchResults as $result)
-                        <a href="{{ route('bon-livraisons.edit', $result['id']) }}" wire:navigate class="flex items-center justify-between px-3 py-2 text-sm hover:bg-indigo-50">
+                        <a href="{{ route('bon-livraisons.edit', $result['id']) }}" wire:navigate class="flex items-center justify-between px-3 py-2 text-sm hover:bg-[#fff3c4]">
                             <span>
                                 <span class="font-medium text-gray-900">{{ $result['numero'] }}</span>
                                 <span class="text-gray-500"> &middot; {{ $result['client'] }} &middot; {{ $result['date'] }}</span>
@@ -71,8 +71,8 @@
                         <span class="text-sm text-gray-600">Normal</span>
                         <span class="relative inline-block w-10 h-5">
                             <input wire:model.live="tarif_gros" type="checkbox" class="peer sr-only">
-                            <span class="absolute inset-0 rounded-full bg-gray-300 peer-checked:bg-indigo-600 transition-colors"></span>
-                            <span class="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform peer-checked:translate-x-5"></span>
+                            <span class="absolute inset-0 border-2 border-[#111] bg-white peer-checked:bg-[#ffcc00] transition-colors"></span>
+                            <span class="absolute left-0.5 top-0.5 w-4 h-4 bg-[#111] transition-transform peer-checked:translate-x-5"></span>
                         </span>
                         <span class="text-sm text-gray-600">Gros</span>
                     </label>
@@ -177,8 +177,8 @@
                                                         <div :x-ref="'opt' + idx"
                                                             @click="query = p.name; open = false; $wire.set('items.{{ $index }}.product_id', p.id)"
                                                             @mouseenter="highlighted = idx"
-                                                            :class="{ 'bg-indigo-50 font-medium': idx === highlighted }"
-                                                            class="px-3 py-2 text-sm hover:bg-indigo-50 cursor-pointer">
+                                                            :class="{ 'bg-[#fff3c4] font-medium': idx === highlighted }"
+                                                            class="px-3 py-2 text-sm hover:bg-[#fff3c4] cursor-pointer">
                                                             <span x-text="p.name"></span>
                                                             <span class="text-gray-400 text-xs" x-text="p.reference"></span>
                                                         </div>

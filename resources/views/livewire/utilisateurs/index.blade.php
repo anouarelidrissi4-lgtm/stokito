@@ -31,7 +31,7 @@
                         <td class="px-6 py-4 text-sm text-gray-500">{{ $user->login ?? '-' }}</td>
                         <td class="px-6 py-4 text-sm text-gray-500">{{ $user->email }}</td>
                         <td class="px-6 py-4 text-sm">
-                            <span class="px-2 py-1 rounded-full text-xs font-semibold {{ $user->role === 'admin' ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-600' }}">{{ $user->role }}</span>
+                            <span class="px-2 py-1 rounded-full text-xs font-semibold {{ $user->role === 'admin' ? 'bg-[#ffe680] text-indigo-700' : 'bg-gray-100 text-gray-600' }}">{{ $user->role }}</span>
                         </td>
                         <td class="px-6 py-4 text-sm">
                             <span class="px-2 py-1 rounded-full text-xs font-semibold {{ ($user->status ?? 'active') === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600' }}">{{ ($user->status ?? 'active') === 'active' ? 'Actif' : 'Inactif' }}</span>

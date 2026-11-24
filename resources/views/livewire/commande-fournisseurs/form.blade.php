@@ -25,7 +25,7 @@
             @if ($numeroSearchPerformed)
                 <div class="mt-3 border rounded-md divide-y divide-gray-100 max-h-56 overflow-y-auto">
                     @forelse ($numeroSearchResults as $result)
-                        <a href="{{ route('commande-fournisseurs.edit', $result['id']) }}" wire:navigate class="flex items-center justify-between px-3 py-2 text-sm hover:bg-indigo-50">
+                        <a href="{{ route('commande-fournisseurs.edit', $result['id']) }}" wire:navigate class="flex items-center justify-between px-3 py-2 text-sm hover:bg-[#fff3c4]">
                             <span>
                                 <span class="font-medium text-gray-900">{{ $result['numero'] }}</span>
                                 <span class="text-gray-500"> &middot; {{ $result['fournisseur'] }} &middot; {{ $result['date'] }}</span>
@@ -155,8 +155,8 @@
                                                         <div :x-ref="'opt' + idx"
                                                             @click="query = p.name; open = false; $wire.set('items.{{ $index }}.product_id', p.id)"
                                                             @mouseenter="highlighted = idx"
-                                                            :class="{ 'bg-indigo-50 font-medium': idx === highlighted }"
-                                                            class="px-3 py-2 text-sm hover:bg-indigo-50 cursor-pointer">
+                                                            :class="{ 'bg-[#fff3c4] font-medium': idx === highlighted }"
+                                                            class="px-3 py-2 text-sm hover:bg-[#fff3c4] cursor-pointer">
                                                             <span x-text="p.name"></span>
                                                             <span class="text-gray-400 text-xs" x-text="p.reference"></span>
                                                         </div>
