@@ -56,30 +56,20 @@ class AuthenticationTest extends TestCase
 
     public function test_navigation_menu_can_be_rendered(): void
     {
-        $user = User::factory()->create();
+        // the menu is a Blade include since the 2026-11-22 redesign (no more Volt layout.navigation)
+        $this->companyUser();
 
-        $this->actingAs($user);
-
-        $response = $this->get('/dashboard');
-
-        $response
+        $this->get('/dashboard')
             ->assertOk()
-            ->assertSeeVolt('layout.navigation');
+            ->assertSee(route('logout'), false)
+            ->assertSee(route('devis.index'), false);
     }
 
     public function test_users_can_logout(): void
     {
-        $user = User::factory()->create();
+        $this->companyUser();
 
-        $this->actingAs($user);
-
-        $component = Volt::test('layout.navigation');
-
-        $component->call('logout');
-
-        $component
-            ->assertHasNoErrors()
-            ->assertRedirect('/');
+        $this->post('/logout')->assertRedirect('/');
 
         $this->assertGuest();
     }

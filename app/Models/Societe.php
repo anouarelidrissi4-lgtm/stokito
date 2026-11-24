@@ -33,6 +33,15 @@ class Societe extends Model
         'menu_config' => 'array',
     ];
 
+    /** @var array<string, self> memo of current(), per user/project/demo flag */
+    protected static array $currentCache = [];
+
+    /** Forget the memoised companies (tests, long-running workers). */
+    public static function flushCurrent(): void
+    {
+        static::$currentCache = [];
+    }
+
     public static function current(): self
     {
         $user = auth()->user();
@@ -43,7 +52,7 @@ class Societe extends Model
         }
 
         // memoised per user for the request: Fmt::money() calls this for every amount on a page
-        static $cache = [];
+        $cache = &static::$currentCache;
         $key = $user->id.'-'.$user->project_id.'-'.(int) $user->is_demo;
         if (isset($cache[$key]) && $cache[$key]->exists) {
             return $cache[$key];
