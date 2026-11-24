@@ -6,6 +6,9 @@ use App\Models\Societe;
 
 class Fmt
 {
+    /** No-break space between thousands: '3 129,62' stays one number on Arabic (RTL) pages and never wraps (2026-11-24). */
+    public const THOUSANDS = "\u{00A0}";
+
     /**
      * Format a quantity value using the company's configured qty_decimals
      * (falls back to 2 if not set).
@@ -14,7 +17,7 @@ class Fmt
     {
         $decimals = Societe::current()->qty_decimals ?? 2;
 
-        return number_format((float) $value, $decimals, ',', ' ');
+        return number_format((float) $value, $decimals, ',', self::THOUSANDS);
     }
 
     /**
@@ -42,6 +45,6 @@ class Fmt
     {
         $decimals = Societe::current()->price_decimals ?? 2;
 
-        return number_format((float) $value, $decimals, ',', ' ');
+        return number_format((float) $value, $decimals, ',', self::THOUSANDS);
     }
 }

@@ -14,20 +14,36 @@
                 <p class="ind-mono text-xs text-[#666] uppercase">{{ now()->locale(app()->getLocale())->isoFormat('dddd D MMMM YYYY') }}</p>
                 <h1 class="ind-h text-4xl uppercase leading-none mt-1">{{ __('Bonjour') }}, {{ $u->first_name ?: $u->name }}</h1>
             </div>
-            <div class="flex flex-wrap gap-2">
-                @if ($u->hasPermission('devis_creer'))
-                    <a href="{{ route('devis.create') }}" wire:navigate class="inline-flex items-center gap-1.5 bg-[#111] text-[#ffcc00] border-2 border-[#111] px-3.5 py-2 ind-h text-lg uppercase tracking-wider shadow-[3px_3px_0_#ffcc00]"><x-sp-icon name="plus" class="w-4 h-4" /> {{ __('Devis') }}</a>
-                @endif
-                @if ($u->hasPermission('factures_consulter'))
-                    <a href="{{ route('factures.create') }}" wire:navigate class="inline-flex items-center gap-1.5 bg-[#ffcc00] text-[#111] border-2 border-[#111] px-3.5 py-2 ind-h text-lg uppercase tracking-wider hover:bg-white"><x-sp-icon name="plus" class="w-4 h-4" /> {{ __('Facture') }}</a>
-                @endif
-                @if ($u->hasPermission('bl_creer'))
-                    <a href="{{ route('bon-livraisons.create') }}" wire:navigate class="inline-flex items-center gap-1.5 bg-white border-2 border-[#111] px-3.5 py-2 ind-h text-lg uppercase tracking-wider hover:bg-[#ffcc00]"><x-sp-icon name="plus" class="w-4 h-4" /> {{ __('Bon de livraison') }}</a>
-                @endif
-                @if ($u->hasPermission('gestion_commandes_fournisseurs'))
-                    <a href="{{ route('commande-fournisseurs.create') }}" wire:navigate class="inline-flex items-center gap-1.5 bg-white border-2 border-[#111] px-3.5 py-2 ind-h text-lg uppercase tracking-wider hover:bg-[#ffcc00]"><x-sp-icon name="plus" class="w-4 h-4" /> {{ __('Bon de commande') }}</a>
-                @endif
-            </div>
+            @php
+                $creates = array_values(array_filter([
+                    $u->hasPermission('devis_creer') ? [route('devis.create'), __('Devis'), 'doc', null] : null,
+                    $u->hasPermission('factures_consulter') ? [route('factures.create'), __('Facture'), 'doc', null] : null,
+                    $u->hasPermission('bl_creer') ? [route('bon-livraisons.create'), __('Bon de livraison'), 'truck', null] : null,
+                    $u->hasPermission('gestion_commandes_fournisseurs') ? [route('commande-fournisseurs.create'), __('Bon de commande'), 'cart', null] : null,
+                    $u->hasPermission('gestion_commandes_fournisseurs') ? [route('commande-fournisseurs.create'), __('Scanner une facture fournisseur'), 'plus', 'IA'] : null,
+                ]));
+            @endphp
+            @if ($creates)
+                {{-- one "+ Nouveau" button instead of four (2026-11-24): opens a menu on click --}}
+                <div class="relative" x-data="{ open: false }" @keydown.escape.window="open = false" @click.outside="open = false">
+                    <button type="button" @click="open = ! open" :aria-expanded="open" aria-haspopup="true"
+                        class="inline-flex items-center gap-2 bg-[#111] text-[#ffcc00] border-2 border-[#111] px-4 py-2 ind-h text-lg uppercase tracking-wider shadow-[3px_3px_0_#ffcc00]">
+                        <x-sp-icon name="plus" class="w-4 h-4" /> {{ __('Nouveau') }}
+                        <svg class="w-4 h-4 transition-transform" :class="open && 'rotate-180'" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+                    <div x-show="open" x-cloak x-transition.origin.top
+                        class="absolute start-0 sm:start-auto sm:end-0 z-30 mt-2 w-64 bg-white border-2 border-[#111] shadow-[5px_5px_0_#111]" role="menu">
+                        @foreach ($creates as [$href, $label, $icon, $badge])
+                            <a href="{{ $href }}" wire:navigate role="menuitem"
+                                class="flex items-center gap-3 px-4 py-3 text-[15px] font-semibold hover:bg-[#ffcc00] {{ $loop->last ? '' : 'border-b border-[#e3e0d8]' }}">
+                                <x-sp-icon :name="$icon" class="w-4 h-4 shrink-0" />
+                                <span class="flex-1">{{ $label }}</span>
+                                @if ($badge)<span class="ind-mono text-[10px] bg-[#111] text-[#ffcc00] px-1.5 py-0.5">{{ $badge }}</span>@endif
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
         </div>
 
         {{-- getting started (new self-service accounts, until the first product exists) --}}
