@@ -17,6 +17,8 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        // email the platform mailbox about real errors (throttled), see App\Support\ErrorAlert
+        $exceptions->reportable(fn (\Throwable $e) => \App\Support\ErrorAlert::send($e));
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
         );
