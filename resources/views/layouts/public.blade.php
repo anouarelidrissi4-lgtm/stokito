@@ -64,9 +64,9 @@
                         </div>
                     </div>
                     @auth
-                        <a href="{{ route('dashboard') }}" class="hidden sm:flex h-9 px-4 items-center whitespace-nowrap bg-[#ffcc00] text-[#111] ind-h tracking-wider text-[15px] hover:bg-white">{{ __('Tableau de bord') }}</a>
+                        <a href="{{ route('dashboard') }}" class="flex h-9 px-3 sm:px-4 items-center whitespace-nowrap bg-[#ffcc00] text-[#111] ind-h tracking-wider text-[15px] hover:bg-white"><span class="sm:hidden">{{ __('Mon espace') }}</span><span class="hidden sm:inline">{{ __('Tableau de bord') }}</span></a>
                     @else
-                        <a href="{{ route('login') }}" class="hidden md:flex h-9 px-3 items-center whitespace-nowrap border border-[#3a3a3a] ind-h tracking-wider text-[15px] hover:border-[#ffcc00]">{{ __('Se connecter') }}</a>
+                        <a href="{{ route('login') }}" class="flex h-9 px-2.5 sm:px-3 items-center whitespace-nowrap border border-[#3a3a3a] ind-h tracking-wider text-[15px] hover:border-[#ffcc00]">{{ __('Se connecter') }}</a>
                         <a href="{{ route('register') }}" class="hidden sm:flex h-9 px-4 items-center whitespace-nowrap bg-[#ffcc00] text-[#111] ind-h tracking-wider text-[15px] hover:bg-white">{{ __('Créer un compte gratuit') }}</a>
                     @endauth
                     <button type="button" @click="menu = !menu" class="xl:hidden p-2 border border-[#3a3a3a]" aria-label="Menu">

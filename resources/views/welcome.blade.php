@@ -164,8 +164,8 @@
                 </div>
             </div>
             <a href="{{ $wa }}" target="_blank" rel="noopener" class="hidden sm:flex h-9 px-3 items-center gap-1.5 border border-[#3a3a3a] text-sm font-semibold hover:border-[#25d366] hover:text-[#25d366]">{!! $waIcon !!} <span class="hidden 2xl:inline">WhatsApp</span></a>
-            @guest<a href="{{ route('login') }}" class="hidden md:flex h-9 px-3 items-center whitespace-nowrap border border-[#3a3a3a] ind-h tracking-wider text-[15px] hover:border-[#ffcc00]">{{ __('Se connecter') }}</a>@endguest
-            <a href="{{ auth()->check() ? route('dashboard') : route('register') }}" class="hidden sm:flex h-9 px-4 items-center whitespace-nowrap bg-[#ffcc00] text-[#111] ind-h tracking-wider text-[15px] hover:bg-white">{{ auth()->check() ? __('Tableau de bord') : __('Créer un compte gratuit') }}</a>
+            @guest<a href="{{ route('login') }}" class="flex h-9 px-2.5 sm:px-3 items-center whitespace-nowrap border border-[#3a3a3a] ind-h tracking-wider text-[15px] hover:border-[#ffcc00]">{{ __('Se connecter') }}</a>@endguest
+            <a href="{{ auth()->check() ? route('dashboard') : route('register') }}" class="{{ auth()->check() ? 'flex' : 'hidden sm:flex' }} h-9 px-3 sm:px-4 items-center whitespace-nowrap bg-[#ffcc00] text-[#111] ind-h tracking-wider text-[15px] hover:bg-white">@auth<span class="sm:hidden">{{ __('Mon espace') }}</span><span class="hidden sm:inline">{{ __('Tableau de bord') }}</span>@else{{ __('Créer un compte gratuit') }}@endauth</a>
             <button type="button" @click="menu = !menu" class="xl:hidden p-2 border border-[#3a3a3a]" aria-label="Menu">
                 <x-sp-icon name="menu" class="w-6 h-6" x-show="!menu" /><x-sp-icon name="x" class="w-6 h-6" x-show="menu" x-cloak />
             </button>
