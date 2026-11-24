@@ -11,7 +11,7 @@ class CommandeFournisseur extends Model
     use ScopedToDemoMode;
 
     protected $fillable = [
-        'fournisseur_id', 'numero', 'date', 'status', 'total',
+        'fournisseur_id', 'numero', 'reference_fournisseur', 'date', 'status', 'total',
         'total_ht', 'tva_rate', 'remise_type', 'remise_value',
     ];
 

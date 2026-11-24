@@ -12,6 +12,39 @@
     @endif
 
     @if (! $commande)
+        {{-- Scanner IA d'une facture fournisseur (2026-11-24) --}}
+        <div class="bg-[#fff3c4] border-2 border-[#111] rounded-lg p-4 mb-4"
+            x-data="{ uploading: false, progress: 0 }"
+            x-on:livewire-upload-start="uploading = true; progress = 0"
+            x-on:livewire-upload-finish="uploading = false"
+            x-on:livewire-upload-cancel="uploading = false"
+            x-on:livewire-upload-error="uploading = false"
+            x-on:livewire-upload-progress="progress = $event.detail.progress">
+            <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                <div class="flex-1">
+                    <p class="font-bold text-gray-900">Scanner une facture fournisseur
+                        <span class="ml-1 align-middle text-[10px] font-bold uppercase tracking-wide bg-[#111] text-[#ffcc00] px-1.5 py-0.5 rounded">IA</span></p>
+                    <p class="text-sm text-gray-700 mt-0.5">Prenez la facture en photo ou choisissez un PDF : le fournisseur, la date et les lignes se remplissent. Vous vérifiez, puis vous enregistrez.</p>
+                    <p class="text-xs text-gray-500 mt-1">{{ auth()->user()->isDemo() ? 'Désactivé dans la démo : créez votre compte gratuit pour l’essayer sur vos factures.' : $scansLeft.' scan(s) restant(s) ce mois-ci.' }}</p>
+                </div>
+                <label class="shrink-0 cursor-pointer inline-flex items-center justify-center gap-2 bg-[#111] text-white px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-black"
+                    wire:loading.class="opacity-50 pointer-events-none" wire:target="scanFile">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.66-.9l.82-1.2A2 2 0 0 1 10.07 4h3.86a2 2 0 0 1 1.66.9l.82 1.2a2 2 0 0 0 1.66.9H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><circle cx="12" cy="13" r="3"/></svg>
+                    Photo ou PDF
+                    <input type="file" wire:model="scanFile" accept="image/*,application/pdf" class="sr-only">
+                </label>
+            </div>
+            <div x-show="uploading" x-cloak class="mt-3 text-sm text-gray-700">Envoi du fichier… <span x-text="progress"></span> %</div>
+            <div wire:loading.flex wire:target="scanFile" class="mt-3 items-center gap-2 text-sm font-medium text-gray-900">
+                <svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" class="opacity-25"/><path d="M22 12a10 10 0 0 0-10-10" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+                Lecture de la facture en cours (10 à 40 secondes)…
+            </div>
+            @error('scanFile') <p class="mt-3 text-sm text-red-700 font-medium">{{ $message }}</p> @enderror
+            @if ($scanMessage)
+                <p class="mt-3 text-sm text-gray-900 font-medium">✓ {{ $scanMessage }}</p>
+            @endif
+        </div>
+
         <div class="bg-white shadow rounded-lg p-4 mb-4">
             <label class="block text-sm font-medium text-gray-700 mb-1">Rechercher une commande existante par numéro</label>
             <form wire:submit.prevent="searchByNumero" class="flex gap-2">
@@ -41,7 +74,13 @@
     @endif
 
     <div class="bg-white shadow rounded-lg p-6 space-y-6">
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        @if ($scanSupplier)
+            <div class="flex flex-col sm:flex-row sm:items-center gap-2 bg-[#fff3c4] border border-[#ffcc00] rounded-md px-3 py-2 text-sm">
+                <span class="flex-1">Fournisseur lu sur la facture : <strong>{{ $scanSupplier['nom'] }}</strong>@if (! empty($scanSupplier['identifiant'])) ({{ $scanSupplier['identifiant'] }})@endif. Il n’est pas encore dans votre liste.</span>
+                <button type="button" wire:click="createScannedSupplier" class="shrink-0 bg-[#111] text-white px-3 py-1.5 rounded-md text-xs font-semibold hover:bg-black">Créer ce fournisseur</button>
+            </div>
+        @endif
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Fournisseur</label>
                 <select wire:model="fournisseur_id" class="w-full rounded-md border-gray-300 text-sm">
@@ -51,6 +90,11 @@
                     @endforeach
                 </select>
                 @error('fournisseur_id') <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">N° facture fournisseur</label>
+                <input wire:model="reference_fournisseur" type="text" placeholder="Facultatif" class="w-full rounded-md border-gray-300 text-sm">
+                @error('reference_fournisseur') <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
@@ -91,7 +135,7 @@
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                         @foreach ($items as $index => $item)
-                            <tr wire:key="item-{{ $index }}">
+                            <tr wire:key="item-{{ $scanRun }}-{{ $index }}">
                                 <td class="px-4 py-2">
                                     <div class="flex gap-1">
                                         <button type="button" wire:click="openProductModal({{ $index }})" title="Nouveau produit" class="shrink-0 h-9 w-9 flex items-center justify-center rounded-md border border-gray-300 text-gray-600 hover:bg-gray-50">+</button>
@@ -166,6 +210,17 @@
                                             </template>
                                         </div>
                                     </div>
+                                    @if (! empty($item['scan']))
+                                        @php($sc = $item['scan'])
+                                        @if ($sc['status'] === 'new')
+                                            <p class="text-xs mt-1 text-amber-800">Lu sur la facture : « {{ $sc['text'] }} »{{ $sc['reference'] ? ' · réf. '.$sc['reference'] : '' }} — produit introuvable.
+                                                <button type="button" wire:click="openProductModal({{ $index }})" class="font-semibold underline">Créer ce produit</button> ou choisissez-le dans la liste.</p>
+                                        @elseif ($sc['status'] === 'check')
+                                            <p class="text-xs mt-1 text-amber-800">À vérifier — lu sur la facture : « {{ $sc['text'] }} »</p>
+                                        @else
+                                            <p class="text-xs mt-1 text-gray-500">Lu sur la facture : « {{ $sc['text'] }} »</p>
+                                        @endif
+                                    @endif
                                     @error("items.{$index}.product_id") <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
                                 </td>
                                 <td class="px-4 py-2">
