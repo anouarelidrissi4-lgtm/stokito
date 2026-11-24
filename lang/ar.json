@@ -414,5 +414,7 @@
     "Puis-je saisir une facture fournisseur en la prenant en photo ?": "هل يمكنني إدخال فاتورة مورّد بتصويرها؟",
     "Oui. Dans « Nouveau bon de commande », touchez « Photo ou PDF » : Stokito lit le fournisseur, la date, le numéro et les lignes de la facture, puis retrouve vos produits. Vous vérifiez avant d’enregistrer. 30 factures par mois sont incluses gratuitement.": "نعم. في «أمر شراء جديد» اضغط على «Photo ou PDF»: يقرأ Stokito المورّد والتاريخ والرقم وأسطر الفاتورة، ثم يجد منتجاتك. تراجع قبل الحفظ. 30 فاتورة شهريًا مجانًا.",
     "Scanner de factures fournisseurs": "ماسح فواتير المورّدين",
-    "En savoir plus": "اعرف المزيد"
+    "En savoir plus": "اعرف المزيد",
+    "L’application, écran par écran": "التطبيق، شاشة بشاشة",
+    "Les écrans de la démo, reproduits avec ses données fictives. Ouvrez la démo pour les essayer.": "شاشات النسخة التجريبية معروضة ببياناتها الوهمية. افتح النسخة التجريبية لتجربتها."
 }

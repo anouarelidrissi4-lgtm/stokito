@@ -550,33 +550,8 @@
     </div>
 </section>
 
-{{-- ============ REAL SCREENS ============ --}}
-<section id="ecrans" class="py-20 sm:py-24 scroll-mt-20 bg-[#f4f2ec]" x-data="{ tab: 0, n: {{ count($screens) }}, t: null }" x-init="t = setInterval(() => tab = (tab + 1) % n, 5000)">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6">
-        <div class="flex flex-wrap items-end justify-between gap-6 border-b-2 border-[#111] pb-6">
-            <div>
-                <p class="ind-mono text-xs text-[#666]">SECTION 04 · {{ __('Écrans') }}</p>
-                <h2 class="mt-2 ind-h text-4xl sm:text-5xl uppercase leading-[0.95]">{{ __('Les vrais écrans de l’application') }}</h2>
-            </div>
-            <p class="max-w-sm text-[#444]">{{ __('Ce que vous voyez ici est la démo en ligne, avec des données fictives.') }}</p>
-        </div>
-        <div class="mt-8 flex flex-wrap gap-0">
-            @foreach ($screens as $i => [$key, $label])
-                <button type="button" @click="tab = {{ $i }}; clearInterval(t)" class="ind-h tracking-wider uppercase px-4 py-2 border-2 border-[#111] -me-0.5 -mb-0.5" :class="tab === {{ $i }} ? 'bg-[#111] text-[#ffcc00]' : 'bg-white text-[#111] hover:bg-[#ffcc00]'">{{ __($label) }}</button>
-            @endforeach
-        </div>
-        <div class="border-2 border-[#111] bg-white shadow-[10px_10px_0_#111]">
-            <div class="h-9 flex items-center justify-between px-4 border-b-2 border-[#111] bg-[#f4f2ec]" dir="ltr"><span class="ind-mono text-[11px] text-[#555]">stokito.com</span><span class="ind-bc w-20 h-4"></span></div>
-            <div class="grid">
-            @foreach ($screens as $i => [$key, $label])
-                <img src="/images/screens/screen-{{ $key }}.webp?v=20261123" alt="{{ __('Capture d’écran Stokito') }} : {{ __($label) }}" width="1400" @if ($i) loading="lazy" @endif
-                    class="col-start-1 row-start-1 w-full self-start transition-opacity duration-500" :class="tab === {{ $i }} ? 'opacity-100' : 'opacity-0 pointer-events-none'" @if ($i) style="opacity:0" @endif x-bind:style="''">
-            @endforeach
-            </div>
-        </div>
-        <div class="mt-10"><a href="{{ route('demo.login') }}" class="ind-btn bg-[#ffcc00] text-[#111]">{{ __('Ouvrir la démo') }} <span aria-hidden="true">{{ $rtl ? '←' : '→' }}</span></a></div>
-    </div>
-</section>
+{{-- ============ SCREENS (coded replicas, 2026-11-24) ============ --}}
+@include('landing.screens')
 
 {{-- ============ GUIDE ============ --}}
 <section id="guide" class="py-20 scroll-mt-20 ind-concrete border-y-2 border-[#111]">
