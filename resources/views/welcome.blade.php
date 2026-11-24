@@ -7,6 +7,7 @@
         ['Stokito fonctionne-t-il sur téléphone ?', "Oui. Stokito s'ouvre dans le navigateur de votre ordinateur, de votre tablette ou de votre téléphone. Il n'y a rien à installer."],
         ['Mes factures affichent-elles les identifiants de mon entreprise ?', 'Oui, selon votre pays : SIRET, N° TVA et RCS en France ; ICE, IF, RC, Taxe professionnelle et CNSS au Maroc. Les identifiants du client, la TVA détaillée et le montant en lettres sont aussi imprimés. Faites valider vos mentions par votre comptable.'],
         ['Comment le stock se met-il à jour ?', 'Le stock baisse quand un bon de livraison passe en « Livré » ou quand vous faites une facture directe. Il augmente quand vous marquez une commande fournisseur comme reçue. L’inventaire corrige les écarts.'],
+        ['Puis-je saisir une facture fournisseur en la prenant en photo ?', 'Oui. Dans « Nouveau bon de commande », touchez « Photo ou PDF » : Stokito lit le fournisseur, la date, le numéro et les lignes de la facture, puis retrouve vos produits. Vous vérifiez avant d’enregistrer. 30 factures par mois sont incluses gratuitement.'],
         ['Plusieurs employés peuvent-ils travailler en même temps ?', 'Oui. Chaque employé a son compte et vous choisissez ce qu’il peut voir : par exemple cacher les prix d’achat et les marges aux vendeurs.'],
         ['Puis-je importer mes produits depuis Excel ?', 'Oui. Exportez la liste pour obtenir le modèle, remplissez-le dans Excel puis importez-le : les catégories manquantes sont créées automatiquement.'],
         ['Mes données sont-elles sauvegardées ?', 'Oui. Une sauvegarde automatique est faite chaque nuit et chaque société ne voit que ses propres données.'],
@@ -123,6 +124,18 @@
         @keyframes lpMarquee { to { transform: translateX(-50%); } }
         @keyframes lpMarqueeR { to { transform: translateX(50%); } }
         .lp-shot { display: none; } .lp-shot.on { display: block; animation: lpFade .5s ease; }
+        /* scanner IA section (2026-11-24) */
+        @keyframes scBeam { 0%,3% { top: 0; opacity: 0; } 5% { opacity: 1; } 27% { top: calc(100% - 4px); opacity: 1; } 30%,100% { top: calc(100% - 4px); opacity: 0; } }
+        @keyframes scRow { 0%,28% { opacity: 0; transform: translateY(6px); } 33%,93% { opacity: 1; transform: none; } 98%,100% { opacity: 0; } }
+        @keyframes scTag { 0%,26% { opacity: 1; } 29%,100% { opacity: 0; } }
+        @keyframes scTag2 { 0%,26% { opacity: 0; } 29%,93% { opacity: 1; } 98%,100% { opacity: 0; } }
+        .sc-beam { position: absolute; left: -6px; right: -6px; height: 4px; background: #ffcc00; box-shadow: 0 0 0 1px #111, 0 0 18px 6px rgba(255,204,0,.55); animation: scBeam 9s infinite; }
+        .sc-row { animation: scRow 9s infinite; animation-delay: calc(var(--i) * .35s); }
+        .sc-tag1 { animation: scTag 9s infinite; } .sc-tag2 { animation: scTag2 9s infinite; }
+        @media (prefers-reduced-motion: reduce) {
+            .sc-beam, .sc-tag1 { animation: none !important; opacity: 0 !important; }
+            .sc-row, .sc-tag2 { animation: none !important; opacity: 1 !important; }
+        }
         @keyframes lpFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
         @media (prefers-reduced-motion: reduce) {
             .hx *, .lp-loop *, .lp-marquee { animation: none !important; }
@@ -149,6 +162,7 @@
         <nav class="hidden xl:flex items-center gap-6 whitespace-nowrap ind-h text-[15px] tracking-wider text-[#d6d6d6]">
             <a href="#parcours" class="hidden 2xl:inline hover:text-[#ffcc00]">{{ __('Comment ça marche') }}</a>
             <a href="#fonctionnalites" class="hover:text-[#ffcc00]">{{ __('Fonctionnalités') }}</a>
+            <a href="#scanner" class="hover:text-[#ffcc00]">{{ __('Scanner IA') }}</a>
             <a href="#ecrans" class="hover:text-[#ffcc00]">{{ __('Écrans') }}</a>
             <a href="#guide" class="hover:text-[#ffcc00]">{{ __('Guide') }}</a>
             <a href="#faq" class="hover:text-[#ffcc00]">{{ __('Questions') }}</a>
@@ -174,6 +188,7 @@
     <div x-show="menu" x-cloak @click="menu = false" class="xl:hidden border-t border-[#2a2a2a] px-4 pb-4 pt-2 ind-h tracking-wider text-lg">
         <a href="#parcours" class="block py-2.5 border-b border-[#2a2a2a]">{{ __('Comment ça marche') }}</a>
         <a href="#fonctionnalites" class="block py-2.5 border-b border-[#2a2a2a]">{{ __('Fonctionnalités') }}</a>
+        <a href="#scanner" class="block py-2.5 border-b border-[#2a2a2a]">{{ __('Scanner IA') }}</a>
         <a href="#ecrans" class="block py-2.5 border-b border-[#2a2a2a]">{{ __('Écrans') }}</a>
         <a href="#guide" class="block py-2.5 border-b border-[#2a2a2a]">{{ __('Guide') }}</a>
         <a href="#faq" class="block py-2.5 border-b border-[#2a2a2a]">{{ __('Questions') }}</a>
@@ -205,7 +220,11 @@
                 <a href="{{ route('register') }}" class="ind-btn bg-[#111] text-[#ffcc00]">{{ __('Créer un compte gratuit') }} <span aria-hidden="true">{{ $rtl ? '←' : '→' }}</span></a>
                 <a href="{{ route('demo.login') }}" class="ind-btn bg-white text-[#111]">{{ __('Tester la démo') }}</a>
             </div>
-            <dl class="mt-10 grid grid-cols-3 max-w-lg border-2 border-[#111] bg-white">
+            <a href="#scanner" class="mt-6 inline-flex items-center gap-2 border-2 border-[#111] bg-white px-3 py-1.5 text-sm font-semibold hover:bg-[#ffcc00]">
+                <span class="ind-mono text-[10px] bg-[#111] text-[#ffcc00] px-1.5 py-0.5">{{ __('NOUVEAU') }}</span>
+                {{ __('Scannez vos factures fournisseurs') }} <span aria-hidden="true">{{ $rtl ? '←' : '→' }}</span>
+            </a>
+            <dl class="mt-8 grid grid-cols-3 max-w-lg border-2 border-[#111] bg-white">
                 <div class="p-3 border-e-2 border-[#111]"><dt class="ind-mono text-[10px] text-[#777]">INSTALL.</dt><dd class="ind-h text-lg leading-tight">{{ __('Sans installation') }}</dd></div>
                 <div class="p-3 border-e-2 border-[#111]"><dt class="ind-mono text-[10px] text-[#777]">LANG.</dt><dd class="ind-h text-lg leading-tight">{{ __('Français, anglais, arabe') }}</dd></div>
                 <div class="p-3"><dt class="ind-mono text-[10px] text-[#777]">ÉCRAN</dt><dd class="ind-h text-lg leading-tight">{{ __('PC et téléphone') }}</dd></div>
@@ -453,6 +472,79 @@
                 </div>
             @endforeach
             <p class="mt-5 pt-4 border-t border-[#2a2a2a] ind-mono text-[11px] text-[#9a9a9a]">{{ __('Aussi : Belgique, Suisse, Luxembourg, Sénégal, Côte d’Ivoire, Cameroun, Tunisie, Algérie. Devise, TVA et identifiants s’adaptent au pays choisi.') }}</p>
+        </div>
+    </div>
+</section>
+
+{{-- ============ SCANNER IA (2026-11-24) ============ --}}
+<section id="scanner" class="py-20 sm:py-24 scroll-mt-20 bg-[#f4f2ec] border-b-2 border-[#111]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 grid lg:grid-cols-12 gap-12 items-center">
+        <div class="lg:col-span-5">
+            <p class="ind-mono text-xs text-[#666]"><span class="bg-[#111] text-[#ffcc00] px-1.5 py-0.5 me-1">{{ __('NOUVEAU') }}</span> MOD-07 · {{ __('Scanner IA') }}</p>
+            <h2 class="mt-3 ind-h text-4xl sm:text-5xl uppercase leading-[0.95]">{{ __('Une photo de la facture. Le bon de commande se remplit.') }}</h2>
+            <p class="mt-5 text-[#333]">{{ __('Prenez en photo la facture de votre fournisseur, ou choisissez le PDF. Stokito lit le fournisseur, la date, le numéro et chaque ligne, puis retrouve vos produits. Vous vérifiez, vous enregistrez : à la réception, le stock monte tout seul.') }}</p>
+            <ul class="mt-6 space-y-2.5 text-sm">
+                @foreach ([
+                    __('Fournisseur reconnu par son SIRET, son ICE ou son nom'),
+                    __('Produits retrouvés par référence, code-barres ou désignation'),
+                    __('Produit inconnu : créé en un clic, déjà prérempli'),
+                    __('Rien n’est enregistré sans votre validation'),
+                ] as $pt)
+                    <li class="flex gap-3"><span class="mt-0.5 grid place-items-center w-5 h-5 shrink-0 bg-[#ffcc00] border-2 border-[#111] text-[11px] font-bold">✓</span><span>{{ $pt }}</span></li>
+                @endforeach
+            </ul>
+            <div class="mt-8 flex flex-wrap items-center gap-3">
+                <a href="{{ route('register') }}" class="ind-btn bg-[#111] text-[#ffcc00]">{{ __('Créer un compte gratuit') }} <span aria-hidden="true">{{ $rtl ? '←' : '→' }}</span></a>
+            </div>
+            <p class="mt-4 ind-mono text-[11px] text-[#666]">{{ __('30 factures par mois incluses gratuitement · photo JPG, PNG ou PDF · 10 Mo max.') }}</p>
+        </div>
+
+        {{-- animation: the invoice is read, then the lines appear in the purchase order --}}
+        <div class="lg:col-span-7 grid sm:grid-cols-[0.9fr_1.1fr] gap-5 items-center" dir="ltr" aria-hidden="true">
+            <div class="relative bg-white border-2 border-[#111] p-4 shadow-[6px_6px_0_#111] -rotate-1 text-[11px] leading-snug">
+                <div class="sc-beam"></div>
+                <div class="flex justify-between items-start">
+                    <div><b class="text-[12px]">QUINCAILLERIE RHÔNE PRO</b><div class="text-[#666]">SIRET 812 345 678 00027</div><div class="text-[#666]">69007 Lyon</div></div>
+                    <div class="text-right"><b class="ind-h text-lg">FACTURE</b><div class="ind-mono text-[10px]">FA-24-11872</div><div class="ind-mono text-[10px]">18/11/2026</div></div>
+                </div>
+                <div class="mt-3 border-t border-[#111] pt-1 space-y-1 ind-mono text-[10px]">
+                    <div class="flex justify-between"><span>VIS-440 Vis inox 4x40</span><span>10 × 6,50</span></div>
+                    <div class="flex justify-between"><span>CHV-08 Chevilles 8 mm</span><span>5 × 3,20</span></div>
+                    <div class="flex justify-between"><span>PSF18 Perceuse 18V</span><span>1 × 89,00</span></div>
+                    <div class="flex justify-between"><span>Frais de port</span><span>1 × 12,00</span></div>
+                </div>
+                <div class="mt-2 border-t border-[#111] pt-1 flex justify-between font-bold"><span>TOTAL HT</span><span>182,00 €</span></div>
+                <div class="mt-3 relative h-4 ind-mono text-[10px]">
+                    <span class="sc-tag1 absolute inset-0 text-[#666]">photo.jpg · {{ __('lecture…') }}</span>
+                    <span class="sc-tag2 absolute inset-0 text-[#0a7a3e] font-semibold">✓ {{ __('4 lignes lues') }}</span>
+                </div>
+            </div>
+
+            <div class="bg-white border-2 border-[#111] shadow-[6px_6px_0_#111] text-xs">
+                <div class="bg-[#111] text-[#ffcc00] ind-mono text-[10px] px-3 py-2 flex justify-between"><span>{{ __('BON DE COMMANDE') }} · CF-00031</span><span>N° FA-24-11872</span></div>
+                <div class="px-3 py-2 border-b border-[#ddd] flex justify-between"><span class="text-[#666]">{{ __('Fournisseur') }}</span><b>Quincaillerie Rhône Pro</b></div>
+                @foreach ([
+                    ['Vis inox 4x40 (boîte 100)', '10', '6,50', 'ok'],
+                    ['Chevilles nylon 8 mm', '5', '3,20', 'ok'],
+                    ['Perceuse sans fil 18V', '1', '89,00', 'check'],
+                    ['Frais de port', '1', '12,00', 'new'],
+                ] as $i => [$n, $q, $pu, $st])
+                    <div class="sc-row px-3 py-2 border-b border-[#eee]" style="--i: {{ $i }}">
+                        <div class="flex justify-between gap-2"><span class="font-medium truncate">{{ $n }}</span><span class="ind-mono shrink-0">{{ $q }} × {{ $pu }}</span></div>
+                        @if ($st === 'ok')
+                            <span class="ind-mono text-[10px] text-[#0a7a3e]">✓ {{ __('Reconnu') }}</span>
+                        @elseif ($st === 'check')
+                            <span class="ind-mono text-[10px] text-[#a15c00]">{{ __('À vérifier') }}</span>
+                        @else
+                            <span class="ind-mono text-[10px] bg-[#ffcc00] border border-[#111] px-1">+ {{ __('Créer ce produit') }}</span>
+                        @endif
+                    </div>
+                @endforeach
+                <div class="px-3 py-2.5 flex items-center justify-between">
+                    <b class="ind-mono">182,00 € HT</b>
+                    <span class="bg-[#111] text-[#ffcc00] ind-h uppercase tracking-wider text-sm px-3 py-1">{{ __('Enregistrer') }}</span>
+                </div>
+            </div>
         </div>
     </div>
 </section>
