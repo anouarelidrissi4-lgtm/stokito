@@ -4,6 +4,7 @@
 # - server ahead of GitHub (commit made on the server) -> push it to GitHub
 # - histories diverged -> do nothing, log once (fix by hand)
 set -uo pipefail
+export PATH=/usr/local/bin:/usr/bin:/bin   # cron gives no PATH: npm could not find vite
 APP=/home/stockpilot/htdocs/stockpilot.cloud
 cd "$APP" || exit 1
 exec 9>/tmp/stokito-deploy.lock
@@ -41,10 +42,12 @@ run() {
     php artisan migrate --force
   fi
   if grep -q '^package-lock.json$' <<<"$CHANGED"; then npm ci --no-audit --no-fund; fi
-  npm run build >/dev/null
+  npm run build > /tmp/stokito-build.log 2>&1 || { tail -20 /tmp/stokito-build.log; exit 1; }
   php artisan optimize:clear >/dev/null
   php artisan view:cache >/dev/null
   php artisan route:cache >/dev/null
   echo "== ok"
 }
-( run ) >> "$LOG" 2>&1 || echo "== $(date -Is) FAILED (see above)" >> "$LOG"
+# not "( run ) || ...": inside an || list bash ignores set -e, so failures were logged as ok
+( run ) >> "$LOG" 2>&1
+[ $? -eq 0 ] || echo "== $(date -Is) FAILED (see above)" >> "$LOG"
