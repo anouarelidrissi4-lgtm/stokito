@@ -186,7 +186,7 @@
                 </div>
             @endforeach
         </div>
-        <p>Votre logo, votre adresse, votre SIREN et vos conditions de paiement (pénalités de retard, indemnité de 40 €) se règlent une fois dans « Ma Société » et apparaissent sur chaque PDF. Les avoirs, les clients, le catalogue et l’import Excel sont inclus.</p>
+        <p>Votre logo, votre adresse, votre SIREN et vos conditions de paiement se règlent une fois dans « Ma Société » et apparaissent sur chaque PDF. Une même facture peut mélanger <strong>plusieurs taux de TVA</strong> (20 %, 10 %, 5,5 %…) avec une ligne de TVA par taux. Pour une entreprise française, Stokito ajoute aussi les mentions que vous activez : « TVA non applicable, art. 293 B du CGI », pénalités de retard, indemnité forfaitaire de 40 €, escompte, adresse de livraison et nature des opérations. Les avoirs, les clients, le catalogue et l’import Excel sont inclus.</p>
         <figure class="my-8 border-2 border-[#111] bg-white shadow-[8px_8px_0_#111]">
             <img src="/images/screens/screen-factures.webp?v=20261123" width="1400" height="871" loading="lazy" alt="Liste des factures dans le logiciel devis facture Stokito : numéro, client, montant TTC, montant payé et statut" class="w-full">
             <figcaption class="px-4 py-2 border-t-2 border-[#111] text-sm text-[#444]">La liste des factures dans Stokito : le statut payé, partiel ou en retard se met à jour avec les règlements (démo, données fictives).</figcaption>
@@ -194,7 +194,6 @@
         <h3>Ce que Stokito ne fait pas encore</h3>
         <ul>
             <li>Ce n’est <strong>pas une plateforme de facturation électronique agréée</strong> : les factures sont produites en PDF.</li>
-            <li>Un seul taux de TVA par document, et pas encore de mention automatique « TVA non applicable, art. 293 B du CGI » (vous pouvez l’écrire dans les notes).</li>
             <li>Pas de durée de validité dédiée sur le devis (à indiquer dans les notes), ni de factures de situation pour les chantiers.</li>
         </ul>
         <p>Pour voir chaque écran pas à pas, téléchargez le <a href="/docs/guide-stockpilot-fr.pdf" target="_blank" rel="noopener">guide d’utilisation (PDF)</a> ou ouvrez la <a href="{{ route('demo.login') }}">démo avec des données fictives</a>.</p>
