@@ -39,6 +39,9 @@
                 </div>
 
                 <div class="flex items-center gap-1.5 sm:gap-2">
+                    @if (auth()->user()->project_id)
+                        <livewire:global-search />
+                    @endif
                     <!-- Dark mode toggle -->
                     <button type="button"
                         x-data="{ dark: document.documentElement.classList.contains('dark') }"

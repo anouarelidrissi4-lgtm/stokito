@@ -82,7 +82,7 @@
                                 'bg-red-100 text-red-700' => $facture->status === 'en_retard',
                             ])>{{ \App\Support\Fmt::status($facture->status) }}</span>
                         </td>
-                        <td class="px-4 py-4 text-right text-sm space-x-2 whitespace-nowrap">
+                        <td class="px-4 py-4 text-right text-sm"><div class="flex flex-wrap justify-end gap-x-2 gap-y-1 min-w-[10rem] max-w-[16rem] ms-auto">
                             <a href="{{ route('factures.edit', $facture->id) }}" wire:navigate class="text-indigo-600 hover:underline">Modifier</a>
                             <a href="{{ route('factures.pdf', $facture->id) }}" target="_blank" class="text-gray-500 hover:underline">PDF</a>
                             <button wire:click="openSend({{ $facture->id }})" class="text-gray-700 hover:underline" title="{{ $facture->sent_at ? 'Envoyée le '.$facture->sent_at->format('d/m/Y H:i') : 'Envoyer par email' }}">{{ $facture->sent_at ? 'Renvoyer' : 'Envoyer' }}</button>
@@ -93,7 +93,7 @@
                                 @endif
                             @endif
                             <button wire:click="delete({{ $facture->id }})" wire:confirm="Supprimer cette facture ?" class="text-red-600 hover:underline">Supprimer</button>
-                        </td>
+                        </div></td>
                     </tr>
                 @empty
                     <tr><td colspan="9" class="px-6 py-8 text-center text-sm text-gray-400">Aucune facture trouvee.</td></tr>

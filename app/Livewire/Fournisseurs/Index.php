@@ -11,6 +11,7 @@ class Index extends Component
 {
     use WithPagination, RequiresPermission;
 
+    #[\Livewire\Attributes\Url(as: 'q', except: '')]
     public string $search = '';
     public bool $showModal = false;
     public ?int $editingId = null;

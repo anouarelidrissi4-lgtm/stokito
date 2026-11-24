@@ -370,5 +370,14 @@
     "CA HT": "رقم المعاملات دون ضريبة",
     "CA TTC": "رقم المعاملات مع الضريبة",
     "Aucune vente sur la période": "لا توجد مبيعات في هذه الفترة",
-    "Inscriptions": "التسجيلات"
+    "Inscriptions": "التسجيلات",
+    "Rechercher": "بحث",
+    "Pages": "الصفحات",
+    "Page": "صفحة",
+    "Client, produit, n° de facture ou de devis…": "زبون، منتج، رقم فاتورة أو عرض سعر…",
+    "Tapez au moins 2 caractères. Astuce : Ctrl+K ou / ouvre la recherche partout.": "اكتب حرفين على الأقل. نصيحة: Ctrl+K أو / يفتح البحث من أي صفحة.",
+    "Aucun résultat.": "لا توجد نتائج.",
+    "pour choisir": "للاختيار",
+    "pour ouvrir": "للفتح",
+    "Bons de livraison": "سندات التسليم"
 }

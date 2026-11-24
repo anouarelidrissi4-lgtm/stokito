@@ -16,6 +16,7 @@ class Index extends Component
 {
     use WithFileUploads, WithPagination, RequiresPermission;
 
+    #[\Livewire\Attributes\Url(as: 'q', except: '')]
     public string $search = '';
     public string $categoryFilter = '';
     public bool $showModal = false;

@@ -351,5 +351,14 @@
     "CA HT": "Revenue excl. VAT",
     "CA TTC": "Revenue incl. VAT",
     "Aucune vente sur la période": "No sales in this period",
-    "Inscriptions": "Sign-ups"
+    "Inscriptions": "Sign-ups",
+    "Rechercher": "Search",
+    "Pages": "Pages",
+    "Page": "Page",
+    "Client, produit, n° de facture ou de devis…": "Customer, product, invoice or quote number…",
+    "Tapez au moins 2 caractères. Astuce : Ctrl+K ou / ouvre la recherche partout.": "Type at least 2 characters. Tip: Ctrl+K or / opens search anywhere.",
+    "Aucun résultat.": "No results.",
+    "pour choisir": "to choose",
+    "pour ouvrir": "to open",
+    "Bons de livraison": "Delivery notes"
 }
