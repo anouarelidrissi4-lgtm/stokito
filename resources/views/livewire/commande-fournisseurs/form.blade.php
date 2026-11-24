@@ -1,6 +1,6 @@
 <div class="py-6 px-4 sm:px-6 lg:px-8 max-w-5xl">
     <div class="flex items-center justify-between mb-6">
-        <h1 class="text-2xl font-bold text-gray-900">{{ $commande ? 'Modifier' : 'Nouvelle' }} Commande Fournisseur</h1>
+        <h1 class="text-2xl font-bold text-gray-900">{{ $commande ? __('Modifier le bon de commande') : __('Nouveau bon de commande') }}</h1>
         <a href="{{ route('commande-fournisseurs.index') }}" wire:navigate class="text-sm text-gray-500 hover:underline">&larr; Retour</a>
     </div>
 

@@ -52,8 +52,8 @@
             $creates = collect([
                 ['devis.create', 'Devis', 'devis_creer'],
                 ['factures.create', 'Facture', 'factures_consulter'],
-                ['bon-livraisons.create', 'Livraison', 'bl_creer'],
-                ['commande-fournisseurs.create', 'Commande', 'gestion_commandes_fournisseurs'],
+                ['bon-livraisons.create', 'Bon de livraison', 'bl_creer'],
+                ['commande-fournisseurs.create', 'Bon de commande', 'gestion_commandes_fournisseurs'],
             ])->filter(fn ($c) => $user->hasPermission($c[2]))->values();
         @endphp
         @if ($creates->isNotEmpty())
@@ -62,7 +62,7 @@
                 <div class="grid grid-cols-2 gap-1.5">
                     @foreach ($creates as [$cRoute, $cLabel])
                         <a href="{{ route($cRoute) }}" wire:navigate
-                           class="flex items-center justify-center gap-1 h-10 px-1.5 border-2 border-[#111] ind-h text-[15px] uppercase tracking-wide whitespace-nowrap {{ $loop->index === 0 ? 'bg-[#111] text-[#ffcc00] shadow-[2px_2px_0_#ffcc00] hover:bg-black' : ($loop->index === 1 ? 'bg-[#ffcc00] text-[#111] hover:bg-white' : 'bg-white text-[#111] hover:bg-[#ffcc00]') }}">
+                           class="{{ $loop->index >= 2 ? 'col-span-2' : '' }} flex items-center justify-center gap-1 h-10 px-1.5 border-2 border-[#111] ind-h text-[15px] uppercase tracking-wide whitespace-nowrap {{ $loop->index === 0 ? 'bg-[#111] text-[#ffcc00] shadow-[2px_2px_0_#ffcc00] hover:bg-black' : ($loop->index === 1 ? 'bg-[#ffcc00] text-[#111] hover:bg-white' : 'bg-white text-[#111] hover:bg-[#ffcc00]') }}">
                             <x-sp-icon name="plus" class="w-3.5 h-3.5 shrink-0" /> {{ __($cLabel) }}
                         </a>
                     @endforeach

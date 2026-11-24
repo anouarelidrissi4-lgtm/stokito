@@ -388,5 +388,9 @@
     "Nouvelle facture": "فاتورة جديدة",
     "Nouveau bon de livraison": "وصل تسليم جديد",
     "Nouvelle commande fournisseur": "طلبية مورد جديدة",
-    "Nouvelle Facture": "فاتورة جديدة"
+    "Nouvelle Facture": "فاتورة جديدة",
+    "Bons de commande": "طلبيات الشراء",
+    "Nouveau bon de commande": "طلبية شراء جديدة",
+    "Bon de commande": "طلبية شراء",
+    "Modifier le bon de commande": "تعديل طلبية الشراء"
 }

@@ -329,7 +329,7 @@ class Form extends Component
 
         $this->commande->recalculateTotals();
 
-        session()->flash('success', 'Commande fournisseur enregistrée.');
+        session()->flash('success', 'Bon de commande enregistré.');
 
         return $this->redirect(route('commande-fournisseurs.index'), navigate: true);
     }

@@ -273,7 +273,7 @@ Route::middleware(['auth'])->group(function () {
 
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.document', [
             'societe' => $societe,
-            'title' => 'Commande Fournisseur',
+            'title' => 'Bon de commande',
             'numero' => $commande->numero,
             'date' => $commande->date->format('d/m/Y'),
             'dueDate' => null,

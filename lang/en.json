@@ -369,5 +369,9 @@
     "Nouvelle facture": "New invoice",
     "Nouveau bon de livraison": "New delivery note",
     "Nouvelle commande fournisseur": "New supplier order",
-    "Nouvelle Facture": "New invoice"
+    "Nouvelle Facture": "New invoice",
+    "Bons de commande": "Purchase orders",
+    "Nouveau bon de commande": "New purchase order",
+    "Bon de commande": "Purchase order",
+    "Modifier le bon de commande": "Edit purchase order"
 }
