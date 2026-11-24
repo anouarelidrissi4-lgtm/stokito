@@ -79,6 +79,8 @@ class Edit extends Component
 
     public $devis_validite_jours = 30;
 
+    public $relances_auto = false;
+
     #[Validate('nullable|image|max:2048')]
     public $logo;
 
@@ -119,6 +121,7 @@ class Edit extends Component
         $this->tva_debits = (bool) $this->societe->tva_debits;
         $this->nature_operation_default = $this->societe->nature_operation_default ?? '';
         $this->devis_validite_jours = $this->societe->devis_validite_jours ?? 30;
+        $this->relances_auto = (bool) $this->societe->relances_auto;
     }
 
     public function updatedCountryCode($code): void
@@ -195,6 +198,7 @@ class Edit extends Component
             'tva_debits' => (bool) $this->tva_debits,
             'nature_operation_default' => $this->nature_operation_default ?: null,
             'devis_validite_jours' => (int) $this->devis_validite_jours,
+            'relances_auto' => (bool) $this->relances_auto,
         ];
 
         if ($this->logo) {

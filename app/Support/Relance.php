@@ -8,21 +8,33 @@ use App\Models\Societe;
 /** WhatsApp reminder link for an unpaid invoice (opens WhatsApp with a ready message). */
 class Relance
 {
-    /** Moroccan phone -> international digits for wa.me (0612.. -> 212612..), null if unusable. */
-    public static function phone(?string $raw): ?string
+    /**
+     * Phone -> international digits for wa.me, using the company's country (2026-11-24; was Morocco only):
+     * 0612345678 -> 212612345678 in Morocco, 33612345678 in France. Null if unusable.
+     */
+    public static function phone(?string $raw, ?string $countryCode = null): ?string
     {
-        $d = preg_replace('/\D/', '', (string) $raw);
-        if (str_starts_with($d, '00')) {
-            $d = substr($d, 2);
+        $raw = trim((string) $raw);
+        $d = preg_replace('/\D/', '', $raw);
+        if (str_starts_with($raw, '+') || str_starts_with($d, '00')) {
+            $d = ltrim(str_starts_with($d, '00') ? substr($d, 2) : $d, '0');
+
+            return strlen($d) >= 10 ? $d : null;
         }
-        if (str_starts_with($d, '0') && strlen($d) === 10) {
-            $d = '212'.substr($d, 1);
+        $cc = $countryCode ?? (Societe::current()->country_code ?: 'MA');
+        $dial = Countries::get($cc)['dial'] ?? null;
+        if (! $dial) {
+            return strlen($d) >= 11 ? $d : null;
         }
-        if (strlen($d) === 9 && in_array($d[0], ['5', '6', '7'], true)) {
-            $d = '212'.$d;
+        if (str_starts_with($d, $dial) && strlen($d) >= strlen($dial) + 8) {
+            return $d; // already international, without the +
+        }
+        // countries whose national numbers carry a trunk 0 that is dropped abroad
+        if (in_array($cc, ['MA', 'FR', 'BE', 'CH', 'DZ'], true) && str_starts_with($d, '0')) {
+            $d = substr($d, 1);
         }
 
-        return strlen($d) >= 11 ? $d : null;
+        return strlen($d) >= 8 ? $dial.$d : null;
     }
 
     public static function whatsappUrl(Facture $f): ?string

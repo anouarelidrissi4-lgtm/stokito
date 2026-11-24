@@ -210,6 +210,12 @@
                     @error('devis_validite_jours') <p class="text-red-600 text-xs mt-1">Entre 1 et 365 jours.</p> @enderror
                 </div>
             </div>
+            <div class="mt-4 border-2 border-[#111] bg-[#f4f2ec] p-4">
+                <label class="flex items-start gap-3 cursor-pointer">
+                    <input wire:model="relances_auto" type="checkbox" class="mt-1 rounded border-gray-300">
+                    <span class="text-sm text-gray-700"><strong>Relances automatiques par email</strong> : un rappel poli 7 jours après l’échéance, puis une deuxième relance à 30 jours, avec la facture en PDF. Seulement pour les factures non réglées dont le client a un email ; une seule fois par niveau. Les réponses arrivent sur l’email de Ma Société.</span>
+                </label>
+            </div>
         </div>
 
         @if ($country_code === 'FR')
