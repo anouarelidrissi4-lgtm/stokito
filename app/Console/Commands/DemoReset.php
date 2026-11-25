@@ -37,7 +37,7 @@ class DemoReset extends Command
 
     /** Tables holding tenant data, children first. */
     protected array $tables = [
-        'caisse_journal', 'caisse_clotures', 'caisse_tickets',
+        'depenses', 'caisse_journal', 'caisse_clotures', 'caisse_tickets',
         'reglements_clients', 'reglements_fournisseurs', 'avoirs_clients', 'avoirs_fournisseurs',
         'cheques_effets_fournisseurs', 'mouvements_bancaires', 'bons_de_chargement',
         'factures', 'bon_livraisons', 'devis', 'commande_fournisseurs', 'stock_movements',
@@ -189,6 +189,21 @@ class DemoReset extends Command
 
         TresorerieCompte::create(['name' => 'Caisse magasin', 'type' => 'caisse', 'initial_balance' => $m(15000), 'is_active' => true]);
         TresorerieCompte::create(['name' => 'Compte bancaire principal', 'type' => 'banque', 'bank_name' => 'Banque (démo)', 'initial_balance' => $m(250000), 'is_active' => true]);
+
+        // running costs (module Dépenses, 2026-11-25): [days ago, category, label, TTC in MAD, VAT %, mode, account type]
+        foreach ([
+            [15, 'telecom', 'Internet et téléphones', 390, 20, 'prelevement', 'banque'],
+            [9, 'transport', 'Gasoil camion de livraison', 300, 20, 'carte', 'banque'],
+            [3, 'fournitures', 'Rouleaux de tickets', 140, 20, 'especes', 'caisse'],
+        ] as [$ago, $cat, $label, $ttc, $rate, $mode, $type]) {
+            $ttc = $m($ttc);
+            $dep = \App\Models\Depense::create([
+                'date' => now()->subDays($ago)->toDateString(), 'categorie' => $cat, 'libelle' => $label,
+                'montant_ttc' => $ttc, 'montant_tva' => \App\Models\Depense::tvaFromTtc($ttc, $rate), 'mode_paiement' => $mode,
+                'tresorerie_compte_id' => TresorerieCompte::where('type', $type)->value('id'),
+            ]);
+            $dep->syncTresorerie();
+        }
 
         $ht = fn ($ttc) => round($ttc / 1.2, 2); // catalogue prices are TTC, document lines are HT
 

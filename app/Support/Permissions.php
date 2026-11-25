@@ -27,6 +27,7 @@ class Permissions
         'devis_edition' => 'Devis : Edition',
         'devis_supprimer' => 'Devis : Supprimer',
         'devis_valider' => 'Devis : Valider',
+        'depenses' => 'Dépenses',
         'documents_externes' => 'Documents externes',
         'factures_consulter' => 'Factures : Consulter',
 

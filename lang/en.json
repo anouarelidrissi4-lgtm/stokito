@@ -1,4 +1,7 @@
 {
+    "Dépenses du mois": "Expenses this month",
+    "Marge moins dépenses (HT)": "Margin minus expenses (excl. VAT)",
+    "Loyer, énergie, carburant…": "Rent, energy, fuel…",
     "Mentions légales": "Legal notice",
     "Tableau de bord": "Dashboard",
     "Catalogue": "Catalog",
@@ -182,7 +185,7 @@
     "Guide": "Guide",
     "Guide d'utilisation": "User guide",
     "Guide d'utilisation gratuit": "Free user guide",
-    "23 pages, pas à pas": "35 pages, step by step",
+    "23 pages, pas à pas": "36 pages, step by step",
     "Tout Stokito expliqué simplement, avec des captures d'écran : produits, devis, bons de livraison, factures, encaissements, inventaire. Idéal pour former votre équipe.": "Everything in Stokito explained simply, with screenshots: products, quotes, delivery notes, invoices, payments, stock count. Ideal to train your team.",
     "Guide en français (PDF)": "Guide in French (PDF)",
     "Tout Stokito expliqué pas à pas, à garder ou à partager avec votre équipe.": "All of Stokito explained step by step, to keep or share with your team.",

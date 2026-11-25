@@ -118,6 +118,18 @@
                 <div class="mt-1 text-xs text-slate-400">{{ $margePct !== null ? $margePct.' % '.__('du CA HT') : __('Aucune facture ce mois') }}</div>
             </div>
             @endif
+            @if ($u->hasPermission('depenses'))
+            <a href="{{ route('depenses.index') }}" wire:navigate class="{{ $card }} p-4 sm:p-5 hover:bg-[#ffcc00]">
+                <div class="flex items-center gap-2 ind-mono text-[11px] uppercase text-[#666]"><x-sp-icon name="wallet" class="w-4 h-4 text-[#111]" /> {{ __('Dépenses du mois') }}</div>
+                <div class="mt-2 ind-h text-3xl sm:text-4xl leading-none text-slate-900">{{ $money($depensesMoisTtc) }} <span class="text-sm font-medium text-slate-400">{{ $currency }}</span></div>
+                @if ($u->hasPermission('marges'))
+                    @php $resultat = $margeMois - $depensesMoisHt; @endphp
+                    <div class="mt-1 text-xs {{ $resultat < 0 ? 'text-rose-600 font-semibold' : 'text-slate-400' }}">{{ __('Marge moins dépenses (HT)') }} : {{ $money($resultat) }}</div>
+                @else
+                    <div class="mt-1 text-xs text-slate-400">{{ __('Loyer, énergie, carburant…') }}</div>
+                @endif
+            </a>
+            @endif
             @if ($u->hasPermission('produits_prix_achat'))
             <a href="{{ route('products.index') }}" wire:navigate class="{{ $card }} p-4 sm:p-5 hover:bg-[#ffcc00]">
                 <div class="flex items-center gap-2 ind-mono text-[11px] uppercase text-[#666]"><x-sp-icon name="cube" class="w-4 h-4 text-[#111]" /> {{ __('Valeur du stock') }}</div>

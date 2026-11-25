@@ -200,7 +200,12 @@ Route::get('dashboard', function () {
     $topNoms = Product::whereIn('id', $topProduits->pluck('product_id'))->pluck('name', 'id');
     $today = now()->startOfDay();
 
+    $depMois = \App\Models\Depense::where('date', '>=', $monthStart->toDateString());
+    $depTtc = (float) (clone $depMois)->sum('montant_ttc');
+
     return view('dashboard', [
+        'depensesMoisTtc' => $depTtc,
+        'depensesMoisHt' => $depTtc - (float) (clone $depMois)->sum('montant_tva'),
         'margeMois' => $htMois - $coutMois,
         'margePct' => $htMois > 0 ? round(($htMois - $coutMois) / $htMois * 100) : null,
         'valeurStock' => (float) Product::where('stock_qty', '>', 0)->sum(\Illuminate\Support\Facades\DB::raw('stock_qty * purchase_price')),
@@ -243,6 +248,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('inventaire', \App\Livewire\Inventaire\Index::class)->name('inventaire.index');
     Route::get('inventaire/nouveau', \App\Livewire\Inventaire\Form::class)->name('inventaire.create');
     Route::get('inventaire/{inventaireId}', \App\Livewire\Inventaire\Form::class)->whereNumber('inventaireId')->name('inventaire.show');
+    Route::get('depenses', \App\Livewire\Depenses\Index::class)->name('depenses.index');
+    Route::get('depenses/{depense}/justificatif', function (int $depense) {
+        abort_unless(auth()->user()->hasPermission('depenses'), 403);
+        $d = \App\Models\Depense::findOrFail($depense);
+        abort_unless($d->justificatif_path && \Illuminate\Support\Facades\Storage::disk('local')->exists($d->justificatif_path), 404);
+
+        return \Illuminate\Support\Facades\Storage::disk('local')->response($d->justificatif_path);
+    })->whereNumber('depense')->name('depenses.justificatif');
     Route::get('products', \App\Livewire\Products\Index::class)->name('products.index');
     Route::get('copilot', \App\Livewire\Copilot\Chat::class)->name('copilot');
     // the supplier-invoice scanner has its own menu entry; same page as "Nouveau bon de commande"
