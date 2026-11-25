@@ -232,7 +232,6 @@
                                 <path d="M12 1.2 2.4 6.3v11.4l9.6 5.1 9.6-5.1V6.3z" stroke="#ffcc00" stroke-width="1.1"/>
                                 <path d="M2.4 6.3 12 11.4l9.6-5.1M12 11.4v11.4" stroke="#ffcc00" stroke-opacity=".45" stroke-width=".55"/>
                             </svg>
-                            <span class="absolute top-[2%] {{ $rtl ? 'right-[2%]' : 'left-[2%]' }} grid place-items-center w-[17%] aspect-square rounded-2xl bg-[#ffcc00] text-zinc-900 shadow-xl shadow-black/40 -rotate-6"><x-sp-icon name="cube" style="width:55%;height:55%" /></span>
                             <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full lg:w-[96%] rounded-xl bg-white shadow-2xl shadow-black/50 ring-1 ring-white/10 overflow-hidden {{ $k % 2 ? 'rotate-[1.5deg]' : '-rotate-[1.5deg]' }}">
                                 <div class="h-7 flex items-center gap-1.5 px-3 bg-zinc-100 border-b border-zinc-200">
                                     <span class="w-2.5 h-2.5 rounded-full bg-[#ff5f57]"></span><span class="w-2.5 h-2.5 rounded-full bg-[#febc2e]"></span><span class="w-2.5 h-2.5 rounded-full bg-[#28c840]"></span>
