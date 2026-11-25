@@ -209,7 +209,7 @@ class CopilotTools
             'annee' => [$now->copy()->startOfYear(), $now->copy()->addDay()->startOfDay(), 'cette année'],
             default => [$now->copy()->startOfMonth(), $now->copy()->addDay()->startOfDay(), 'ce mois-ci'],
         };
-        $fac = Facture::where('date', '>=', $from->toDateString())->where('date', '<', $to->toDateString());
+        $fac = Facture::horsCaisse()->where('date', '>=', $from->toDateString())->where('date', '<', $to->toDateString());
         $tk = CaisseTicket::where('created_at', '>=', $from)->where('created_at', '<', $to);
         $cur = Societe::current()->currency ?: 'EUR';
         $caFac = (float) (clone $fac)->sum('total_ttc');

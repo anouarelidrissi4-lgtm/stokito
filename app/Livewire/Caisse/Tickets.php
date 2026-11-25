@@ -59,7 +59,7 @@ class Tickets extends Component
 
     public function render()
     {
-        $q = CaisseTicket::query()->with(['paiements', 'annulation'])
+        $q = CaisseTicket::query()->with(['paiements', 'annulation', 'facture'])
             ->when($this->numero !== '', fn ($b) => $b->where('numero', 'like', '%'.trim($this->numero).'%'))
             ->when($this->numero === '' && $this->date, fn ($b) => $b->whereDate('created_at', $this->date))
             ->orderByDesc('sequence');

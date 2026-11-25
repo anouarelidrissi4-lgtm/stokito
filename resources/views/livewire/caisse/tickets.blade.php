@@ -36,6 +36,11 @@
                         <td class="px-3 py-2.5 text-end whitespace-nowrap">
                             <div class="inline-flex items-center gap-2">
                                 <a href="{{ route('caisse.tickets.print', $t->id) }}" target="_blank" class="border-2 border-[#111] bg-white px-2 py-1 text-xs font-semibold hover:bg-[#ffcc00]">Imprimer</a>
+                                @if ($t->facture)
+                                    <a href="{{ route('factures.edit', $t->facture->id) }}" wire:navigate class="border-2 border-[#111] bg-[#fff3c4] px-2 py-1 text-xs font-semibold" title="Facture établie pour ce ticket">{{ $t->facture->numero }}</a>
+                                @elseif (! $t->isAnnulation() && ! $t->annulation && auth()->user()->hasPermission('factures_consulter'))
+                                    <a href="{{ route('factures.create', ['ticket' => $t->id]) }}" wire:navigate class="border-2 border-[#111] bg-white px-2 py-1 text-xs font-semibold hover:bg-[#ffcc00]" title="Le client demande une facture">Facture</a>
+                                @endif
                                 @if (! $t->isAnnulation() && ! $t->annulation && auth()->user()->hasPermission('caisse_annuler'))
                                     <button type="button" wire:click="askCancel({{ $t->id }})" class="border-2 border-[#b42318] text-[#b42318] bg-white px-2 py-1 text-xs font-semibold">Annuler</button>
                                 @endif

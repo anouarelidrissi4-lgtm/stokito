@@ -43,6 +43,11 @@ class CaisseTicket extends Model
         return $this->belongsTo(self::class, 'annule_ticket_id');
     }
 
+    public function facture(): HasOne
+    {
+        return $this->hasOne(Facture::class, 'caisse_ticket_id');
+    }
+
     public function isAnnulation(): bool
     {
         return $this->type === 'annulation';

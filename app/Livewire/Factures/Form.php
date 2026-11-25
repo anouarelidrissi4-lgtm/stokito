@@ -25,6 +25,9 @@ class Form extends Component
     #[\Livewire\Attributes\Locked]
     public ?int $devis_id = null;
 
+    /** Invoice made for a till ticket (2026-11-25). */
+    public ?int $caisse_ticket_id = null;
+
     #[\Livewire\Attributes\Locked]
     public string $devis_numero = '';
 
@@ -102,6 +105,7 @@ class Form extends Component
             $this->client_id = $this->facture->client_id;
             $this->bon_livraison_id = $this->facture->bon_livraison_id;
             $this->devis_id = $this->facture->devis_id;
+            $this->caisse_ticket_id = $this->facture->caisse_ticket_id;
             $this->devis_numero = (string) ($this->facture->devis?->numero ?? '');
             $this->date = $this->facture->date->format('Y-m-d');
             $this->due_date = optional($this->facture->due_date)->format('Y-m-d') ?? '';
@@ -132,6 +136,27 @@ class Form extends Component
                 'unit_price' => (float) ($i->unit_price ?? 0),
                 'tva_rate' => $i->tva_rate !== null ? (float) $i->tva_rate : (float) $this->tva_rate,
             ])->toArray();
+        } elseif ($ticketId = (int) request()->query('ticket')) {
+            // invoice asked by a till customer: same lines and prices; the ticket already paid and took the stock
+            $t = \App\Models\CaisseTicket::with('lignes')->findOrFail($ticketId);
+            abort_if($t->isAnnulation() || \App\Models\CaisseTicket::where('annule_ticket_id', $t->id)->exists(), 403, 'Ce ticket est annulé.');
+            if ($existing = Facture::where('caisse_ticket_id', $t->id)->first()) {
+                $this->redirect(route('factures.edit', $existing->id), navigate: true);
+
+                return;
+            }
+            $this->caisse_ticket_id = $t->id;
+            $this->client_id = $t->client_id ?: '';
+            $this->date = $t->created_at->format('Y-m-d');
+            $this->due_date = $t->created_at->format('Y-m-d');
+            $this->tva_rate = $this->defaultVatRate();
+            $this->notes = 'Facture du ticket de caisse '.$t->numero.' du '.$t->created_at->format('d/m/Y').', réglé à la caisse.';
+            $this->items = $t->lignes->map(fn ($l) => [
+                'product_id' => $l->product_id,
+                'quantity' => (float) $l->quantity,
+                'unit_price' => (float) $l->quantity != 0.0 ? round((float) $l->total_ht / (float) $l->quantity, 2) : 0,
+                'tva_rate' => (float) $l->tva_rate,
+            ])->values()->all();
         } elseif ($devisId = (int) request()->query('devis')) {
             // invoice straight from an accepted quote (no delivery note): same lines, VAT and discount
             $devis = \App\Models\Devis::findOrFail($devisId);
@@ -369,8 +394,8 @@ class Form extends Component
      */
     protected function checkStockAvailability(): bool
     {
-        if (! \App\Models\Societe::current()->stock_verification) {
-            return true;
+        if (! \App\Models\Societe::current()->stock_verification || $this->caisse_ticket_id) {
+            return true; // a till invoice does not take stock
         }
 
         $productIds = collect($this->items)->pluck('product_id')->filter()->unique()->values();
@@ -424,6 +449,7 @@ class Form extends Component
             'client_id' => $this->client_id,
             'bon_livraison_id' => $this->bon_livraison_id,
             'devis_id' => $this->devis_id,
+            'caisse_ticket_id' => $this->caisse_ticket_id,
             'date' => $this->date,
             'due_date' => $this->due_date ?: null,
             'tva_rate' => $this->tva_rate,

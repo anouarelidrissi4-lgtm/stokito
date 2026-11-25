@@ -242,6 +242,52 @@ class CaisseTest extends TestCase
         $this->assertSame('ACTIVATION', CaisseJournal::sole()->code);
     }
 
+    public function test_invoice_for_a_ticket_is_paid_takes_no_stock_and_is_not_counted_twice(): void
+    {
+        $this->shop();
+        $client = $this->client('Café Central');
+        $p = $this->product('TIC-1', 10, 5, 12);   // 12 € TTC
+        $t = Caisse::encaisser([Caisse::lineFor($p, 3)], ['especes' => 40], $client);
+        $this->assertEquals(7, (float) $p->fresh()->stock_qty);
+
+        Livewire::withQueryParams(['ticket' => $t->id])->test(\App\Livewire\Factures\Form::class)
+            ->assertSet('client_id', $client->id)
+            ->assertSet('caisse_ticket_id', $t->id)
+            ->assertSet('items.0.quantity', 3.0)
+            ->assertSet('items.0.unit_price', 10.0)
+            ->call('save')->assertHasNoErrors();
+
+        $f = \App\Models\Facture::sole();
+        $this->assertSame($t->id, $f->caisse_ticket_id);
+        $this->assertEquals(36, (float) $f->total_ttc);
+        $this->assertSame('payee', $f->status);
+        $this->assertEquals(0, $f->resteAPayer());
+        $this->assertEquals(7, (float) $p->fresh()->stock_qty);          // no second stock exit
+        $this->assertEquals(0, $client->fresh()->solde());               // nothing owed
+        $this->assertStringContainsString($t->numero, (string) $f->notes);
+
+        $html = $this->get(route('dashboard'))->getContent();
+        $this->assertStringContainsString(\App\Support\Fmt::money(36), $html);
+        $this->assertStringNotContainsString(\App\Support\Fmt::money(72), $html);   // not counted twice
+        $this->assertSame(\App\Support\Fmt::money(36), \App\Support\CopilotTools::stats('aujourd_hui')['chiffre_affaires_ttc']);
+
+        // a second "Facture" on the same ticket opens the existing invoice
+        Livewire::withQueryParams(['ticket' => $t->id])->test(\App\Livewire\Factures\Form::class)->assertRedirect(route('factures.edit', $f->id));
+
+        // a cancelled ticket cannot be invoiced
+        $t2 = Caisse::encaisser([Caisse::lineFor($p, 1)], ['especes' => 12]);
+        Caisse::annuler($t2, 'erreur');
+        $this->get(route('factures.create', ['ticket' => $t2->id]))->assertForbidden();
+    }
+
+    public function test_statistics_page_counts_till_payments(): void
+    {
+        $this->shop();
+        $p = $this->product('ST-1', 10, 5, 50);
+        Caisse::encaisser([Caisse::lineFor($p, 2)], ['carte' => 100]);
+        $this->get(route('statistiques.index'))->assertOk()->assertSee('dont caisse')->assertSee(\App\Support\Fmt::money(100))->assertSee('Produit ST-1');
+    }
+
     public function test_counter_sales_count_in_the_dashboard(): void
     {
         $this->shop();

@@ -18,7 +18,7 @@ class Facture extends Model
     }
 
     protected $fillable = [
-        'client_id', 'bon_livraison_id', 'devis_id', 'numero', 'date', 'due_date',
+        'client_id', 'bon_livraison_id', 'devis_id', 'caisse_ticket_id', 'numero', 'date', 'due_date',
         'total_ht', 'tva_rate', 'total_ttc', 'montant_paye', 'status', 'sent_at', 'relance_niveau', 'relance_at', 'notes', 'adresse_livraison', 'nature_operation',
         'remise_type', 'remise_value',
     ];
@@ -89,9 +89,23 @@ class Facture extends Model
         $this->update(['total_ht' => $totalHt, 'total_ttc' => $totalTtc]);
     }
 
+    /** Invoices that are not the paper copy of a till ticket (the ticket is already counted in the sales). */
+    public function scopeHorsCaisse($q)
+    {
+        return $q->whereNull($q->getModel()->getTable().'.caisse_ticket_id');
+    }
+
+    public function caisseTicket()
+    {
+        return $this->belongsTo(CaisseTicket::class, 'caisse_ticket_id');
+    }
+
     public function refreshStatus(): void
     {
         $paye = $this->reglements()->sum('montant');
+        if ($this->caisse_ticket_id) {
+            $paye = max((float) $paye, (float) $this->total_ttc); // paid at the till
+        }
         $avoirs = $this->avoirs()->sum('montant');
         $this->montant_paye = $paye;
 

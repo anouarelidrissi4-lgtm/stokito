@@ -29,7 +29,7 @@ class StockSync
 
     public static function facture(Facture $f, bool $deleting = false): void
     {
-        self::sync('facture', $f, ! $deleting && ! $f->bon_livraison_id, $f->items()->get());
+        self::sync('facture', $f, ! $deleting && ! $f->bon_livraison_id && ! $f->caisse_ticket_id, $f->items()->get());
     }
 
     protected static function sync(string $type, $doc, bool $active, $items): void

@@ -154,8 +154,8 @@ Route::get('dashboard', function () {
     $prevStart = now()->subMonthNoOverflow()->startOfMonth();
     // counter sales (caisse tickets, cancellations negative) count with the invoices (2026-11-25)
     $tk = fn ($from, $to = null) => \App\Models\CaisseTicket::where('created_at', '>=', $from)->when($to, fn ($q) => $q->where('created_at', '<', $to));
-    $caMois = (float) \App\Models\Facture::where('date', '>=', $monthStart)->sum('total_ttc') + (float) $tk($monthStart)->sum('total_ttc');
-    $caPrev = (float) \App\Models\Facture::whereBetween('date', [$prevStart, $monthStart->copy()->subDay()])->sum('total_ttc')
+    $caMois = (float) \App\Models\Facture::horsCaisse()->where('date', '>=', $monthStart)->sum('total_ttc') + (float) $tk($monthStart)->sum('total_ttc');
+    $caPrev = (float) \App\Models\Facture::horsCaisse()->whereBetween('date', [$prevStart, $monthStart->copy()->subDay()])->sum('total_ttc')
         + (float) $tk($prevStart, $monthStart)->sum('total_ttc');
     $impayes = \App\Models\Facture::with('client')
         ->where('status', '!=', 'payee')
@@ -167,14 +167,14 @@ Route::get('dashboard', function () {
 
         return [
             'label' => ucfirst($start->locale(app()->getLocale())->isoFormat('MMM')),
-            'total' => (float) \App\Models\Facture::whereBetween('date', [$start, $start->copy()->endOfMonth()])->sum('total_ttc')
+            'total' => (float) \App\Models\Facture::horsCaisse()->whereBetween('date', [$start, $start->copy()->endOfMonth()])->sum('total_ttc')
                 + (float) $tk($start, $start->copy()->addMonthNoOverflow())->sum('total_ttc'),
         ];
     });
 
     // widgets (2026-11-24): margin, stock value, quotes, VAT, cash-in within 30 days, top products / clients
-    $facIds = fn ($from) => \App\Models\Facture::where('date', '>=', $from)->select('id'); // tenant-scoped subquery
-    $htMois = (float) \App\Models\Facture::where('date', '>=', $monthStart)->sum('total_ht') + (float) $tk($monthStart)->sum('total_ht');
+    $facIds = fn ($from) => \App\Models\Facture::horsCaisse()->where('date', '>=', $from)->select('id'); // tenant-scoped subquery
+    $htMois = (float) \App\Models\Facture::horsCaisse()->where('date', '>=', $monthStart)->sum('total_ht') + (float) $tk($monthStart)->sum('total_ht');
     $coutMois = (float) \App\Models\FactureItem::query()
         ->join('products', 'products.id', '=', 'facture_items.product_id')
         ->whereIn('facture_items.facture_id', $facIds($monthStart))
@@ -210,7 +210,7 @@ Route::get('dashboard', function () {
         'tauxAcceptation' => $devis90Total > 0 ? round((clone $devis90)->where('status', 'accepted')->count() / $devis90Total * 100) : null,
         'tvaMois' => $caMois - $htMois,
         'topProduits' => $topProduits->map(fn ($r) => ['name' => $topNoms[$r->product_id] ?? '-', 'ca' => (float) $r->ca, 'qty' => (float) $r->qty]),
-        'topClients' => \App\Models\Facture::with('client')->where('date', '>=', $from90)
+        'topClients' => \App\Models\Facture::horsCaisse()->with('client')->where('date', '>=', $from90)
             ->selectRaw('client_id, SUM(total_ttc) as ca, COUNT(*) as nb')->groupBy('client_id')->orderByDesc('ca')->limit(5)->get()
             ->map(fn ($r) => ['name' => $r->client->name ?? '-', 'ca' => (float) $r->ca, 'nb' => (int) $r->nb]),
         'caMois' => $caMois,
@@ -425,21 +425,19 @@ Route::middleware(['auth'])->group(function () {
             return $client;
         })->sortByDesc('solde_calcule')->take(5)->values();
 
+        // invoices + till lines (2026-11-25); invoices made for a till ticket are skipped (the ticket is counted)
         $topProduits = \App\Models\FactureItem::selectRaw('product_id, SUM(quantity) as qte_vendue')
-            ->groupBy('product_id')
-            ->orderByDesc('qte_vendue')
-            ->with('product')
-            ->take(5)
-            ->get()
-            ->map(function ($row) {
-                return (object) [
-                    'name' => $row->product->name ?? '-',
-                    'qte_vendue' => $row->qte_vendue,
-                ];
-            });
+            ->whereIn('facture_id', \App\Models\Facture::horsCaisse()->select('id'))
+            ->groupBy('product_id')->get()
+            ->concat(\App\Models\CaisseTicketLigne::selectRaw('product_id, SUM(quantity) as qte_vendue')->whereNotNull('product_id')
+                ->whereIn('ticket_id', \App\Models\CaisseTicket::select('id'))->groupBy('product_id')->get())
+            ->groupBy('product_id')->map(fn ($g, $pid) => (float) $g->sum('qte_vendue'))->sortDesc()->take(5);
+        $noms = Product::whereIn('id', $topProduits->keys())->pluck('name', 'id');
+        $topProduits = $topProduits->map(fn ($q, $pid) => (object) ['name' => $noms[$pid] ?? '-', 'qte_vendue' => $q])->values();
 
         return view('statistiques', [
-            'caEncaisse' => \App\Models\ReglementClient::sum('montant'),
+            'caEncaisse' => (float) \App\Models\ReglementClient::sum('montant') + (float) \App\Models\CaissePaiement::whereIn('ticket_id', \App\Models\CaisseTicket::select('id'))->sum('montant'),
+            'caCaisse' => (float) \App\Models\CaissePaiement::whereIn('ticket_id', \App\Models\CaisseTicket::select('id'))->sum('montant'),
             'creancesEnCours' => $factures->sum(fn ($f) => $f->resteAPayer()),
             'totalAchats' => \App\Models\CommandeFournisseur::sum('total'),
             'soldeTresorerie' => $comptes->sum(fn ($c) => $c->currentBalance()),

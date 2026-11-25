@@ -41,6 +41,12 @@
                 <div class="flex items-center gap-1.5 sm:gap-2">
                     @if (auth()->user()->project_id)
                         <livewire:global-search />
+                        @if (auth()->user()?->hasPermission('copilot'))
+                            <a href="{{ route('copilot') }}" wire:navigate title="Copilot IA" class="hidden lg:flex items-center gap-1.5 h-9 px-3 border border-[#ffcc00] text-[#ffcc00] hover:bg-[#ffcc00] hover:text-[#111] ind-h uppercase tracking-wider text-sm {{ request()->routeIs('copilot') ? 'bg-[#ffcc00] !text-[#111]' : '' }}">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9z"/></svg>
+                                Copilot
+                            </a>
+                        @endif
                     @endif
                     <!-- Dark mode toggle -->
                     <button type="button"
@@ -103,9 +109,9 @@
                         {{ $slot }}
                     </main>
                     @if (auth()->user()?->hasPermission('copilot') && ! request()->routeIs('copilot', 'caisse.*'))
-                        <a href="{{ route('copilot') }}" wire:navigate title="Copilot IA" class="fixed bottom-4 end-4 lg:end-auto lg:start-4 z-30 inline-flex items-center gap-2 border-2 border-[#111] bg-[#ffcc00] px-4 py-2.5 ind-h uppercase tracking-wider shadow-[4px_4px_0_#111] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0_#111] print:hidden">
-                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9z"/></svg>
-                            Copilot
+                        <a href="{{ route('copilot') }}" wire:navigate title="Copilot IA" class="lg:hidden fixed bottom-4 end-4 z-30 inline-flex items-center justify-center w-12 h-12 border-2 border-[#111] bg-[#ffcc00] ind-h uppercase tracking-wider shadow-[4px_4px_0_#111] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0_#111] print:hidden">
+                            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9z"/></svg>
+                            <span class="sr-only">Copilot</span>
                         </a>
                     @endif
                 </div>

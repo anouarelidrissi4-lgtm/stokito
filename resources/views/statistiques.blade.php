@@ -8,6 +8,7 @@
             <div class="bg-white rounded-xl shadow p-6">
                 <div class="text-sm text-gray-500 mb-1">Chiffre d'affaires encaisse</div>
                 <div class="text-2xl font-bold text-green-700">{{ \App\Support\Fmt::money($caEncaisse) }}</div>
+                @if ($caCaisse != 0)<div class="text-xs text-gray-500 mt-1">dont caisse : {{ \App\Support\Fmt::money($caCaisse) }}</div>@endif
             </div>
             <div class="bg-white rounded-xl shadow p-6">
                 <div class="text-sm text-gray-500 mb-1">Creances en cours</div>

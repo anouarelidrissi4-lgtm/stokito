@@ -37,7 +37,7 @@ class Client extends Model
 
     public function solde(): float
     {
-        $totalFactures = $this->factures()->sum('total_ttc');
+        $totalFactures = $this->factures()->whereNull('caisse_ticket_id')->sum('total_ttc');
         $totalRegle = $this->reglements()->sum('montant');
         $totalAvoirs = $this->avoirs()->sum('montant');
 
