@@ -58,6 +58,16 @@
         .sp-ind .ind-h, .hero-title { font-family: 'Poppins', 'Tajawal', sans-serif; }
         .hero-title { font-weight: 800; line-height: 1.06; letter-spacing: -0.03em; }
         .hero-dots { background-image: radial-gradient(rgba(255,204,0,.45) 1.6px, transparent 1.7px); background-size: 22px 22px; }
+        .hero-bg { background-color: #14161f; background-image:
+            radial-gradient(900px 600px at 85% 10%, rgba(255,204,0,.28), transparent 60%),
+            radial-gradient(700px 520px at 100% 100%, rgba(245,130,32,.22), transparent 60%),
+            radial-gradient(800px 600px at 0% 100%, rgba(59,76,160,.45), transparent 65%),
+            linear-gradient(135deg, #12141c 0%, #1a1d2e 50%, #231d16 100%); }
+        [dir=rtl] .hero-bg { background-image:
+            radial-gradient(900px 600px at 15% 10%, rgba(255,204,0,.28), transparent 60%),
+            radial-gradient(700px 520px at 0% 100%, rgba(245,130,32,.22), transparent 60%),
+            radial-gradient(800px 600px at 100% 100%, rgba(59,76,160,.45), transparent 65%),
+            linear-gradient(225deg, #12141c 0%, #1a1d2e 50%, #231d16 100%); }
         .hero-bar { animation: heroBar 7s linear forwards; }
         @keyframes heroBar { from { width: 0 } to { width: 100% } }
         .hero-mark { animation: heroFloat 6s ease-in-out infinite; }
@@ -189,13 +199,13 @@
          'img' => 'screen-scanner-facture', 'w' => 992, 'h' => 1092, 'url' => 'stokito.com/commande-fournisseurs', 'badge' => ['FA-24-11872', '✓ 4 / 4']],
     ];
 @endphp
-<section class="relative overflow-hidden bg-[#111113] text-white"
+<section class="hero-bg relative overflow-hidden text-white"
     x-data="{ i: 0, n: {{ count($heroSlides) }}, t: null,
         start() { clearInterval(this.t); if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return; this.t = setInterval(() => this.i = (this.i + 1) % this.n, 7000) },
         go(k) { this.i = k; this.start() } }"
     x-init="start()" @mouseenter="clearInterval(t)" @mouseleave="start()">
     <div aria-hidden="true" class="pointer-events-none absolute inset-0">
-        <div class="absolute -top-56 {{ $rtl ? '-left-40' : '-right-40' }} w-[760px] h-[760px] rounded-full bg-[#ffcc00] opacity-[.07] blur-[100px]"></div>
+        
         <div class="absolute bottom-6 {{ $rtl ? 'left-6' : 'right-6' }} w-64 h-40 hero-dots hidden sm:block"></div>
     </div>
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 pt-12 sm:pt-16 pb-10">
