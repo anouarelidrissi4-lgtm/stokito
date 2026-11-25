@@ -204,7 +204,7 @@
     x-init="start()" @mouseenter="clearInterval(t)" @mouseleave="start()">
     <div aria-hidden="true" class="pointer-events-none absolute inset-0">
         
-        <div class="absolute bottom-6 {{ $rtl ? 'left-6' : 'right-6' }} w-64 h-40 hero-dots hidden sm:block"></div>
+        <div class="absolute bottom-24 {{ $rtl ? 'left-6' : 'right-6' }} w-64 h-40 hero-dots hidden sm:block"></div>
     </div>
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 pt-12 sm:pt-16 pb-10">
         <div class="grid">
@@ -262,18 +262,17 @@
             {{ __('Scannez vos factures fournisseurs') }} <span aria-hidden="true">{{ $rtl ? '←' : '→' }}</span>
         </a>
     </div>
-</section>
-
-{{-- ============ sectors strip ============ --}}
-<section class="bg-white border-y border-zinc-200 text-zinc-400 py-4 overflow-hidden">
-    <div class="flex w-max lp-marquee">
-        @foreach ([1, 2] as $copy)
-            <div class="flex items-center gap-8 px-4">
-                @foreach ($sectors as $s)
-                    <span class="flex items-center gap-8 whitespace-nowrap text-base font-medium">{{ __($s) }}<span class="text-zinc-300">·</span></span>
-                @endforeach
-            </div>
-        @endforeach
+    {{-- sectors marquee, inside the hero (white, see-through) --}}
+    <div class="relative border-t border-white/10 py-4 overflow-hidden">
+        <div class="flex w-max lp-marquee">
+            @foreach ([1, 2] as $copy)
+                <div class="flex items-center gap-8 px-4">
+                    @foreach ($sectors as $sec)
+                        <span class="flex items-center gap-8 whitespace-nowrap text-base font-medium text-white/50">{{ __($sec) }}<span class="text-white/25">·</span></span>
+                    @endforeach
+                </div>
+            @endforeach
+        </div>
     </div>
 </section>
 
