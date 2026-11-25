@@ -50,7 +50,7 @@
                     <button wire:click="convertToBonLivraison" class="bg-indigo-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-indigo-700">
                         Suivant : Convertir en Bon de Livraison &rarr;
                     </button>
-                    <button wire:click="convertToFacture" class="bg-[#ffcc00] text-[#111] border-2 border-[#111] px-5 py-2.5 text-sm font-bold hover:bg-white">
+                    <button wire:click="convertToFacture" class="bg-[#ffcc00] text-zinc-900 border border-zinc-200 px-5 py-2.5 text-sm font-bold hover:bg-white rounded-lg">
                         Facturer directement &rarr;
                     </button>
                 @endif
@@ -120,8 +120,8 @@
                         <span class="text-sm text-gray-600">Normal</span>
                         <span class="relative inline-block w-10 h-5">
                             <input wire:model.live="tarif_gros" type="checkbox" class="peer sr-only">
-                            <span class="absolute inset-0 border-2 border-[#111] bg-white peer-checked:bg-[#ffcc00] transition-colors"></span>
-                            <span class="absolute left-0.5 top-0.5 w-4 h-4 bg-[#111] transition-transform peer-checked:translate-x-5"></span>
+                            <span class="absolute inset-0 border border-zinc-200 bg-white peer-checked:bg-[#ffcc00] transition-colors rounded-lg"></span>
+                            <span class="absolute left-0.5 top-0.5 w-4 h-4 bg-zinc-900 transition-transform peer-checked:translate-x-5"></span>
                         </span>
                         <span class="text-sm text-gray-600">En Gros</span>
                     </label>

@@ -90,8 +90,8 @@ new #[Layout('layouts.guest')] class extends Component
 }; ?>
 
 <div>
-    <h2 class="ind-h text-4xl uppercase leading-none mb-2">{{ __('Créer un compte gratuit') }}</h2>
-    <p class="text-sm text-[#555] mb-6">{{ __('Votre espace est prêt en une minute. Pas de carte bancaire.') }}</p>
+    <h2 class="ind-h text-3xl leading-none mb-2">{{ __('Créer un compte gratuit') }}</h2>
+    <p class="text-sm text-zinc-500 mb-6">{{ __('Votre espace est prêt en une minute. Pas de carte bancaire.') }}</p>
 
     <form wire:submit="register" class="space-y-4" x-data x-init="(() => { const z = { 'Africa/Casablanca': 'MA', 'Europe/Paris': 'FR', 'Europe/Brussels': 'BE', 'Europe/Zurich': 'CH', 'Europe/Luxembourg': 'LU', 'Africa/Dakar': 'SN', 'Africa/Abidjan': 'CI', 'Africa/Douala': 'CM', 'Africa/Tunis': 'TN', 'Africa/Algiers': 'DZ' }[Intl.DateTimeFormat().resolvedOptions().timeZone]; if (z) $wire.set('country', z) })()">
         <input type="text" wire:model="website" name="website" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true">
@@ -104,7 +104,7 @@ new #[Layout('layouts.guest')] class extends Component
             </div>
             <div>
                 <x-input-label for="country" :value="__('Pays')" />
-                <select wire:model="country" id="country" class="block mt-1 w-full border-2 border-[#111] rounded-none text-sm">
+                <select wire:model="country" id="country" class="block mt-1 w-full border border-zinc-200 rounded-none text-sm">
                     @foreach ($countries as $code => $label)
                         <option value="{{ $code }}">{{ $label }}</option>
                     @endforeach
@@ -144,14 +144,14 @@ new #[Layout('layouts.guest')] class extends Component
             </div>
         </div>
 
-        <label class="flex items-start gap-2 text-sm text-[#333] normal-case font-sans" style="font-family:inherit;text-transform:none;font-size:14px!important">
-            <input type="checkbox" wire:model="terms" class="mt-1 border-2 border-[#111]">
-            <span>{!! __('J’accepte les :cgu et la :privacy.', ['cgu' => '<a href="'.route('legal.terms').'" target="_blank" class="underline decoration-[#ffcc00] decoration-2">'.__('conditions d’utilisation').'</a>', 'privacy' => '<a href="'.route('legal.privacy').'" target="_blank" class="underline decoration-[#ffcc00] decoration-2">'.__('politique de confidentialité').'</a>']) !!}</span>
+        <label class="flex items-start gap-2 text-sm text-zinc-700 normal-case font-sans" style="font-family:inherit;text-transform:none;font-size:14px!important">
+            <input type="checkbox" wire:model="terms" class="mt-1 border border-zinc-200 rounded-lg">
+            <span>{!! __('J’accepte les :cgu et la :privacy.', ['cgu' => '<a href="'.route('legal.terms').'" target="_blank" class="underline decoration-amber-400 decoration-2">'.__('conditions d’utilisation').'</a>', 'privacy' => '<a href="'.route('legal.privacy').'" target="_blank" class="underline decoration-amber-400 decoration-2">'.__('politique de confidentialité').'</a>']) !!}</span>
         </label>
         <x-input-error :messages="$errors->get('terms')" class="mt-1" />
 
         <div class="flex items-center justify-between gap-3 pt-2">
-            <a class="underline text-sm text-[#555]" href="{{ route('login') }}" wire:navigate>{{ __('Déjà un compte ? Se connecter') }}</a>
+            <a class="underline text-sm text-zinc-500" href="{{ route('login') }}" wire:navigate>{{ __('Déjà un compte ? Se connecter') }}</a>
             <x-primary-button>{{ __('Créer mon compte') }}</x-primary-button>
         </div>
     </form>

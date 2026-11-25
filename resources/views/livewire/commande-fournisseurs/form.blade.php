@@ -13,7 +13,7 @@
 
     @if (! $commande)
         {{-- Scanner IA d'une facture fournisseur (2026-11-24) --}}
-        <div class="bg-[#fff3c4] border-2 border-[#111] rounded-lg p-4 mb-4"
+        <div class="bg-[#fff3c4] border border-zinc-200 rounded-lg p-4 mb-4"
             x-data="{ uploading: false, progress: 0 }"
             x-on:livewire-upload-start="uploading = true; progress = 0"
             x-on:livewire-upload-finish="uploading = false"
@@ -23,11 +23,11 @@
             <div class="flex flex-col sm:flex-row sm:items-center gap-3">
                 <div class="flex-1">
                     <p class="font-bold text-gray-900">Scanner une facture fournisseur
-                        <span class="ml-1 align-middle text-[10px] font-bold uppercase tracking-wide bg-[#111] text-[#ffcc00] px-1.5 py-0.5 rounded">IA</span></p>
+                        <span class="ml-1 align-middle text-[10px] font-bold uppercase tracking-wide bg-zinc-900 text-white px-1.5 py-0.5 rounded">IA</span></p>
                     <p class="text-sm text-gray-700 mt-0.5">Prenez la facture en photo ou choisissez un PDF : le fournisseur, la date et les lignes se remplissent. Vous vérifiez, puis vous enregistrez.</p>
                     <p class="text-xs text-gray-500 mt-1">{{ auth()->user()->isDemo() ? 'Désactivé dans la démo : créez votre compte gratuit pour l’essayer sur vos factures.' : $scansLeft.' scan(s) restant(s) ce mois-ci.' }}</p>
                 </div>
-                <label class="shrink-0 cursor-pointer inline-flex items-center justify-center gap-2 bg-[#111] text-white px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-black"
+                <label class="shrink-0 cursor-pointer inline-flex items-center justify-center gap-2 bg-zinc-900 text-white px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-black"
                     wire:loading.class="opacity-50 pointer-events-none" wire:target="scanFile">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.66-.9l.82-1.2A2 2 0 0 1 10.07 4h3.86a2 2 0 0 1 1.66.9l.82 1.2a2 2 0 0 0 1.66.9H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><circle cx="12" cy="13" r="3"/></svg>
                     Photo ou PDF
@@ -75,9 +75,9 @@
 
     <div class="bg-white shadow rounded-lg p-6 space-y-6">
         @if ($scanSupplier)
-            <div class="flex flex-col sm:flex-row sm:items-center gap-2 bg-[#fff3c4] border border-[#ffcc00] rounded-md px-3 py-2 text-sm">
+            <div class="flex flex-col sm:flex-row sm:items-center gap-2 bg-[#fff3c4] border border-amber-300 rounded-md px-3 py-2 text-sm">
                 <span class="flex-1">Fournisseur lu sur la facture : <strong>{{ $scanSupplier['nom'] }}</strong>@if (! empty($scanSupplier['identifiant'])) ({{ $scanSupplier['identifiant'] }})@endif. Il n’est pas encore dans votre liste.</span>
-                <button type="button" wire:click="createScannedSupplier" class="shrink-0 bg-[#111] text-white px-3 py-1.5 rounded-md text-xs font-semibold hover:bg-black">Créer ce fournisseur</button>
+                <button type="button" wire:click="createScannedSupplier" class="shrink-0 bg-zinc-900 text-white px-3 py-1.5 rounded-md text-xs font-semibold hover:bg-black">Créer ce fournisseur</button>
             </div>
         @endif
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

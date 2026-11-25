@@ -14,18 +14,18 @@
     $quickKeys = ['devis.create', 'bon-livraisons.create', 'commande-fournisseurs.create'];
     $isActive = fn ($item) => $item['active'] && request()->routeIs($item['active']);
     // industrial style (2026-11-23): active = yellow label with ink border
-    $linkClass = fn ($on) => 'flex items-center gap-2.5 px-3 py-2 text-[14px] transition-colors border-2 '
-        .($on ? 'bg-[#ffcc00] text-[#111] font-bold border-[#111]' : 'border-transparent text-[#333] hover:bg-white hover:border-[#111] font-medium');
+    $linkClass = fn ($on) => 'flex items-center gap-2.5 px-3 py-2 text-[14px] transition-colors rounded-lg '
+        .($on ? 'bg-white text-zinc-900 font-semibold shadow-sm ring-1 ring-zinc-200' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 font-medium');
 @endphp
 
 <div x-show="nav" x-cloak @click="nav = false" class="fixed inset-0 z-40 bg-slate-900/50 sm:hidden print:hidden"></div>
 
 <aside
-    class="sp-sidebar fixed sm:sticky top-0 sm:top-16 z-50 sm:z-auto h-screen sm:h-[calc(100vh-4rem)] w-72 sm:w-64 shrink-0 overflow-y-auto bg-[#f4f2ec] {{ $rtl ? 'right-0 border-l-2' : 'left-0 border-r-2' }} border-[#111] {{ $rtl ? 'translate-x-full' : '-translate-x-full' }} sm:!translate-x-0 transition-transform duration-200 print:hidden"
+    class="sp-sidebar fixed sm:sticky top-0 sm:top-16 z-50 sm:z-auto h-screen sm:h-[calc(100vh-4rem)] w-72 sm:w-64 shrink-0 overflow-y-auto bg-zinc-50 {{ $rtl ? 'right-0 border-l' : 'left-0 border-r' }} border-zinc-200 {{ $rtl ? 'translate-x-full' : '-translate-x-full' }} sm:!translate-x-0 transition-transform duration-200 print:hidden"
     :class="nav && '!translate-x-0'">
 
     <div class="flex items-center justify-between h-16 px-4 border-b border-slate-200 sm:hidden">
-        <span class="flex items-center gap-2 ind-h text-2xl uppercase"><span class="grid place-items-center w-8 h-8 bg-[#ffcc00] border-2 border-[#111]"><x-sp-icon name="cube" class="w-5 h-5" /></span> Stokito</span>
+        <span class="flex items-center gap-2 ind-h text-xl"><span class="grid place-items-center w-8 h-8 bg-[#ffcc00] rounded-lg"><x-sp-icon name="cube" class="w-5 h-5" /></span> Stokito</span>
         <button type="button" @click="nav = false" class="p-2 rounded-lg text-slate-500 hover:bg-slate-200" aria-label="Fermer le menu"><x-sp-icon name="x" /></button>
     </div>
 
@@ -69,7 +69,7 @@
             @else
                 <div x-data="{ open: {{ $hasActive ? 'true' : 'false' }} }">
                     <button type="button" @click="open = !open"
-                        class="w-full flex items-center gap-2.5 px-3 py-2 ind-h text-[16px] uppercase tracking-wider {{ $hasActive ? 'text-[#111]' : 'text-[#333]' }} hover:bg-white">
+                        class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[14px] font-semibold {{ $hasActive ? 'text-zinc-900' : 'text-zinc-700' }} hover:bg-zinc-100">
                         <x-sp-icon :name="$icon" class="w-[18px] h-[18px]" />
                         <span class="flex-1 text-start">{{ __($section['label']) }}</span>
                         <x-sp-icon name="chevron" class="w-4 h-4 text-slate-400 transition-transform {{ $rtl ? 'rotate-180' : '' }}" x-bind:class="open && '{{ $rtl ? '!-rotate-90' : 'rotate-90' }}'" />
@@ -88,7 +88,7 @@
             @endif
         @endforeach
 
-        <div class="pt-3 mt-3 border-t-2 border-[#111] space-y-0.5">
+        <div class="pt-3 mt-3 border-t border-zinc-200 space-y-0.5">
             <a href="/docs/guide-stokito-{{ in_array(app()->getLocale(), ['ar', 'en'], true) ? app()->getLocale() : 'fr' }}.pdf" target="_blank" rel="noopener" class="{{ $linkClass(false) }}">
                 <x-sp-icon name="doc" class="w-[18px] h-[18px]" /> {{ __("Guide d'utilisation") }}
             </a>

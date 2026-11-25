@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h1 class="ind-h text-3xl sm:text-4xl uppercase leading-none text-[#111]">{{ __('Statistiques') }}</h1>
+        <h1 class="ind-h text-3xl sm:text-4xl leading-none text-zinc-900">{{ __('Statistiques') }}</h1>
     </x-slot>
 
     <div class="p-4 sm:p-6 lg:p-8 space-y-6">
@@ -63,7 +63,7 @@
         </div>
 
         <div class="bg-white rounded-xl shadow overflow-hidden">
-            <div class="px-5 py-3 border-b-2 border-[#111]"><h3 class="font-semibold text-red-700">Chèques en retard</h3></div>
+            <div class="px-5 py-3 border-b border-zinc-200"><h3 class="font-semibold text-red-700">Chèques en retard</h3></div>
             <div class="overflow-x-auto">
 <table class="min-w-full divide-y divide-gray-100 text-sm">
                 <tbody class="divide-y divide-gray-100">

@@ -120,8 +120,8 @@
                     <label class="inline-flex items-center gap-2 cursor-pointer">
                         <span class="relative inline-block w-10 h-5">
                             <input wire:model="stock_verification" type="checkbox" class="peer sr-only">
-                            <span class="absolute inset-0 border-2 border-[#111] bg-white peer-checked:bg-[#ffcc00] transition-colors"></span>
-                            <span class="absolute left-0.5 top-0.5 w-4 h-4 bg-[#111] transition-transform peer-checked:translate-x-5"></span>
+                            <span class="absolute inset-0 border border-zinc-200 bg-white peer-checked:bg-[#ffcc00] transition-colors rounded-lg"></span>
+                            <span class="absolute left-0.5 top-0.5 w-4 h-4 bg-zinc-900 transition-transform peer-checked:translate-x-5"></span>
                         </span>
                     </label>
                 </div>
@@ -130,8 +130,8 @@
                     <label class="inline-flex items-center gap-2 cursor-pointer">
                         <span class="relative inline-block w-10 h-5">
                             <input wire:model="show_ref_facture" type="checkbox" class="peer sr-only">
-                            <span class="absolute inset-0 border-2 border-[#111] bg-white peer-checked:bg-[#ffcc00] transition-colors"></span>
-                            <span class="absolute left-0.5 top-0.5 w-4 h-4 bg-[#111] transition-transform peer-checked:translate-x-5"></span>
+                            <span class="absolute inset-0 border border-zinc-200 bg-white peer-checked:bg-[#ffcc00] transition-colors rounded-lg"></span>
+                            <span class="absolute left-0.5 top-0.5 w-4 h-4 bg-zinc-900 transition-transform peer-checked:translate-x-5"></span>
                         </span>
                         <span class="text-sm text-gray-600">Afficher désignation et référence</span>
                     </label>
@@ -141,8 +141,8 @@
                     <label class="inline-flex items-center gap-2 cursor-pointer">
                         <span class="relative inline-block w-10 h-5">
                             <input wire:model="show_ref_bl" type="checkbox" class="peer sr-only">
-                            <span class="absolute inset-0 border-2 border-[#111] bg-white peer-checked:bg-[#ffcc00] transition-colors"></span>
-                            <span class="absolute left-0.5 top-0.5 w-4 h-4 bg-[#111] transition-transform peer-checked:translate-x-5"></span>
+                            <span class="absolute inset-0 border border-zinc-200 bg-white peer-checked:bg-[#ffcc00] transition-colors rounded-lg"></span>
+                            <span class="absolute left-0.5 top-0.5 w-4 h-4 bg-zinc-900 transition-transform peer-checked:translate-x-5"></span>
                         </span>
                         <span class="text-sm text-gray-600">Afficher désignation et référence</span>
                     </label>
@@ -210,7 +210,7 @@
                     @error('devis_validite_jours') <p class="text-red-600 text-xs mt-1">Entre 1 et 365 jours.</p> @enderror
                 </div>
             </div>
-            <div class="mt-4 border-2 border-[#111] bg-[#f4f2ec] p-4">
+            <div class="mt-4 border border-zinc-200 bg-zinc-50 p-4 rounded-xl">
                 <label class="flex items-start gap-3 cursor-pointer">
                     <input wire:model="relances_auto" type="checkbox" class="mt-1 rounded border-gray-300">
                     <span class="text-sm text-gray-700"><strong>Relances automatiques par email</strong> : un rappel poli 7 jours après l’échéance, puis une deuxième relance à 30 jours, avec la facture en PDF. Seulement pour les factures non réglées dont le client a un email ; une seule fois par niveau. Les réponses arrivent sur l’email de Ma Société.</span>
@@ -268,8 +268,8 @@
                 <label class="inline-flex items-center gap-2 cursor-pointer">
                     <span class="relative inline-block w-10 h-5">
                         <input wire:model="bons_chargement_enabled" type="checkbox" class="peer sr-only">
-                        <span class="absolute inset-0 border-2 border-[#111] bg-white peer-checked:bg-[#ffcc00] transition-colors"></span>
-                        <span class="absolute left-0.5 top-0.5 w-4 h-4 bg-[#111] transition-transform peer-checked:translate-x-5"></span>
+                        <span class="absolute inset-0 border border-zinc-200 bg-white peer-checked:bg-[#ffcc00] transition-colors rounded-lg"></span>
+                        <span class="absolute left-0.5 top-0.5 w-4 h-4 bg-zinc-900 transition-transform peer-checked:translate-x-5"></span>
                     </span>
                     <span class="text-sm text-gray-600">Activer les bons de chargement</span>
                 </label>
@@ -279,8 +279,8 @@
                 <label class="inline-flex items-center gap-2 cursor-pointer">
                     <span class="relative inline-block w-10 h-5">
                         <input wire:model="caisse_enabled" type="checkbox" class="peer sr-only">
-                        <span class="absolute inset-0 border-2 border-[#111] bg-white peer-checked:bg-[#ffcc00] transition-colors"></span>
-                        <span class="absolute left-0.5 top-0.5 w-4 h-4 bg-[#111] transition-transform peer-checked:translate-x-5"></span>
+                        <span class="absolute inset-0 border border-zinc-200 bg-white peer-checked:bg-[#ffcc00] transition-colors rounded-lg"></span>
+                        <span class="absolute left-0.5 top-0.5 w-4 h-4 bg-zinc-900 transition-transform peer-checked:translate-x-5"></span>
                     </span>
                     <span class="text-sm text-gray-600">Activer la caisse : tickets, paiements et clôtures Z</span>
                 </label>

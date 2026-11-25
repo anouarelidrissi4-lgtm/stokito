@@ -44,13 +44,13 @@
                         </td>
                         <td class="px-6 py-4 text-right text-sm whitespace-nowrap">
                             <div class="inline-flex items-center gap-2">
-                            <a href="{{ route('commande-fournisseurs.pdf', $commande->id) }}" target="_blank" title="Ouvrir le PDF" class="inline-flex items-center gap-1 border-2 border-[#111] bg-[#d92d20] text-white px-2 py-1 text-xs font-bold hover:bg-[#b42318]"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h1.5a1.5 1.5 0 0 1 0 3H8v-3zm0 3v2M13 13v5h1a2 2 0 0 0 2-2v-1a2 2 0 0 0-2-2h-1z" stroke-width="1.4"/></svg>PDF</a>
+                            <a href="{{ route('commande-fournisseurs.pdf', $commande->id) }}" target="_blank" title="Ouvrir le PDF" class="inline-flex items-center gap-1 border border-zinc-200 bg-[#d92d20] text-white px-2 py-1 text-xs font-bold hover:bg-[#b42318] rounded-lg"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h1.5a1.5 1.5 0 0 1 0 3H8v-3zm0 3v2M13 13v5h1a2 2 0 0 0 2-2v-1a2 2 0 0 0-2-2h-1z" stroke-width="1.4"/></svg>PDF</a>
                             <x-row-actions>
                                 <a href="{{ route('commande-fournisseurs.edit', $commande->id) }}" wire:navigate>Modifier</a>
                                 @if ($commande->status !== 'received')
                                     <button type="button" wire:click="markReceived({{ $commande->id }})" wire:confirm="Marquer cette commande comme reçue ? Le stock sera mis à jour." class="!font-bold">Marquer reçue</button>
                                 @endif
-                                <button type="button" wire:click="delete({{ $commande->id }})" wire:confirm="Supprimer cette commande ?" class="!text-[#b42318] border-t border-[#e3e0d8]">Supprimer</button>
+                                <button type="button" wire:click="delete({{ $commande->id }})" wire:confirm="Supprimer cette commande ?" class="!text-[#b42318] border-t border-zinc-200">Supprimer</button>
                             </x-row-actions>
                             </div>
                         </td>

@@ -54,7 +54,7 @@
                         </td>
                         <td class="px-6 py-4 text-right text-sm whitespace-nowrap">
                             <div class="inline-flex items-center gap-2">
-                            <a href="{{ route('devis.pdf', $devis->id) }}" target="_blank" title="Ouvrir le PDF" class="inline-flex items-center gap-1 border-2 border-[#111] bg-[#d92d20] text-white px-2 py-1 text-xs font-bold hover:bg-[#b42318]"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h1.5a1.5 1.5 0 0 1 0 3H8v-3zm0 3v2M13 13v5h1a2 2 0 0 0 2-2v-1a2 2 0 0 0-2-2h-1z" stroke-width="1.4"/></svg>PDF</a>
+                            <a href="{{ route('devis.pdf', $devis->id) }}" target="_blank" title="Ouvrir le PDF" class="inline-flex items-center gap-1 border border-zinc-200 bg-[#d92d20] text-white px-2 py-1 text-xs font-bold hover:bg-[#b42318] rounded-lg"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h1.5a1.5 1.5 0 0 1 0 3H8v-3zm0 3v2M13 13v5h1a2 2 0 0 0 2-2v-1a2 2 0 0 0-2-2h-1z" stroke-width="1.4"/></svg>PDF</a>
                             <x-row-actions>
                                 <a href="{{ route('devis.edit', $devis->id) }}" wire:navigate>Modifier</a>
                                 <button type="button" wire:click="openSend({{ $devis->id }})" title="{{ $devis->sent_at ? 'Envoyé le '.$devis->sent_at->format('d/m/Y H:i') : 'Envoyer par email' }}">{{ $devis->sent_at ? 'Renvoyer par email' : 'Envoyer par email' }}</button>
@@ -63,7 +63,7 @@
                                     <button type="button" wire:click="convertToBonLivraison({{ $devis->id }})">Convertir en BL</button>
                                     <button type="button" wire:click="convertToFacture({{ $devis->id }})" class="!font-bold">Facturer</button>
                                 @endif
-                                <button type="button" wire:click="delete({{ $devis->id }})" wire:confirm="Supprimer ce devis ?" class="!text-[#b42318] border-t border-[#e3e0d8]">Supprimer</button>
+                                <button type="button" wire:click="delete({{ $devis->id }})" wire:confirm="Supprimer ce devis ?" class="!text-[#b42318] border-t border-zinc-200">Supprimer</button>
                             </x-row-actions>
                             </div>
                         </td>

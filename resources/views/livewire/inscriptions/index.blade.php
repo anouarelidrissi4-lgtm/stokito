@@ -1,42 +1,42 @@
 <div class="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl">
     @php
-        $card = 'bg-white border-2 border-[#111] p-4 sm:p-5';
+        $card = 'bg-white border-2 border-zinc-200 p-4 sm:p-5';
         $pct = fn ($a, $b) => $b > 0 ? round($a / $b * 100) : 0;
         $flags = \App\Support\Countries::ALL;
     @endphp
     <div>
-        <p class="ind-mono text-xs text-[#666] uppercase">Superadmin</p>
-        <h1 class="ind-h text-4xl uppercase leading-none mt-1">Inscriptions</h1>
+        <p class="ind-mono text-xs text-zinc-500 uppercase">Superadmin</p>
+        <h1 class="ind-h text-4xl leading-none mt-1">Inscriptions</h1>
     </div>
 
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <div class="{{ $card }}">
-            <div class="ind-mono text-[11px] uppercase text-[#666]">Sociétés inscrites</div>
+            <div class="ind-mono text-[11px] uppercase text-zinc-500">Sociétés inscrites</div>
             <div class="mt-2 ind-h text-4xl leading-none">{{ (int) $stats->total }}</div>
             <div class="mt-1 text-xs text-slate-500">{{ (int) $stats->self }} en libre-service</div>
         </div>
         <div class="{{ $card }}">
-            <div class="ind-mono text-[11px] uppercase text-[#666]">Nouvelles</div>
+            <div class="ind-mono text-[11px] uppercase text-zinc-500">Nouvelles</div>
             <div class="mt-2 ind-h text-4xl leading-none">{{ (int) $stats->d7 }} <span class="text-sm font-medium text-slate-400">7 j</span></div>
             <div class="mt-1 text-xs text-slate-500">{{ (int) $stats->d30 }} sur 30 jours</div>
         </div>
         <div class="{{ $card }}">
-            <div class="ind-mono text-[11px] uppercase text-[#666]">Actives</div>
+            <div class="ind-mono text-[11px] uppercase text-zinc-500">Actives</div>
             <div class="mt-2 ind-h text-4xl leading-none text-emerald-700">{{ $pct((int) $stats->actifs, (int) $stats->total) }} %</div>
             <div class="mt-1 text-xs text-slate-500">{{ (int) $stats->actifs }} ont fait un devis ou une facture</div>
         </div>
         <div class="{{ $card }}">
-            <div class="ind-mono text-[11px] uppercase text-[#666]">Pays</div>
+            <div class="ind-mono text-[11px] uppercase text-zinc-500">Pays</div>
             <div class="mt-2 flex flex-wrap gap-1.5">
                 @foreach ($pays as $cc => $n)
-                    <span class="border-2 border-[#111] px-2 py-0.5 text-sm font-semibold">{{ $flags[$cc]['name'] ?? $cc }} · {{ $n }}</span>
+                    <span class="border border-zinc-200 px-2 py-0.5 text-sm font-semibold rounded-lg">{{ $flags[$cc]['name'] ?? $cc }} · {{ $n }}</span>
                 @endforeach
             </div>
             <div class="mt-1 text-xs text-slate-500">{{ $pct((int) $stats->verifies, (int) $stats->total) }} % ont confirmé leur email</div>
         </div>
     </div>
 
-    <div class="bg-white border-2 border-[#111] p-4 flex flex-wrap items-center gap-3">
+    <div class="bg-white border border-zinc-200 p-4 flex flex-wrap items-center gap-3 rounded-xl">
         <input wire:model.live.debounce.400ms="search" type="search" placeholder="Société, nom ou email…" class="flex-1 min-w-[220px] rounded-md border-gray-300 text-sm">
         <select wire:model.live="periode" class="rounded-md border-gray-300 text-sm">
             <option value="all">Toutes les dates</option>
@@ -47,9 +47,9 @@
         <label class="inline-flex items-center gap-2 text-sm"><input wire:model.live="actifs" type="checkbox" class="rounded border-gray-300"> Actives seulement</label>
     </div>
 
-    <div class="bg-white border-2 border-[#111] overflow-x-auto">
+    <div class="bg-white border border-zinc-200 overflow-x-auto rounded-lg">
         <table class="min-w-full text-sm">
-            <thead class="bg-[#111] text-[#ffcc00] text-xs uppercase">
+            <thead class="bg-zinc-900 text-white text-xs uppercase">
                 <tr>
                     <th class="text-start px-4 py-3">Société</th>
                     <th class="text-start px-4 py-3">Contact</th>
@@ -76,7 +76,7 @@
                         <td class="px-4 py-3">
                             <div class="text-slate-800">{{ $r->admin_name ?: '—' }}</div>
                             @if ($r->admin_email)
-                                <a href="mailto:{{ $r->admin_email }}" class="text-xs underline decoration-[#ffcc00] decoration-2">{{ $r->admin_email }}</a>
+                                <a href="mailto:{{ $r->admin_email }}" class="text-xs underline decoration-amber-400 decoration-2">{{ $r->admin_email }}</a>
                                 @if (! $r->verified_at)<span class="ms-1 text-[10px] font-semibold text-amber-700">non confirmé</span>@endif
                             @endif
                             @if ($wa)<div><a href="https://wa.me/{{ $wa }}" target="_blank" rel="noopener" class="text-xs text-emerald-700 underline">WhatsApp {{ $r->contact_phone }}</a></div>@endif

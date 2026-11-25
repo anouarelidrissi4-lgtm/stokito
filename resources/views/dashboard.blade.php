@@ -3,7 +3,7 @@
         $u = auth()->user();
         $max = max(1, $months->max('total'));
         $money = fn ($v) => \App\Support\Fmt::money($v);
-        $card = 'bg-white border-2 border-[#111]';
+        $card = 'bg-white border border-zinc-200 rounded-xl shadow-sm';
     @endphp
 
     <div class="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl">
@@ -11,8 +11,8 @@
         {{-- greeting + quick actions --}}
         <div class="flex flex-wrap items-end justify-between gap-3">
             <div>
-                <p class="ind-mono text-xs text-[#666] uppercase">{{ now()->locale(app()->getLocale())->isoFormat('dddd D MMMM YYYY') }}</p>
-                <h1 class="ind-h text-4xl uppercase leading-none mt-1">{{ __('Bonjour') }}, {{ $u->first_name ?: $u->name }}</h1>
+                <p class="text-sm text-zinc-500 first-letter:uppercase">{{ now()->locale(app()->getLocale())->isoFormat('dddd D MMMM YYYY') }}</p>
+                <h1 class="ind-h text-3xl leading-tight mt-1">{{ __('Bonjour') }}, {{ $u->first_name ?: $u->name }}</h1>
             </div>
             @php
                 $creates = array_values(array_filter([
@@ -27,18 +27,18 @@
                 {{-- one "+ Nouveau" button instead of four (2026-11-24): opens a menu on click --}}
                 <div class="relative" x-data="{ open: false }" @keydown.escape.window="open = false" @click.outside="open = false">
                     <button type="button" @click="open = ! open" :aria-expanded="open" aria-haspopup="true"
-                        class="inline-flex items-center gap-2 bg-[#111] text-[#ffcc00] border-2 border-[#111] px-4 py-2 ind-h text-lg uppercase tracking-wider shadow-[3px_3px_0_#ffcc00]">
+                        class="inline-flex items-center gap-2 bg-zinc-900 text-white px-4 py-2.5 rounded-lg text-sm font-semibold shadow-sm hover:bg-zinc-700">
                         <x-sp-icon name="plus" class="w-4 h-4" /> {{ __('Nouveau') }}
                         <svg class="w-4 h-4 transition-transform" :class="open && 'rotate-180'" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
                     </button>
                     <div x-show="open" x-cloak x-transition.origin.top
-                        class="absolute start-0 sm:start-auto sm:end-0 z-30 mt-2 w-64 bg-white border-2 border-[#111] shadow-[5px_5px_0_#111]" role="menu">
+                        class="absolute start-0 sm:start-auto sm:end-0 z-30 mt-2 w-64 bg-white border border-zinc-200 shadow-lg rounded-xl overflow-hidden" role="menu">
                         @foreach ($creates as [$href, $label, $icon, $badge])
                             <a href="{{ $href }}" wire:navigate role="menuitem"
-                                class="flex items-center gap-3 px-4 py-3 text-[15px] font-semibold hover:bg-[#ffcc00] {{ $loop->last ? '' : 'border-b border-[#e3e0d8]' }}">
+                                class="flex items-center gap-3 px-4 py-3 text-[15px] font-semibold hover:bg-zinc-100 {{ $loop->last ? '' : 'border-b border-zinc-200' }}">
                                 <x-sp-icon :name="$icon" class="w-4 h-4 shrink-0" />
                                 <span class="flex-1">{{ $label }}</span>
-                                @if ($badge)<span class="ind-mono text-[10px] bg-[#111] text-[#ffcc00] px-1.5 py-0.5">{{ $badge }}</span>@endif
+                                @if ($badge)<span class="ind-mono text-[10px] bg-zinc-900 text-white px-1.5 py-0.5">{{ $badge }}</span>@endif
                             </a>
                         @endforeach
                     </div>
@@ -48,44 +48,43 @@
 
         {{-- getting started (new self-service accounts, until the first product exists) --}}
         @if (! $u->is_demo && \App\Models\Product::count() === 0)
-            <div class="bg-white border-2 border-[#111] shadow-[6px_6px_0_#111]">
-                <div class="ind-hazard h-2"></div>
+            <div class="bg-white border border-zinc-200 shadow-lg shadow-zinc-900/5 rounded-xl">
                 <div class="p-5">
-                    <p class="ind-mono text-[11px] uppercase text-[#666]">{{ __('Démarrage') }} · 3 {{ __('étapes') }}</p>
-                    <h2 class="ind-h text-3xl uppercase leading-none mt-1">{{ __('Bienvenue ! Votre espace est prêt.') }}</h2>
+                    <p class="text-xs text-zinc-400">{{ __('Démarrage') }} · 3 {{ __('étapes') }}</p>
+                    <h2 class="ind-h text-2xl leading-tight mt-1">{{ __('Bienvenue ! Votre espace est prêt.') }}</h2>
                     <div class="mt-4 grid md:grid-cols-3 gap-3">
                         @foreach ([[route('societe.edit'), '01', __('Complétez Ma Société'), __('Logo, adresse, identifiants : ils apparaissent sur vos PDF.')],
                                    [route('products.index'), '02', __('Ajoutez vos produits'), __('Un par un, ou importez votre fichier Excel en une fois.')],
                                    [route('devis.create'), '03', __('Faites votre premier devis'), __('Choisissez un client, ajoutez les lignes, imprimez le PDF.')]] as [$href, $n, $t, $d])
-                            <a href="{{ $href }}" wire:navigate class="block border-2 border-[#111] p-4 hover:bg-[#ffcc00]">
-                                <div class="ind-h text-4xl leading-none text-[#ffcc00] [-webkit-text-stroke:1.5px_#111]">{{ $n }}</div>
-                                <div class="mt-2 ind-h text-xl uppercase">{{ $t }}</div>
-                                <div class="text-sm text-[#444]">{{ $d }}</div>
+                            <a href="{{ $href }}" wire:navigate class="block border border-zinc-200 p-4 hover:bg-zinc-100 rounded-xl">
+                                <div class="ind-h text-3xl leading-none text-zinc-300">{{ $n }}</div>
+                                <div class="mt-2 text-base font-semibold">{{ $t }}</div>
+                                <div class="text-sm text-zinc-600">{{ $d }}</div>
                             </a>
                         @endforeach
                     </div>
-                    <p class="mt-4 text-sm text-[#444]">{{ __('Besoin d’aide pour démarrer ?') }} <a href="https://wa.me/212676035777" target="_blank" rel="noopener" class="font-semibold underline decoration-[#ffcc00] decoration-2">{{ __('Écrivez-nous sur WhatsApp') }}</a>.</p>
+                    <p class="mt-4 text-sm text-zinc-600">{{ __('Besoin d’aide pour démarrer ?') }} <a href="https://wa.me/212676035777" target="_blank" rel="noopener" class="font-semibold underline decoration-amber-400 decoration-2">{{ __('Écrivez-nous sur WhatsApp') }}</a>.</p>
                 </div>
             </div>
         @endif
 
         {{-- user guide --}}
-        <div class="flex flex-wrap items-center gap-3 border-2 border-[#111] bg-[#ffcc00] px-4 py-3">
-            <span class="grid place-items-center w-9 h-9 bg-[#111] text-[#ffcc00] shrink-0"><x-sp-icon name="doc" class="w-5 h-5" /></span>
+        <div class="flex flex-wrap items-center gap-3 border border-zinc-200 bg-white shadow-sm px-4 py-3 rounded-xl">
+            <span class="grid place-items-center w-9 h-9 rounded-lg bg-[#ffcc00] text-zinc-900 shrink-0"><x-sp-icon name="doc" class="w-5 h-5" /></span>
             <div class="flex-1 min-w-[200px]">
                 <div class="text-sm font-semibold text-slate-900">{{ __("Guide d'utilisation") }}</div>
                 <div class="text-xs text-slate-500">{{ __('Tout Stokito expliqué pas à pas, à garder ou à partager avec votre équipe.') }}</div>
             </div>
-            <a href="/docs/guide-stokito-fr.pdf" target="_blank" rel="noopener" class="inline-flex items-center bg-white border-2 border-[#111] px-3 py-1.5 text-sm font-bold hover:bg-[#111] hover:text-[#ffcc00]">Français (PDF)</a>
-            <a href="/docs/guide-stokito-ar.pdf" target="_blank" rel="noopener" class="inline-flex items-center bg-white border-2 border-[#111] px-3 py-1.5 text-sm font-bold hover:bg-[#111] hover:text-[#ffcc00]" dir="rtl">العربية (PDF)</a>
-            <a href="/docs/guide-stokito-en.pdf" target="_blank" rel="noopener" class="inline-flex items-center bg-white border-2 border-[#111] px-3 py-1.5 text-sm font-bold hover:bg-[#111] hover:text-[#ffcc00]">English (PDF)</a>
+            <a href="/docs/guide-stokito-fr.pdf" target="_blank" rel="noopener" class="inline-flex items-center bg-white border border-zinc-200 px-3 py-1.5 text-sm font-bold hover:bg-zinc-50 rounded-lg">Français (PDF)</a>
+            <a href="/docs/guide-stokito-ar.pdf" target="_blank" rel="noopener" class="inline-flex items-center bg-white border border-zinc-200 px-3 py-1.5 text-sm font-bold hover:bg-zinc-50 rounded-lg" dir="rtl">العربية (PDF)</a>
+            <a href="/docs/guide-stokito-en.pdf" target="_blank" rel="noopener" class="inline-flex items-center bg-white border border-zinc-200 px-3 py-1.5 text-sm font-bold hover:bg-zinc-50 rounded-lg">English (PDF)</a>
         </div>
 
         {{-- KPIs --}}
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             <div class="{{ $card }} p-4 sm:p-5">
-                <div class="flex items-center gap-2 ind-mono text-[11px] uppercase text-[#666]"><x-sp-icon name="chart" class="w-4 h-4 text-[#111]" /> {{ __('CA du mois') }}</div>
-                <div class="mt-2 ind-h text-3xl sm:text-4xl leading-none text-slate-900">{{ $money($caMois) }} <span class="text-sm font-medium text-slate-400">{{ $currency }}</span></div>
+                <div class="flex items-center gap-2 text-[13px] font-medium text-zinc-500"><x-sp-icon name="chart" class="w-4 h-4 text-zinc-400" /> {{ __('CA du mois') }}</div>
+                <div class="mt-2 ind-h text-2xl sm:text-3xl leading-none text-slate-900">{{ $money($caMois) }} <span class="text-sm font-medium text-slate-400">{{ $currency }}</span></div>
                 @if ($caEvolution !== null)
                     <div class="mt-1 text-xs font-semibold {{ $caEvolution >= 0 ? 'text-emerald-600' : 'text-rose-600' }}">{{ $caEvolution >= 0 ? '▲' : '▼' }} {{ abs($caEvolution) }}% {{ __('vs mois dernier') }}</div>
                 @else
@@ -93,18 +92,18 @@
                 @endif
             </div>
             <div class="{{ $card }} p-4 sm:p-5">
-                <div class="flex items-center gap-2 ind-mono text-[11px] uppercase text-[#666]"><x-sp-icon name="coins" class="w-4 h-4 text-[#111]" /> {{ __('Encaissé ce mois') }}</div>
-                <div class="mt-2 ind-h text-3xl sm:text-4xl leading-none text-slate-900">{{ $money($encaisseMois) }} <span class="text-sm font-medium text-slate-400">{{ $currency }}</span></div>
+                <div class="flex items-center gap-2 text-[13px] font-medium text-zinc-500"><x-sp-icon name="coins" class="w-4 h-4 text-zinc-400" /> {{ __('Encaissé ce mois') }}</div>
+                <div class="mt-2 ind-h text-2xl sm:text-3xl leading-none text-slate-900">{{ $money($encaisseMois) }} <span class="text-sm font-medium text-slate-400">{{ $currency }}</span></div>
                 <div class="mt-1 text-xs text-slate-400">{{ __('Règlements clients') }}</div>
             </div>
-            <a href="{{ route('factures.index') }}" wire:navigate class="{{ $card }} p-4 sm:p-5 hover:bg-[#ffcc00]">
-                <div class="flex items-center gap-2 ind-mono text-[11px] uppercase text-[#666]"><x-sp-icon name="clock" class="w-4 h-4 text-[#111]" /> {{ __('Impayés') }}</div>
-                <div class="mt-2 ind-h text-3xl sm:text-4xl leading-none {{ $totalImpayes > 0 ? 'text-amber-600' : 'text-slate-900' }}">{{ $money($totalImpayes) }} <span class="text-sm font-medium text-slate-400">{{ $currency }}</span></div>
+            <a href="{{ route('factures.index') }}" wire:navigate class="{{ $card }} p-4 sm:p-5 hover:border-zinc-300 hover:shadow transition">
+                <div class="flex items-center gap-2 text-[13px] font-medium text-zinc-500"><x-sp-icon name="clock" class="w-4 h-4 text-zinc-400" /> {{ __('Impayés') }}</div>
+                <div class="mt-2 ind-h text-2xl sm:text-3xl leading-none {{ $totalImpayes > 0 ? 'text-amber-600' : 'text-slate-900' }}">{{ $money($totalImpayes) }} <span class="text-sm font-medium text-slate-400">{{ $currency }}</span></div>
                 <div class="mt-1 text-xs text-slate-400">{{ trans_choice('{0} Aucune facture|{1} :count facture|[2,*] :count factures', $impayes->count(), ['count' => $impayes->count()]) }}</div>
             </a>
-            <a href="{{ route('products.index') }}" wire:navigate class="{{ $card }} p-4 sm:p-5 hover:bg-[#ffcc00]">
-                <div class="flex items-center gap-2 ind-mono text-[11px] uppercase text-[#666]"><x-sp-icon name="alert" class="w-4 h-4 text-[#111]" /> {{ __('Stock bas') }}</div>
-                <div class="mt-2 ind-h text-3xl sm:text-4xl leading-none {{ $lowStock->count() ? 'text-rose-600' : 'text-slate-900' }}">{{ $lowStock->count() }} <span class="text-sm font-medium text-slate-400">{{ __('produits') }}</span></div>
+            <a href="{{ route('products.index') }}" wire:navigate class="{{ $card }} p-4 sm:p-5 hover:border-zinc-300 hover:shadow transition">
+                <div class="flex items-center gap-2 text-[13px] font-medium text-zinc-500"><x-sp-icon name="alert" class="w-4 h-4 text-zinc-400" /> {{ __('Stock bas') }}</div>
+                <div class="mt-2 ind-h text-2xl sm:text-3xl leading-none {{ $lowStock->count() ? 'text-rose-600' : 'text-slate-900' }}">{{ $lowStock->count() }} <span class="text-sm font-medium text-slate-400">{{ __('produits') }}</span></div>
                 <div class="mt-1 text-xs text-slate-400">{{ $devisEnCours }} {{ __('devis en cours') }}</div>
             </a>
         </div>
@@ -113,15 +112,15 @@
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             @if ($u->hasPermission('marges'))
             <div class="{{ $card }} p-4 sm:p-5">
-                <div class="flex items-center gap-2 ind-mono text-[11px] uppercase text-[#666]"><x-sp-icon name="chart" class="w-4 h-4 text-[#111]" /> {{ __('Marge brute du mois') }}</div>
-                <div class="mt-2 ind-h text-3xl sm:text-4xl leading-none {{ $margeMois < 0 ? 'text-rose-600' : 'text-emerald-700' }}">{{ $money($margeMois) }} <span class="text-sm font-medium text-slate-400">{{ $currency }}</span></div>
+                <div class="flex items-center gap-2 text-[13px] font-medium text-zinc-500"><x-sp-icon name="chart" class="w-4 h-4 text-zinc-400" /> {{ __('Marge brute du mois') }}</div>
+                <div class="mt-2 ind-h text-2xl sm:text-3xl leading-none {{ $margeMois < 0 ? 'text-rose-600' : 'text-emerald-700' }}">{{ $money($margeMois) }} <span class="text-sm font-medium text-slate-400">{{ $currency }}</span></div>
                 <div class="mt-1 text-xs text-slate-400">{{ $margePct !== null ? $margePct.' % '.__('du CA HT') : __('Aucune facture ce mois') }}</div>
             </div>
             @endif
             @if ($u->hasPermission('depenses'))
-            <a href="{{ route('depenses.index') }}" wire:navigate class="{{ $card }} p-4 sm:p-5 hover:bg-[#ffcc00]">
-                <div class="flex items-center gap-2 ind-mono text-[11px] uppercase text-[#666]"><x-sp-icon name="wallet" class="w-4 h-4 text-[#111]" /> {{ __('Dépenses du mois') }}</div>
-                <div class="mt-2 ind-h text-3xl sm:text-4xl leading-none text-slate-900">{{ $money($depensesMoisTtc) }} <span class="text-sm font-medium text-slate-400">{{ $currency }}</span></div>
+            <a href="{{ route('depenses.index') }}" wire:navigate class="{{ $card }} p-4 sm:p-5 hover:border-zinc-300 hover:shadow transition">
+                <div class="flex items-center gap-2 text-[13px] font-medium text-zinc-500"><x-sp-icon name="wallet" class="w-4 h-4 text-zinc-400" /> {{ __('Dépenses du mois') }}</div>
+                <div class="mt-2 ind-h text-2xl sm:text-3xl leading-none text-slate-900">{{ $money($depensesMoisTtc) }} <span class="text-sm font-medium text-slate-400">{{ $currency }}</span></div>
                 @if ($u->hasPermission('marges'))
                     @php $resultat = $margeMois - $depensesMoisHt; @endphp
                     <div class="mt-1 text-xs {{ $resultat < 0 ? 'text-rose-600 font-semibold' : 'text-slate-400' }}">{{ __('Marge moins dépenses (HT)') }} : {{ $money($resultat) }}</div>
@@ -131,20 +130,20 @@
             </a>
             @endif
             @if ($u->hasPermission('produits_prix_achat'))
-            <a href="{{ route('products.index') }}" wire:navigate class="{{ $card }} p-4 sm:p-5 hover:bg-[#ffcc00]">
-                <div class="flex items-center gap-2 ind-mono text-[11px] uppercase text-[#666]"><x-sp-icon name="cube" class="w-4 h-4 text-[#111]" /> {{ __('Valeur du stock') }}</div>
-                <div class="mt-2 ind-h text-3xl sm:text-4xl leading-none text-slate-900">{{ $money($valeurStock) }} <span class="text-sm font-medium text-slate-400">{{ $currency }}</span></div>
+            <a href="{{ route('products.index') }}" wire:navigate class="{{ $card }} p-4 sm:p-5 hover:border-zinc-300 hover:shadow transition">
+                <div class="flex items-center gap-2 text-[13px] font-medium text-zinc-500"><x-sp-icon name="cube" class="w-4 h-4 text-zinc-400" /> {{ __('Valeur du stock') }}</div>
+                <div class="mt-2 ind-h text-2xl sm:text-3xl leading-none text-slate-900">{{ $money($valeurStock) }} <span class="text-sm font-medium text-slate-400">{{ $currency }}</span></div>
                 <div class="mt-1 text-xs {{ $dormants ? 'text-amber-700 font-semibold' : 'text-slate-400' }}">{{ $dormants ? $dormants.' '.__('produits sans vente depuis 90 j') : __('Au prix d’achat HT') }}</div>
             </a>
             @endif
-            <a href="{{ route('devis.index') }}" wire:navigate class="{{ $card }} p-4 sm:p-5 hover:bg-[#ffcc00]">
-                <div class="flex items-center gap-2 ind-mono text-[11px] uppercase text-[#666]"><x-sp-icon name="doc" class="w-4 h-4 text-[#111]" /> {{ __('Devis en attente') }}</div>
-                <div class="mt-2 ind-h text-3xl sm:text-4xl leading-none text-slate-900">{{ $money($devisAttenteMontant) }} <span class="text-sm font-medium text-slate-400">{{ $currency }}</span></div>
+            <a href="{{ route('devis.index') }}" wire:navigate class="{{ $card }} p-4 sm:p-5 hover:border-zinc-300 hover:shadow transition">
+                <div class="flex items-center gap-2 text-[13px] font-medium text-zinc-500"><x-sp-icon name="doc" class="w-4 h-4 text-zinc-400" /> {{ __('Devis en attente') }}</div>
+                <div class="mt-2 ind-h text-2xl sm:text-3xl leading-none text-slate-900">{{ $money($devisAttenteMontant) }} <span class="text-sm font-medium text-slate-400">{{ $currency }}</span></div>
                 <div class="mt-1 text-xs text-slate-400">{{ $devisAttenteCount }} {{ __('devis') }}@if ($tauxAcceptation !== null) · {{ $tauxAcceptation }} % {{ __('acceptés (90 j)') }}@endif</div>
             </a>
             <div class="{{ $card }} p-4 sm:p-5">
-                <div class="flex items-center gap-2 ind-mono text-[11px] uppercase text-[#666]"><x-sp-icon name="coins" class="w-4 h-4 text-[#111]" /> {{ __('TVA facturée ce mois') }}</div>
-                <div class="mt-2 ind-h text-3xl sm:text-4xl leading-none text-slate-900">{{ $money($tvaMois) }} <span class="text-sm font-medium text-slate-400">{{ $currency }}</span></div>
+                <div class="flex items-center gap-2 text-[13px] font-medium text-zinc-500"><x-sp-icon name="coins" class="w-4 h-4 text-zinc-400" /> {{ __('TVA facturée ce mois') }}</div>
+                <div class="mt-2 ind-h text-2xl sm:text-3xl leading-none text-slate-900">{{ $money($tvaMois) }} <span class="text-sm font-medium text-slate-400">{{ $currency }}</span></div>
                 <div class="mt-1 text-xs text-slate-400">{{ __('Sur les factures du mois') }}</div>
             </div>
         </div>
@@ -153,14 +152,14 @@
             {{-- 6-month sales chart --}}
             <div class="{{ $card }} p-5 lg:col-span-3">
                 <div class="flex items-center justify-between">
-                    <h2 class="ind-h text-xl uppercase tracking-wide">{{ __('Ventes des 6 derniers mois') }}</h2>
+                    <h2 class="text-base font-semibold">{{ __('Ventes des 6 derniers mois') }}</h2>
                     <span class="text-xs text-slate-400">{{ __('Factures TTC') }}, {{ $currency }}</span>
                 </div>
                 <div class="mt-6 flex items-end gap-2 sm:gap-4 h-48">
                     @foreach ($months as $m)
                         <div class="flex-1 flex flex-col items-center justify-end h-full group">
                             <div class="text-[11px] font-semibold text-slate-500 mb-1 opacity-0 group-hover:opacity-100 sm:opacity-100 whitespace-nowrap">{{ $m['total'] > 0 ? number_format($m['total'] / 1000, 1, ',', ' ').'k' : '' }}</div>
-                            <div class="w-full max-w-[56px] {{ $loop->last ? 'bg-[#ffcc00] border-2 border-b-0 border-[#111]' : 'bg-[#111] group-hover:bg-[#444]' }}"
+                            <div class="w-full max-w-[56px] {{ $loop->last ? 'bg-[#ffcc00]' : 'bg-zinc-800 group-hover:bg-zinc-600' }} rounded-md"
                                 style="height: {{ $m['total'] > 0 ? max(4, round($m['total'] / $max * 100)) : 2 }}%" title="{{ $money($m['total']) }} {{ $currency }}"></div>
                             <div class="mt-2 text-xs {{ $loop->last ? 'font-semibold text-slate-800' : 'text-slate-500' }}">{{ $m['label'] }}</div>
                         </div>
@@ -170,12 +169,12 @@
 
             {{-- unpaid invoices --}}
             <div class="{{ $card }} lg:col-span-2 overflow-hidden">
-                <div class="px-5 py-4 border-b-2 border-[#111] flex items-center justify-between">
+                <div class="px-5 py-4 border-b border-zinc-200 flex items-center justify-between">
                     <div>
-                        <h2 class="ind-h text-xl uppercase tracking-wide">{{ __('À encaisser') }}</h2>
+                        <h2 class="text-base font-semibold">{{ __('À encaisser') }}</h2>
                         @if ($aEncaisser30 > 0)<div class="text-xs text-slate-500">{{ __('Sous 30 jours') }} : <strong class="text-slate-900">{{ $money($aEncaisser30) }} {{ $currency }}</strong></div>@endif
                     </div>
-                    <a href="{{ route('factures.index') }}" wire:navigate class="ind-mono text-[11px] uppercase underline decoration-[#ffcc00] decoration-2 underline-offset-4">{{ __('Toutes les factures') }}</a>
+                    <a href="{{ route('factures.index') }}" wire:navigate class="text-sm font-medium text-zinc-500 hover:text-zinc-900">{{ __('Toutes les factures') }}</a>
                 </div>
                 <ul class="divide-y divide-slate-100">
                     @forelse ($impayes->take(5) as $f)
@@ -211,17 +210,17 @@
             @foreach ([[__('Top produits'), $topProduits, __('CA HT')], [__('Top clients'), $topClients, __('CA TTC')]] as [$titre, $rows, $unite])
                 @php $topMax = max(1, $rows->max('ca')); @endphp
                 <div class="{{ $card }} overflow-hidden">
-                    <div class="px-5 py-4 border-b-2 border-[#111] flex items-center justify-between">
-                        <h2 class="ind-h text-xl uppercase tracking-wide">{{ $titre }}</h2>
-                        <span class="ind-mono text-[11px] uppercase text-[#666]">{{ __('90 derniers jours') }} · {{ $unite }}</span>
+                    <div class="px-5 py-4 border-b border-zinc-200 flex items-center justify-between">
+                        <h2 class="text-base font-semibold">{{ $titre }}</h2>
+                        <span class="text-xs text-zinc-400">{{ __('90 derniers jours') }} · {{ $unite }}</span>
                     </div>
                     @forelse ($rows as $i => $r)
                         <div class="px-5 py-3 {{ $loop->last ? '' : 'border-b border-slate-100' }}">
                             <div class="flex items-center justify-between gap-3">
-                                <span class="text-sm text-slate-800 truncate"><span class="ind-mono text-[11px] text-[#666] me-2">{{ sprintf('%02d', $i + 1) }}</span>{{ $r['name'] }}</span>
+                                <span class="text-sm text-slate-800 truncate"><span class="ind-mono text-[11px] text-zinc-500 me-2">{{ sprintf('%02d', $i + 1) }}</span>{{ $r['name'] }}</span>
                                 <span class="text-sm font-semibold text-slate-900 shrink-0">{{ $money($r['ca']) }}</span>
                             </div>
-                            <div class="mt-2 h-2 border border-[#111] bg-white overflow-hidden"><div class="h-full {{ $i === 0 ? 'bg-[#ffcc00]' : 'bg-[#111]' }}" style="width: {{ max(3, round($r['ca'] / $topMax * 100)) }}%"></div></div>
+                            <div class="mt-2 h-1.5 bg-zinc-100 overflow-hidden rounded-full"><div class="h-full rounded-full {{ $i === 0 ? 'bg-[#ffcc00]' : 'bg-zinc-900' }}" style="width: {{ max(3, round($r['ca'] / $topMax * 100)) }}%"></div></div>
                         </div>
                     @empty
                         <div class="px-5 py-10 text-center text-sm text-slate-400">{{ __('Aucune vente sur la période') }}</div>
@@ -232,9 +231,9 @@
 
         {{-- low stock --}}
         <div class="{{ $card }} overflow-hidden">
-            <div class="px-5 py-4 border-b-2 border-[#111] flex items-center justify-between">
-                <h2 class="ind-h text-xl uppercase tracking-wide">{{ __('Produits en alerte de stock') }}</h2>
-                <a href="{{ route('products.index') }}" wire:navigate class="ind-mono text-[11px] uppercase underline decoration-[#ffcc00] decoration-2 underline-offset-4">{{ __('Voir les produits') }}</a>
+            <div class="px-5 py-4 border-b border-zinc-200 flex items-center justify-between">
+                <h2 class="text-base font-semibold">{{ __('Produits en alerte de stock') }}</h2>
+                <a href="{{ route('products.index') }}" wire:navigate class="text-sm font-medium text-zinc-500 hover:text-zinc-900">{{ __('Voir les produits') }}</a>
             </div>
             @if ($lowStock->isEmpty())
                 <div class="px-5 py-10 text-center text-sm text-slate-400">{{ __('Aucun produit en alerte') }}</div>
@@ -247,7 +246,7 @@
                                 <span class="text-sm text-slate-800 truncate">{{ $product->name }}</span>
                                 <span class="text-sm font-semibold {{ $product->stock_qty <= 0 ? 'text-rose-600' : 'text-amber-600' }} shrink-0">{{ \App\Support\Fmt::qty($product->stock_qty) }} / {{ $product->stock_alert_threshold !== null ? \App\Support\Fmt::qty($product->stock_alert_threshold) : '-' }}</span>
                             </div>
-                            <div class="mt-2 h-2.5 border border-[#111] bg-white overflow-hidden"><div class="h-full {{ $product->stock_qty <= 0 ? 'bg-[#c62828]' : 'bg-[#ffcc00]' }}" style="width: {{ max(3, $pct) }}%"></div></div>
+                            <div class="mt-2 h-1.5 bg-zinc-100 overflow-hidden rounded-full"><div class="h-full rounded-full {{ $product->stock_qty <= 0 ? 'bg-[#c62828]' : 'bg-[#ffcc00]' }}" style="width: {{ max(3, $pct) }}%"></div></div>
                         </div>
                     @endforeach
                 </div>

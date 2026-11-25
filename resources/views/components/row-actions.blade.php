@@ -15,13 +15,12 @@
         }
     }">
     <button type="button" x-ref="btn" @click="toggle()" :aria-expanded="open" aria-haspopup="true"
-        class="inline-flex items-center gap-1 border-2 border-[#111] px-2.5 py-1 text-xs font-semibold hover:bg-[#ffcc00]" :class="open ? 'bg-[#ffcc00]' : 'bg-white'">
+        class="inline-flex items-center gap-1 border border-zinc-200 px-2.5 py-1 text-xs font-semibold hover:bg-zinc-100 rounded-lg" :class="open ? 'bg-[#ffcc00]' : 'bg-white'">
         {{ __('Actions') }}
         <svg class="w-3.5 h-3.5 transition-transform" :class="open && 'rotate-180'" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
     </button>
     <div x-show="open" x-cloak x-transition.opacity.duration.100ms @click="open = false" :style="style" role="menu"
-        class="fixed z-50 w-56 bg-white border-2 border-[#111] shadow-[4px_4px_0_#111] py-1 text-sm text-[#111]
-               [&>*]:flex [&>*]:w-full [&>*]:items-center [&>*]:gap-2 [&>*]:px-4 [&>*]:py-2.5 [&>*]:text-start [&>*]:font-medium [&>*:hover]:bg-[#fff3c4]">
+        class="fixed z-50 w-56 bg-white border border-zinc-200 shadow-md shadow-zinc-900/5 py-1 text-sm text-zinc-900 [&>*]:flex [&>*]:w-full [&>*]:items-center [&>*]:gap-2 [&>*]:px-4 [&>*]:py-2.5 [&>*]:text-start [&>*]:font-medium [&>*:hover]:bg-[#fff3c4] rounded-lg">
         {{ $slot }}
     </div>
 </div>

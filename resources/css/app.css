@@ -81,45 +81,50 @@ html.dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]) { border-color: #3
 html.dark .hover\:bg-slate-50:hover { background-color: #27303f !important; }
 
 /* =====================================================================
-   Industrial / dépôt art direction (2026-11-23) — shared by landing,
-   login (guest layout, .sp-guest) and the app (.sp-app).
-   Ink #111, safety yellow #ffcc00, concrete #e6e3dc, paper #f4f2ec.
+   Simple / modern art direction (2026-11-25) — replaces the industrial
+   one (kept in git history). White + zinc, ink #18181b buttons, brand
+   yellow #ffcc00 only as a small accent, Inter. Shared by landing,
+   public pages, login (.sp-guest) and the app (.sp-app).
    ===================================================================== */
-.ind-h { font-family: 'Barlow Condensed', 'Tajawal', sans-serif; font-weight: 800; }
-.ind-mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; }
-.ind-concrete { background-color: #e6e3dc; }
-.ind-hazard { background: repeating-linear-gradient(-45deg, #ffcc00 0 14px, #111 14px 28px); }
-.ind-bc { background: repeating-linear-gradient(90deg, #111 0 2px, transparent 2px 4px, #111 4px 5px, transparent 5px 7px, #111 7px 10px, transparent 10px 11px, #111 11px 12px, transparent 12px 15px); }
+.ind-h { font-family: inherit; font-weight: 700; letter-spacing: -0.025em; }
+.ind-mono, .mono { font-family: inherit; font-variant-numeric: tabular-nums; }
+.ind-concrete { background-color: #fafafa; }
+.ind-hazard, .ind-bc { display: none !important; }
+.ind-btn { display: inline-flex; align-items: center; gap: .5rem; height: 2.75rem; padding: 0 1.2rem; border: 1px solid #e4e4e7; border-radius: .625rem; font-weight: 600; font-size: .95rem; box-shadow: 0 1px 2px rgba(0,0,0,.05); transition: background-color .15s, border-color .15s, transform .15s; }
+.ind-btn:hover { transform: translateY(-1px); }
+.ind-btn.bg-zinc-900 { border-color: #18181b; }
+.ind-btn.bg-zinc-900:hover { background-color: #27272a; }
+.ind-btn.bg-white:hover { background-color: #f4f4f5; }
+.ind-btn.bg-\[\#ffcc00\] { border-color: #f5c400; }
+.sp-ind, .sp-pub { background: #fff; }
 
 /* ---- app (logged-in pages) ---- */
-.sp-app { font-family: 'Barlow', 'Tajawal', sans-serif; }
-[dir=rtl] .sp-app { font-family: 'Tajawal', 'Barlow', sans-serif; }
-html:not(.dark) .sp-app { background: #f4f2ec; }
-.sp-app main h1, .sp-app main h1.text-2xl { font-family: 'Barlow Condensed', 'Tajawal', sans-serif; font-weight: 800; text-transform: uppercase; letter-spacing: .01em; }
-/* primary buttons: ink + yellow, square */
-.sp-app .bg-indigo-600 { background-color: #111 !important; color: #ffcc00 !important; }
-.sp-app .hover\:bg-indigo-700:hover, .sp-app .hover\:bg-indigo-500:hover { background-color: #000 !important; }
-.sp-app main .bg-indigo-600, .sp-app main a.bg-indigo-600, .sp-app main button.bg-indigo-600 { border-radius: 2px !important; font-weight: 700; }
+html:not(.dark) .sp-app { background: #fafafa; }
+.sp-app main h1, .sp-app main h1.text-2xl { font-weight: 700; letter-spacing: -0.025em; text-transform: none; }
+/* primary buttons: ink, rounded */
+.sp-app .bg-indigo-600 { background-color: #18181b !important; color: #fff !important; }
+.sp-app .hover\:bg-indigo-700:hover, .sp-app .hover\:bg-indigo-500:hover { background-color: #27272a !important; }
+.sp-app main .bg-indigo-600, .sp-app main a.bg-indigo-600, .sp-app main button.bg-indigo-600 { border-radius: .5rem !important; font-weight: 600; }
 /* links that used indigo */
-.sp-app main .text-indigo-600, .sp-app main .text-indigo-700 { color: #111 !important; text-decoration: underline; text-decoration-color: #ffcc00; text-decoration-thickness: 2px; text-underline-offset: 3px; }
-/* cards & panels: flatter, inked edge */
+.sp-app main .text-indigo-600, .sp-app main .text-indigo-700 { color: #18181b !important; text-decoration: underline; text-decoration-color: #d4d4d8; text-underline-offset: 3px; }
+.sp-app main .text-indigo-600:hover, .sp-app main .text-indigo-700:hover { text-decoration-color: #18181b; }
+/* cards & panels: white, hairline border, soft shadow */
 html:not(.dark) .sp-app main .bg-white.shadow,
 html:not(.dark) .sp-app main .bg-white.shadow-sm,
 html:not(.dark) .sp-app main .bg-white.rounded-xl,
-html:not(.dark) .sp-app main .bg-white.rounded-lg { box-shadow: none !important; border: 1.5px solid #111 !important; border-radius: 3px !important; }
+html:not(.dark) .sp-app main .bg-white.rounded-lg { box-shadow: 0 1px 2px rgba(0,0,0,.04) !important; border: 1px solid #e4e4e7 !important; border-radius: .75rem !important; }
 /* table heads */
-html:not(.dark) .sp-app main thead.bg-gray-50, html:not(.dark) .sp-app main thead .bg-gray-50 { background: #111 !important; }
-html:not(.dark) .sp-app main thead.bg-gray-50 th, html:not(.dark) .sp-app main thead .bg-gray-50 th { color: #ffcc00 !important; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 500; letter-spacing: .02em; }
+html:not(.dark) .sp-app main thead.bg-gray-50, html:not(.dark) .sp-app main thead .bg-gray-50 { background: #fafafa !important; }
+html:not(.dark) .sp-app main thead.bg-gray-50 th, html:not(.dark) .sp-app main thead .bg-gray-50 th { color: #71717a !important; font-weight: 500; letter-spacing: 0; text-transform: none; }
 /* form fields */
-.sp-app main input:not([type=checkbox]):not([type=radio]), .sp-app main select, .sp-app main textarea { border-radius: 2px !important; }
-.sp-app main input:focus, .sp-app main select:focus, .sp-app main textarea:focus { border-color: #111 !important; box-shadow: 0 0 0 2px #ffcc00 !important; }
-.sp-app main input[type=checkbox] { color: #111; }
+.sp-app main input:not([type=checkbox]):not([type=radio]), .sp-app main select, .sp-app main textarea { border-radius: .5rem !important; border-color: #d4d4d8; }
+.sp-app main input:focus, .sp-app main select:focus, .sp-app main textarea:focus { border-color: #18181b !important; box-shadow: 0 0 0 3px rgba(24,24,27,.08) !important; }
+.sp-app main input[type=checkbox] { color: #18181b; border-radius: .25rem; }
 
 /* ---- guest pages (login, register, password) ---- */
-.sp-guest { font-family: 'Barlow', 'Tajawal', sans-serif; }
-.sp-guest input:not([type=checkbox]) { border: 2px solid #111 !important; border-radius: 0 !important; box-shadow: none !important; }
-.sp-guest input:focus { box-shadow: 0 0 0 3px #ffcc00 !important; }
-.sp-guest label { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px !important; text-transform: uppercase; color: #444 !important; }
-.sp-guest button[type=submit] { background: #111 !important; color: #ffcc00 !important; border: 2px solid #111 !important; border-radius: 0 !important; font-family: 'Barlow Condensed', sans-serif !important; font-weight: 800 !important; font-size: 17px !important; letter-spacing: .06em; padding: 10px 22px !important; box-shadow: 4px 4px 0 #ffcc00; }
-.sp-guest button[type=submit]:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0 #ffcc00; }
-.sp-guest input[type=checkbox] { border-radius: 0 !important; color: #111 !important; }
+.sp-guest input:not([type=checkbox]), .sp-guest select { border: 1px solid #d4d4d8 !important; border-radius: .5rem !important; box-shadow: 0 1px 2px rgba(0,0,0,.04) !important; }
+.sp-guest input:focus, .sp-guest select:focus { border-color: #18181b !important; box-shadow: 0 0 0 3px rgba(24,24,27,.08) !important; }
+.sp-guest label { font-size: 14px !important; font-weight: 500; color: #3f3f46 !important; }
+.sp-guest button[type=submit] { background: #18181b !important; color: #fff !important; border: 1px solid #18181b !important; border-radius: .5rem !important; font-weight: 600 !important; font-size: 15px !important; letter-spacing: 0; text-transform: none !important; padding: 10px 20px !important; }
+.sp-guest button[type=submit]:hover { background: #27272a !important; }
+.sp-guest input[type=checkbox] { border-radius: .25rem !important; color: #18181b !important; }
