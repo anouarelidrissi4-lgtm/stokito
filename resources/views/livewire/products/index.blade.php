@@ -16,13 +16,13 @@
                 <h2 class="text-lg font-bold text-gray-900">{{ __('Liste des produits') }}</h2>
                 <p class="text-sm text-gray-400">{{ $products->total() }} produit(s)</p>
             </div>
-            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-                <div class="flex items-center gap-2">
-                    <span class="text-sm text-gray-500 whitespace-nowrap">Recherche :</span>
-                    <input wire:model.live.debounce.300ms="search" type="text" placeholder="Référence, désignation ou code-barres" class="rounded-md border-gray-300 text-sm">
-                    <x-barcode-scanner on-scan="onBarcodeSearch" label="Scanner" />
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full lg:w-auto">
+                <div class="flex items-center gap-2 w-full sm:w-auto">
+                    <span class="hidden xl:inline text-sm text-gray-500 whitespace-nowrap">Recherche :</span>
+                    <input wire:model.live.debounce.300ms="search" type="search" placeholder="Référence, désignation ou code-barres" class="flex-1 min-w-0 w-full sm:w-72 rounded-md border-gray-300 text-sm">
+                    <x-barcode-scanner on-scan="onBarcodeSearch" label="Scanner" compact />
                 </div>
-                <select wire:model.live="categoryFilter" class="rounded-md border-gray-300 text-sm">
+                <select wire:model.live="categoryFilter" class="w-full sm:w-auto rounded-md border-gray-300 text-sm">
                     <option value="">Toutes les catégories</option>
                     @foreach ($categories as $cat)
                         <option value="{{ $cat->id }}">{{ $cat->name }}</option>
@@ -31,39 +31,40 @@
             </div>
         </div>
 
-        <div class="p-4 border-b flex flex-wrap items-center gap-2 print:hidden">
-            <button wire:click="create" class="flex items-center gap-1.5 bg-indigo-600 text-white px-3 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-700">
+        <div class="p-4 border-b grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 print:hidden">
+            <button wire:click="create" class="col-span-2 sm:col-span-1 justify-center flex items-center gap-1.5 bg-indigo-600 text-white px-3 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-700">
                 <span>+</span> Nouveau produit
             </button>
-            <button wire:click="exportExcel" class="flex items-center gap-1.5 bg-[#107c41] text-white border border-[#107c41] px-3 py-2 text-sm font-semibold hover:bg-[#0c6634] rounded-lg">
+            <button wire:click="exportExcel" class="justify-center flex items-center gap-1.5 bg-[#107c41] text-white border border-[#107c41] px-3 py-2 text-sm font-semibold hover:bg-[#0c6634] rounded-lg">
                 <svg class="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="3" width="20" height="18" rx="3" fill="currentColor" opacity=".25"/><path d="M8 8l8 8M16 8l-8 8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
                 Exporter Excel
             </button>
-            <button wire:click="openImport" class="flex items-center gap-1.5 bg-white text-[#107c41] border border-[#107c41] px-3 py-2 rounded-lg text-sm font-semibold hover:bg-[#107c41]/10">
+            <button wire:click="openImport" class="justify-center flex items-center gap-1.5 bg-white text-[#107c41] border border-[#107c41] px-3 py-2 rounded-lg text-sm font-semibold hover:bg-[#107c41]/10">
                 <svg class="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="3" width="20" height="18" rx="3" fill="currentColor" opacity=".25"/><path d="M8 8l8 8M16 8l-8 8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
                 Importer Excel
             </button>
-            <a :href="printUrl()" target="_blank" rel="noopener" class="flex items-center gap-1.5 bg-white text-zinc-900 border border-zinc-200 px-3 py-2 text-sm font-semibold hover:bg-zinc-100 rounded-lg">
+            <a :href="printUrl()" target="_blank" rel="noopener" class="justify-center flex items-center gap-1.5 bg-white text-zinc-900 border border-zinc-200 px-3 py-2 text-sm font-semibold hover:bg-zinc-100 rounded-lg">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a1 1 0 001 1h8a1 1 0 001-1v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a1 1 0 00-1-1H6a1 1 0 00-1 1zm2 0h6v3H7V4zm6 10v3H7v-5h6v2z" /></svg>
                 Imprimer
             </a>
 
-            <div class="relative ms-auto" x-data="{ open: false, saving: false, draft: [],
+            <div class="relative sm:ms-auto" x-data="{ open: false, saving: false, draft: [],
                     show() { this.draft = JSON.parse(JSON.stringify(this.$wire.columns)); this.open = !this.open },
                     move(i, d) { const j = i + d; if (j < 0 || j >= this.draft.length) return; const t = this.draft[i]; this.draft[i] = this.draft[j]; this.draft[j] = t },
                     async save() { this.saving = true; await this.$wire.saveColumns(this.draft); this.saving = false; this.open = false } }">
-                <button @click="show()" type="button" class="flex items-center gap-1.5 border border-gray-300 text-gray-700 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-gray-50">
+                <button @click="show()" type="button" class="w-full sm:w-auto justify-center flex items-center gap-1.5 border border-gray-300 text-gray-700 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-gray-50">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M3 4a1 1 0 011-1h3a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM8 4a1 1 0 011-1h3a1 1 0 011 1v12a1 1 0 01-1 1H9a1 1 0 01-1-1V4zM13 4a1 1 0 011-1h3a1 1 0 011 1v12a1 1 0 01-1 1h-3a1 1 0 01-1-1V4z" /></svg>
                     Colonnes
                     <svg class="h-3.5 w-3.5 transition-transform" :class="open && 'rotate-180'" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M5.5 7.5 10 12l4.5-4.5z"/></svg>
                 </button>
+                <div x-show="open" x-cloak x-transition.opacity class="sm:hidden fixed inset-0 z-40 bg-black/40" @click="open = false"></div>
                 <div x-show="open" @click.outside="open = false" @keydown.escape.window="open = false" x-cloak x-transition.origin.top.right
-                    class="absolute end-0 mt-2 w-[calc(100vw-2rem)] max-w-sm bg-white rounded-xl shadow-2xl border border-zinc-200 z-30 text-sm">
+                    class="fixed inset-x-3 top-16 bottom-4 flex flex-col sm:block sm:absolute sm:inset-x-auto sm:top-auto sm:bottom-auto sm:end-0 sm:mt-2 sm:w-[24rem] bg-white rounded-xl shadow-2xl border border-zinc-200 z-50 text-sm">
                     <div class="px-4 pt-4 pb-2">
                         <div class="font-semibold text-zinc-900">Colonnes à afficher</div>
                         <div class="text-xs text-zinc-500 mt-0.5">Cochez les colonnes et utilisez les flèches pour changer l'ordre.</div>
                     </div>
-                    <ul class="px-2 max-h-[60vh] overflow-y-auto space-y-1">
+                    <ul class="px-2 flex-1 sm:flex-none min-h-0 sm:max-h-[60vh] overflow-y-auto space-y-1">
                         <template x-for="(c, i) in draft" :key="c.key">
                             <li class="flex items-center gap-2 rounded-lg border px-2.5 py-1.5 transition-colors" :class="c.visible ? 'border-zinc-200 bg-white' : 'border-transparent bg-zinc-50'">
                                 <label class="flex-1 flex items-center gap-2.5 cursor-pointer min-w-0">
@@ -88,21 +89,21 @@
             $canMarge = $canBuy && auth()->user()->hasPermission('marges');
             $fmtTot = fn ($v) => \App\Support\Fmt::money($v);
         @endphp
-        <div class="px-4 py-3 border-b border-zinc-200 bg-zinc-50/60 grid gap-3 {{ $canMarge ? 'sm:grid-cols-3' : ($canBuy ? 'sm:grid-cols-2' : 'sm:grid-cols-1') }}">
+        <div class="px-4 py-3 border-b border-zinc-200 bg-zinc-50/60 grid gap-2 sm:gap-3 {{ $canMarge ? 'sm:grid-cols-3' : ($canBuy ? 'sm:grid-cols-2' : 'sm:grid-cols-1') }}">
             @if ($canBuy)
-            <div class="rounded-xl border border-zinc-200 bg-white px-4 py-3">
+            <div class="rounded-xl border border-zinc-200 bg-white px-3 py-2 sm:px-4 sm:py-3 flex sm:block items-baseline justify-between gap-2">
                 <div class="text-xs font-medium text-zinc-500">Total d'achat</div>
-                <div class="mt-1 text-xl font-bold text-zinc-900 tabular-nums">{{ $fmtTot($totals['achat']) }} <span class="text-sm font-medium text-zinc-400">{{ $currency }}</span></div>
+                <div class="sm:mt-1 text-base sm:text-xl font-bold text-zinc-900 tabular-nums">{{ $fmtTot($totals['achat']) }} <span class="text-sm font-medium text-zinc-400">{{ $currency }}</span></div>
             </div>
             @endif
-            <div class="rounded-xl border border-zinc-200 bg-white px-4 py-3">
+            <div class="rounded-xl border border-zinc-200 bg-white px-3 py-2 sm:px-4 sm:py-3 flex sm:block items-baseline justify-between gap-2">
                 <div class="text-xs font-medium text-zinc-500">Total prix de vente TTC</div>
-                <div class="mt-1 text-xl font-bold text-zinc-900 tabular-nums">{{ $fmtTot($totals['vente']) }} <span class="text-sm font-medium text-zinc-400">{{ $currency }}</span></div>
+                <div class="sm:mt-1 text-base sm:text-xl font-bold text-zinc-900 tabular-nums">{{ $fmtTot($totals['vente']) }} <span class="text-sm font-medium text-zinc-400">{{ $currency }}</span></div>
             </div>
             @if ($canMarge)
-            <div class="rounded-xl border border-zinc-200 bg-white px-4 py-3">
+            <div class="rounded-xl border border-zinc-200 bg-white px-3 py-2 sm:px-4 sm:py-3 flex sm:block items-baseline justify-between gap-2">
                 <div class="text-xs font-medium text-zinc-500">Total marge <span class="text-zinc-400">(HT)</span></div>
-                <div class="mt-1 text-xl font-bold tabular-nums {{ $totals['marge'] < 0 ? 'text-red-600' : 'text-emerald-700' }}">{{ $fmtTot($totals['marge']) }} <span class="text-sm font-medium text-zinc-400">{{ $currency }}</span></div>
+                <div class="sm:mt-1 text-base sm:text-xl font-bold tabular-nums {{ $totals['marge'] < 0 ? 'text-red-600' : 'text-emerald-700' }}">{{ $fmtTot($totals['marge']) }} <span class="text-sm font-medium text-zinc-400">{{ $currency }}</span></div>
             </div>
             @endif
             <p class="sm:col-span-full text-[11px] text-zinc-400">Sur le stock actuel ({{ $totals['n'] }} produit(s){{ $search !== '' || $categoryFilter !== '' ? ', selon la recherche' : '' }}) : quantité × prix. Marge = vente HT − achat.</p>
