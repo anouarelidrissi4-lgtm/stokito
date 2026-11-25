@@ -48,47 +48,21 @@
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}
     </script>
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700{{ $rtl ? '|tajawal:400,500,700,800' : '' }}&display=swap" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700|poppins:600,700,800{{ $rtl ? '|tajawal:400,500,700,800' : '' }}&display=swap" rel="stylesheet" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
     <style>
 
         /* ---------- industrial / dépôt art direction (2026-11-23) ---------- */
         .ind-btn:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0 #111; }
-        .hero-grid { background-image: linear-gradient(to right, rgba(24,24,27,.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(24,24,27,.06) 1px, transparent 1px); background-size: 44px 44px; -webkit-mask-image: radial-gradient(ellipse 75% 70% at 50% 35%, #000 40%, transparent 100%); mask-image: radial-gradient(ellipse 75% 70% at 50% 35%, #000 40%, transparent 100%); }
-        /* ---------- hero loop: devis -> BL -> stock -> facture -> WhatsApp (14s) ---------- */
-        .hx { --d: 14s; }
-        .hx * { animation-duration: var(--d); animation-iteration-count: infinite; animation-timing-function: ease; }
-        .hx .ln { opacity: 0; animation-name: hxLine; }
-        .hx .ln:nth-child(2) { animation-delay: .5s; } .hx .ln:nth-child(3) { animation-delay: 1s; }
-        @keyframes hxLine { 0%,6% { opacity: 0; transform: translateY(6px); } 10%,92% { opacity: 1; transform: none; } 97%,100% { opacity: 0; } }
-        .hx .tot-a { animation-name: hxTotA; } .hx .tot-b { opacity: 0; animation-name: hxTotB; }
-        @keyframes hxTotA { 0%,16% { opacity: 1; } 18%,100% { opacity: 0; } }
-        @keyframes hxTotB { 0%,16% { opacity: 0; } 18%,92% { opacity: 1; } 97%,100% { opacity: 0; } }
-        .hx .cursor { animation-name: hxCursor; }
-        @keyframes hxCursor { 0%,18% { transform: translate(120px, 90px); opacity: 0; } 22% { opacity: 1; } 31% { transform: translate(0, 0); } 33% { transform: translate(0,0) scale(.85); } 35%,44% { transform: translate(0,0) scale(1); opacity: 1; } 48%,100% { opacity: 0; transform: translate(0,0); } }
-        .hx .btn-bl { animation-name: hxBtn; }
-        @keyframes hxBtn { 0%,32% { box-shadow: 0 0 0 0 rgba(99,102,241,0); } 34% { box-shadow: 0 0 0 7px rgba(99,102,241,.35); } 40%,100% { box-shadow: 0 0 0 0 rgba(99,102,241,0); } }
-        .hx .tag-devis { animation-name: hxTagA; } .hx .tag-bl { opacity: 0; animation-name: hxTagB; }
-        @keyframes hxTagA { 0%,35% { opacity: 1; } 37%,100% { opacity: 0; } }
-        @keyframes hxTagB { 0%,35% { opacity: 0; } 37%,92% { opacity: 1; } 97%,100% { opacity: 0; } }
-        .hx .stock { opacity: 0; animation-name: hxStock; }
-        @keyframes hxStock { 0%,39% { opacity: 0; transform: translateY(8px); } 43%,56% { opacity: 1; transform: none; } 60%,100% { opacity: 0; } }
-        .hx .s-old { animation-name: hxOld; } .hx .s-new { opacity: 0; animation-name: hxNew; }
-        @keyframes hxOld { 0%,47% { opacity: 1; } 50%,100% { opacity: 0; } }
-        @keyframes hxNew { 0%,47% { opacity: 0; } 50%,92% { opacity: 1; } 97%,100% { opacity: 0; } }
-        .hx .s-bar { animation-name: hxBar; }
-        @keyframes hxBar { 0%,47% { width: 78%; } 53%,92% { width: 65%; } 100% { width: 78%; } }
-        .hx .pdf { opacity: 0; animation-name: hxPdf; }
-        @keyframes hxPdf { 0%,54% { opacity: 0; transform: translate(14px, 24px) rotate(2deg); } 60%,92% { opacity: 1; transform: rotate(-2.5deg); } 97%,100% { opacity: 0; transform: rotate(-2.5deg); } }
-        .hx .words { clip-path: inset(0 100% 0 0); animation-name: hxWords; }
-        [dir=rtl] .hx .words { clip-path: inset(0 0 0 100%); animation-name: hxWordsR; }
-        @keyframes hxWords { 0%,61% { clip-path: inset(0 100% 0 0); } 70%,100% { clip-path: inset(0 0 0 0); } }
-        @keyframes hxWordsR { 0%,61% { clip-path: inset(0 0 0 100%); } 70%,100% { clip-path: inset(0 0 0 0); } }
-        .hx .wa { opacity: 0; animation-name: hxWa; }
-        @keyframes hxWa { 0%,72% { opacity: 0; transform: translateY(14px) scale(.96); } 77%,92% { opacity: 1; transform: none; } 97%,100% { opacity: 0; } }
-        .hx .ticks { opacity: 0; animation-name: hxTicks; }
-        @keyframes hxTicks { 0%,82% { opacity: 0; } 84%,92% { opacity: 1; } 97%,100% { opacity: 0; } }
+        .sp-ind .ind-h, .hero-title { font-family: 'Poppins', 'Tajawal', sans-serif; }
+        .hero-title { font-weight: 800; line-height: 1.06; letter-spacing: -0.03em; }
+        .hero-dots { background-image: radial-gradient(rgba(255,204,0,.45) 1.6px, transparent 1.7px); background-size: 22px 22px; }
+        .hero-bar { animation: heroBar 7s linear forwards; }
+        @keyframes heroBar { from { width: 0 } to { width: 100% } }
+        .hero-ring { animation: heroSpin 60s linear infinite; }
+        @keyframes heroSpin { to { transform: rotate(360deg) } }
+        @media (prefers-reduced-motion: reduce) { .hero-ring, .hero-bar { animation: none !important; } .hero-bar { width: 100%; } }
         /* ---------- small card loops (8s) ---------- */
         .lp-loop * { animation-duration: 8s; animation-iteration-count: infinite; }
         .c-line { opacity: 0; animation-name: cLine; }
@@ -132,10 +106,7 @@
         }
         @keyframes lpFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
         @media (prefers-reduced-motion: reduce) {
-            .hx *, .lp-loop *, .lp-marquee { animation: none !important; }
-            .hx .ln, .hx .tot-b, .hx .tag-bl, .hx .stock, .hx .s-new, .hx .pdf, .hx .wa, .hx .ticks, .c-line, .c-b, .c-paid, .c-lang-fr { opacity: 1 !important; }
-            .hx .tot-a, .hx .tag-devis, .hx .s-old, .hx .cursor, .c-a, .c-lang-ar { opacity: 0 !important; }
-            .hx .words { clip-path: none !important; } .hx .pdf { transform: rotate(-2.5deg); }
+            .lp-loop *, .lp-marquee { animation: none !important; }
         }
 
         /* industrial colours for the shared loops */
@@ -201,105 +172,89 @@
 
 <a href="{{ $wa }}" target="_blank" rel="noopener" aria-label="WhatsApp" class="fixed bottom-5 {{ $rtl ? 'left-5' : 'right-5' }} z-40 h-14 w-14 grid place-items-center bg-[#25d366] text-white border border-zinc-200 shadow-md shadow-zinc-900/5 rounded-lg"><span class="[&>svg]:h-7 [&>svg]:w-7">{!! $waIcon !!}</span></a>
 
-{{-- ============ HERO ============ --}}
-<section class="relative overflow-hidden border-b border-zinc-200 bg-[#fbfaf7]">
-    {{-- hero background (2026-11-25): faint grid fading out + soft brand-yellow light behind the document --}}
+{{-- ============ HERO: slider (2026-11-25, after the user's reference: dark band, big title, product visual in brand rings, timed tabs) ============ --}}
+@php
+    $heroSlides = [
+        ['tab' => __('Stock et factures'), 'eyebrow' => __('Logiciel de gestion de stock en ligne'), 'title' => __('Votre stock, vos devis et vos factures.'), 'accent' => __('Au même endroit.'),
+         'text' => __('Stokito suit chaque produit du devis jusqu’à l’encaissement. Le stock se met à jour tout seul, vos factures portent vos identifiants, la TVA et le montant en lettres, et vous relancez vos clients sur WhatsApp.'),
+         'cta' => [route('register'), __('Créer un compte gratuit')], 'cta2' => [route('demo.login'), __('Tester la démo')],
+         'img' => 'screen-dashboard', 'w' => 1600, 'h' => 996, 'url' => 'stokito.com/dashboard', 'badge' => [__('CA du mois'), '1 104,66 €']],
+        ['tab' => __('Caisse'), 'eyebrow' => __('Caisse'), 'title' => __('Une caisse pour le comptoir, reliée au stock.'), 'accent' => null,
+         'text' => __('Scannez, encaissez en espèces, par carte ou par chèque : le rendu de monnaie se calcule et le ticket s’imprime. Chaque vente sort du stock et compte dans votre tableau de bord.'),
+         'cta' => [route('seo.caisse'), __('Essayer la caisse')], 'cta2' => null,
+         'img' => 'screen-caisse-pos', 'w' => 1272, 'h' => 800, 'url' => 'stokito.com/caisse', 'badge' => ['Total TTC', '61,00 €']],
+        ['tab' => __('Scanner IA'), 'eyebrow' => __('Scanner IA'), 'title' => __('Une photo de la facture. Le bon de commande se remplit.'), 'accent' => null,
+         'text' => __('Prenez en photo la facture de votre fournisseur, ou choisissez le PDF. Stokito lit le fournisseur, la date, le numéro et chaque ligne, puis retrouve vos produits. Vous vérifiez, vous enregistrez : à la réception, le stock monte tout seul.'),
+         'cta' => [route('seo.scanner-facture'), __('En savoir plus')], 'cta2' => null,
+         'img' => 'screen-scanner-facture', 'w' => 992, 'h' => 1092, 'url' => 'stokito.com/commande-fournisseurs', 'badge' => ['FA-24-11872', '✓ 4 / 4']],
+    ];
+@endphp
+<section class="relative overflow-hidden bg-[#111113] text-white"
+    x-data="{ i: 0, n: {{ count($heroSlides) }}, t: null,
+        start() { clearInterval(this.t); if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return; this.t = setInterval(() => this.i = (this.i + 1) % this.n, 7000) },
+        go(k) { this.i = k; this.start() } }"
+    x-init="start()" @mouseenter="clearInterval(t)" @mouseleave="start()">
     <div aria-hidden="true" class="pointer-events-none absolute inset-0">
-        <div class="absolute inset-0 hero-grid"></div>
-        <div class="absolute -top-40 {{ $rtl ? '-left-24' : '-right-24' }} w-[720px] h-[720px] rounded-full bg-[#ffcc00] opacity-[.22] blur-[120px]"></div>
-        <div class="absolute -bottom-48 {{ $rtl ? '-right-32' : '-left-32' }} w-[560px] h-[560px] rounded-full bg-amber-200 opacity-30 blur-[110px]"></div>
-        <div class="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-white"></div>
+        <div class="absolute -top-56 {{ $rtl ? '-left-40' : '-right-40' }} w-[760px] h-[760px] rounded-full bg-[#ffcc00] opacity-[.07] blur-[100px]"></div>
+        <div class="absolute bottom-6 {{ $rtl ? 'left-6' : 'right-6' }} w-64 h-40 hero-dots hidden sm:block"></div>
     </div>
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 pt-12 pb-24 sm:pt-16 lg:pb-28 grid lg:grid-cols-12 gap-12 items-center">
-        <div class="lg:col-span-6">
-            <div class="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-medium text-zinc-600 shadow-sm">
-                <span class="w-1.5 h-1.5 rounded-full bg-[#ffcc00]"></span>
-                <span>{{ __('Logiciel de gestion de stock en ligne') }}</span>
-            </div>
-            <h1 class="mt-6 ind-h text-4xl sm:text-5xl xl:text-6xl leading-[1.05]">
-                {{ __('Votre stock, vos devis et vos factures.') }}
-                <span class="relative inline-block mt-2"><span class="relative z-10">{{ __('Au même endroit.') }}</span><span class="absolute inset-x-0 bottom-1 h-[38%] bg-[#ffcc00] -z-0"></span></span>
-            </h1>
-            <p class="mt-6 text-lg text-zinc-700 max-w-xl">{{ __('Stokito suit chaque produit du devis jusqu’à l’encaissement. Le stock se met à jour tout seul, vos factures portent vos identifiants, la TVA et le montant en lettres, et vous relancez vos clients sur WhatsApp.') }}</p>
-            <div class="mt-8 flex flex-wrap items-center gap-3">
-                <a href="{{ route('register') }}" class="ind-btn bg-zinc-900 text-white">{{ __('Créer un compte gratuit') }} <span aria-hidden="true">{{ $rtl ? '←' : '→' }}</span></a>
-                <a href="{{ route('demo.login') }}" class="ind-btn bg-white text-zinc-900">{{ __('Tester la démo') }}</a>
-            </div>
-            <a href="#scanner" class="mt-6 inline-flex items-center gap-2 border border-zinc-200 bg-white px-3 py-1.5 text-sm font-semibold hover:bg-zinc-100 rounded-lg">
-                <span class="text-[10px] font-semibold rounded-full bg-[#ffcc00] text-zinc-900 px-2 py-0.5">{{ __('NOUVEAU') }}</span>
-                {{ __('Scannez vos factures fournisseurs') }} <span aria-hidden="true">{{ $rtl ? '←' : '→' }}</span>
-            </a>
-            <dl class="mt-8 grid grid-cols-3 max-w-lg border border-zinc-200 bg-white rounded-lg">
-                <div class="p-3 border-e border-zinc-200"><dd class="text-sm font-semibold leading-tight">{{ __('Sans installation') }}</dd></div>
-                <div class="p-3 border-e border-zinc-200"><dd class="text-sm font-semibold leading-tight">{{ __('Français, anglais, arabe') }}</dd></div>
-                <div class="p-3"><dd class="text-sm font-semibold leading-tight">{{ __('PC et téléphone') }}</dd></div>
-            </dl>
-        </div>
-
-        {{-- hero animation: same story, document look --}}
-        <div class="lg:col-span-6 hx relative" aria-hidden="true" dir="ltr">
-            <div class="relative mx-auto max-w-[560px]">
-                                <div class="bg-white text-zinc-900 border border-zinc-200 shadow-2xl shadow-zinc-900/10 rounded-xl">
-                    <div class="h-9 flex items-center justify-between px-4 border-b border-zinc-200 bg-zinc-50">
-                        <span class="ind-mono text-[11px] text-zinc-500">stokito.com/devis</span>
-                        
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 pt-12 sm:pt-16 pb-10">
+        <div class="grid">
+            @foreach ($heroSlides as $k => $s)
+                <div class="[grid-area:1/1] grid lg:grid-cols-12 gap-10 lg:gap-12 items-center transition-all duration-700"
+                    :class="i === {{ $k }} ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-3'"
+                    @if ($k > 0) x-cloak @endif>
+                    <div class="lg:col-span-6">
+                        <p class="text-sm font-semibold text-[#ffcc00]">{{ $s['eyebrow'] }}</p>
+                        @if ($k === 0)
+                            <h1 class="mt-4 hero-title text-4xl sm:text-5xl xl:text-6xl">{{ $s['title'] }} @if ($s['accent'])<span class="text-[#ffcc00]">{{ $s['accent'] }}</span>@endif</h1>
+                        @else
+                            <h2 class="mt-4 hero-title text-4xl sm:text-5xl xl:text-6xl">{{ $s['title'] }}</h2>
+                        @endif
+                        <p class="mt-6 text-lg text-zinc-300 max-w-xl leading-relaxed">{{ $s['text'] }}</p>
+                        <div class="mt-8 flex flex-wrap items-center gap-3">
+                            <a href="{{ $s['cta'][0] }}" class="inline-flex items-center gap-2 h-12 px-6 rounded-lg bg-[#ffcc00] text-zinc-900 font-semibold shadow-[0_4px_0_#c99f00] hover:translate-y-px hover:shadow-[0_3px_0_#c99f00] transition">{{ $s['cta'][1] }} <span aria-hidden="true">{{ $rtl ? '←' : '→' }}</span></a>
+                            @if ($s['cta2'])<a href="{{ $s['cta2'][0] }}" class="inline-flex items-center h-12 px-6 rounded-lg border border-white/25 text-white font-semibold hover:bg-white/10 transition">{{ $s['cta2'][1] }}</a>@endif
+                        </div>
                     </div>
-                    <div class="p-5">
-                        <div class="flex items-start justify-between gap-3">
-                            <div>
-                                <div class="relative h-5">
-                                    <span class="tag-devis absolute inset-0 ind-mono text-[11px] font-semibold whitespace-nowrap">DEVIS · DEV-00042</span>
-                                    <span class="tag-bl absolute inset-0 ind-mono text-[11px] font-semibold text-[#0a7a3e] whitespace-nowrap"><span class="hidden sm:inline">BON DE LIVRAISON · </span>BL-00031 · LIVRÉ ✓</span>
+                    <div class="lg:col-span-6" aria-hidden="true">
+                        <div class="relative mx-auto w-full max-w-[400px] lg:max-w-[580px] aspect-square">
+                            <svg class="hero-ring absolute inset-0 w-full h-full" viewBox="0 0 200 200" fill="none">
+                                <circle cx="100" cy="100" r="74" fill="#1c1c20"/>
+                                <circle cx="100" cy="100" r="90" stroke="#ffcc00" stroke-width="9" stroke-linecap="round" stroke-dasharray="250 26 190 100" transform="rotate(-70 100 100)"/>
+                                <circle cx="100" cy="100" r="70" stroke="#ffcc00" stroke-opacity=".35" stroke-width="3" stroke-linecap="round" stroke-dasharray="90 40 160 150" transform="rotate(30 100 100)"/>
+                                <circle cx="30" cy="40" r="8" fill="#ffcc00"/>
+                                <circle cx="172" cy="150" r="5" fill="#ffcc00" fill-opacity=".6"/>
+                            </svg>
+                            <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full lg:w-[96%] rounded-xl bg-white shadow-2xl shadow-black/50 ring-1 ring-white/10 overflow-hidden {{ $k % 2 ? 'rotate-[1.5deg]' : '-rotate-[1.5deg]' }}">
+                                <div class="h-7 flex items-center gap-1.5 px-3 bg-zinc-100 border-b border-zinc-200">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-[#ff5f57]"></span><span class="w-2.5 h-2.5 rounded-full bg-[#febc2e]"></span><span class="w-2.5 h-2.5 rounded-full bg-[#28c840]"></span>
+                                    <span class="ms-3 text-[11px] text-zinc-500 truncate" dir="ltr">{{ $s['url'] }}</span>
                                 </div>
-                                <div class="ind-h text-lg leading-tight">Bâti Plus SARL</div>
-                                <div class="ind-mono text-[11px] text-zinc-500">SIRET 123 456 789 00012 · Lyon</div>
+                                <img src="/images/screens/{{ $s['img'] }}.webp?v=20261125m" width="{{ $s['w'] }}" height="{{ $s['h'] }}" alt="" class="block w-full aspect-[16/10] object-cover object-left-top" @if ($k > 0) loading="lazy" @endif>
                             </div>
-                            <div class="btn-bl shrink-0 relative bg-zinc-900 text-white ind-h text-sm px-3 py-2">Convertir en BL
-                                <svg class="cursor absolute -bottom-5 right-2 w-6 h-6" viewBox="0 0 24 24"><path d="M5 3l14 8-6 1.5L10 19z" fill="#ffcc00" stroke="#111" stroke-width="1.5" stroke-linejoin="round"/></svg>
-                            </div>
-                        </div>
-                        <div class="mt-4 border border-zinc-200 text-[12.5px] rounded-lg">
-                            <div class="grid grid-cols-[1fr_44px_70px_84px] gap-2 bg-zinc-50 text-zinc-500 px-3 py-1.5 ind-mono text-[10px]"><span>PRODUIT</span><span class="text-right">QTÉ</span><span class="text-right">P.U. HT</span><span class="text-right">TOTAL HT</span></div>
-                            <div>
-                                <div class="ln grid grid-cols-[1fr_44px_70px_84px] gap-2 px-3 py-2 border-t border-zinc-100"><span class="truncate">Fer rond à béton Ø10</span><span class="text-right ind-mono">50</span><span class="text-right ind-mono">7,20</span><span class="text-right ind-mono font-semibold">360,00</span></div>
-                                <div class="ln grid grid-cols-[1fr_44px_70px_84px] gap-2 px-3 py-2 border-t border-zinc-100"><span class="truncate">Tube carré 40×40×2</span><span class="text-right ind-mono">12</span><span class="text-right ind-mono">18,50</span><span class="text-right ind-mono font-semibold">222,00</span></div>
-                                <div class="ln grid grid-cols-[1fr_44px_70px_84px] gap-2 px-3 py-2 border-t border-zinc-100"><span class="truncate">Peinture antirouille 4 L</span><span class="text-right ind-mono">6</span><span class="text-right ind-mono">32,90</span><span class="text-right ind-mono font-semibold">197,40</span></div>
-                            </div>
-                        </div>
-                        <div class="mt-3 flex items-end justify-between gap-4">
-                            <div class="stock w-52 border border-amber-200 bg-amber-50 px-3 py-2 text-xs rounded-lg">
-                                <div class="ind-mono text-[10px]">Stock · FER-RD-10</div>
-                                <div class="mt-1 flex items-center gap-2"><span class="relative inline-block w-24 h-5 whitespace-nowrap"><span class="s-old absolute inset-0 ind-h text-lg leading-5">310 barres</span><span class="s-new absolute inset-0 ind-h text-lg leading-5">260 barres</span></span><span class="ind-mono font-bold">−50</span></div>
-                                <div class="mt-1.5 h-1.5 bg-[#111]/20"><div class="s-bar h-full bg-zinc-900"></div></div>
-                            </div>
-                            <div class="text-right text-xs leading-5 ind-mono">
-                                <div>HT <b>779,40</b></div>
-                                <div>TVA 20 % <b>155,88</b></div>
-                                <div class="relative h-6 text-sm"><span class="tot-a absolute right-0 whitespace-nowrap text-zinc-400">TTC …</span><span class="tot-b absolute right-0 whitespace-nowrap font-bold bg-zinc-900 text-white px-1.5">TTC 935,28 €</span></div>
+                            <div class="absolute bottom-[9%] {{ $rtl ? 'right-0' : 'left-0' }} rounded-xl bg-white text-zinc-900 shadow-xl px-4 py-3 flex items-center gap-3">
+                                <span class="grid place-items-center w-9 h-9 rounded-lg bg-[#ffcc00]"><x-sp-icon name="chart" class="w-5 h-5" /></span>
+                                <span><span class="block text-xs text-zinc-500">{{ $s['badge'][0] }}</span><span class="block font-bold tabular-nums" dir="ltr">{{ $s['badge'][1] }}</span></span>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <div class="pdf absolute -bottom-10 -left-4 sm:-left-10 w-60 bg-white text-zinc-900 border border-zinc-200 shadow-lg shadow-zinc-900/5 p-4 text-[10px] leading-4 rounded-xl">
-                    <div class="flex justify-between"><b class="text-[11px]">Démo Matériaux SARL</b><b class="ind-mono">FACTURE</b></div>
-                    <div class="ind-mono text-[9px] text-zinc-500">SIRET · N° TVA · RCS</div>
-                    <div class="mt-1 text-right ind-mono text-zinc-500">N° FAC-00058</div>
-                    <div class="mt-2 h-0.5 bg-zinc-900"></div>
-                    <div class="mt-2 flex justify-between ind-mono"><span>HT</span><b>779,40</b></div>
-                    <div class="flex justify-between ind-mono"><span>TVA 20 %</span><b>155,88</b></div>
-                    <div class="flex justify-between ind-mono text-[11px]"><span>TTC</span><b>935,28 €</b></div>
-                    <div class="words mt-2 text-zinc-600">Arrêtée la présente facture à la somme de : <b>neuf cent trente-cinq euros et vingt-huit centimes TTC</b>.</div>
-                    <div class="absolute -right-3 -bottom-3 rotate-[-12deg] border border-[#c62828] text-[#c62828] ind-h text-xs px-2 py-0.5 bg-white/80 rounded-lg">PAYÉE</div>
-                </div>
-
-                <div class="wa absolute -bottom-14 right-0 sm:-right-6 w-64 bg-[#dcf8c6] text-zinc-900 border border-zinc-200 shadow-lg shadow-zinc-900/5 p-3 text-[11.5px] leading-4 rounded-xl">
-                    <div class="flex items-center gap-1.5 ind-mono text-[10px] text-[#0a7a3e]"><span class="[&>svg]:h-3.5 [&>svg]:w-3.5">{!! $waIcon !!}</span>WHATSAPP · BÂTI PLUS</div>
-                    <p class="mt-1">Bonjour, la facture <b>FAC-00058</b> du 22/11 présente un reste à payer de <b>935,28 €</b>, échéance le 22/12. Merci.</p>
-                    <div class="mt-1 text-right ind-mono text-[10px] text-zinc-500">10:42 <span class="ticks text-[#1d8ad6] font-bold">✓✓</span></div>
-                </div>
-            </div>
+            @endforeach
         </div>
+        {{-- timed tabs --}}
+        <div class="mt-10 grid grid-cols-3 gap-3 max-w-lg" role="tablist">
+            @foreach ($heroSlides as $k => $s)
+                <button type="button" role="tab" @click="go({{ $k }})" :aria-selected="i === {{ $k }}" class="text-start group">
+                    <span class="block h-1 rounded-full bg-white/15 overflow-hidden"><span class="block h-full bg-[#ffcc00] w-0" :class="i === {{ $k }} ? 'hero-bar' : (i > {{ $k }} ? 'w-full' : 'w-0')"></span></span>
+                    <span class="mt-2 block text-sm font-medium transition-colors" :class="i === {{ $k }} ? 'text-white' : 'text-zinc-400 group-hover:text-zinc-200'">{{ $s['tab'] }}</span>
+                </button>
+            @endforeach
+        </div>
+        <a href="#scanner" class="mt-8 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-sm text-zinc-200 hover:bg-white/10">
+            <span class="text-[10px] font-semibold rounded-full bg-[#ffcc00] text-zinc-900 px-2 py-0.5">{{ __('NOUVEAU') }}</span>
+            {{ __('Scannez vos factures fournisseurs') }} <span aria-hidden="true">{{ $rtl ? '←' : '→' }}</span>
+        </a>
     </div>
 </section>
 
