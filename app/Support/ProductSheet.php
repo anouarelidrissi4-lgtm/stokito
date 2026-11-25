@@ -62,7 +62,7 @@ class ProductSheet
         foreach ([1 => 16, 2 => 16, 3 => 42, 4 => 18, 5 => 16, 6 => 22, 7 => 10, 8 => 13, 9 => 16, 10 => 17, 11 => 10, 12 => 13] as $col => $w) {
             $sheet->setColumnWidth($w, $col);
         }
-        $writer->addRow(Row::fromValues(array_values(self::HEADERS), (new Style())->setFontBold()));
+        $writer->addRow(Row::fromValues(array_values(self::HEADERS), (new Style())->setFontBold()->setFontColor('FFFFFF')->setBackgroundColor('107C41')));
         foreach ($products as $p) {
             $writer->addRow(Row::fromValues([
                 (string) $p->reference,
