@@ -35,6 +35,9 @@ class Form extends Component
 
     public array $items = [];
 
+    /** Opened from the "Scanner IA" menu entry (same page, scanner title). */
+    public bool $scannerPage = false;
+
     public $reference_fournisseur = '';
 
     // --- Scanner IA d'une facture fournisseur (2026-11-24) ---
@@ -87,6 +90,7 @@ class Form extends Component
     public function mount($commandeId = null)
     {
         $this->requirePermission('gestion_commandes_fournisseurs');
+        $this->scannerPage = request()->routeIs('scanner.facture');
 
         $this->date = now()->format('Y-m-d');
 

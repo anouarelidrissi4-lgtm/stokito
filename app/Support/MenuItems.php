@@ -37,6 +37,7 @@ class MenuItems
         'dashboard' => ['label' => 'Dashboard', 'route' => 'dashboard', 'active' => 'dashboard', 'permission' => 'dashboard', 'module' => null, 'admin_override' => false, 'section' => 'tableau_de_bord', 'order' => 10],
 
         'copilot' => ['label' => 'Copilot IA', 'route' => 'copilot', 'active' => 'copilot', 'permission' => 'copilot', 'module' => null, 'admin_override' => false, 'section' => 'tableau_de_bord', 'order' => 20],
+        'scanner.facture' => ['label' => 'Scanner IA', 'route' => 'scanner.facture', 'active' => 'scanner.facture', 'permission' => 'gestion_commandes_fournisseurs', 'module' => null, 'admin_override' => false, 'section' => 'tableau_de_bord', 'order' => 30],
 
         'products.index' => ['label' => 'Produits', 'route' => 'products.index', 'active' => 'products.index', 'permission' => 'produits_consulter', 'module' => null, 'admin_override' => false, 'section' => 'catalogue', 'order' => 10],
         'categories.index' => ['label' => 'Categories', 'route' => 'categories.index', 'active' => 'categories.index', 'permission' => 'gestion_categories', 'module' => null, 'admin_override' => false, 'section' => 'catalogue', 'order' => 20],

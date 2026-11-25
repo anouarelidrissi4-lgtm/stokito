@@ -244,6 +244,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('inventaire/{inventaireId}', \App\Livewire\Inventaire\Form::class)->whereNumber('inventaireId')->name('inventaire.show');
     Route::get('products', \App\Livewire\Products\Index::class)->name('products.index');
     Route::get('copilot', \App\Livewire\Copilot\Chat::class)->name('copilot');
+    // the supplier-invoice scanner has its own menu entry; same page as "Nouveau bon de commande"
+    Route::get('scanner-ia', \App\Livewire\CommandeFournisseurs\Form::class)->name('scanner.facture');
     // Caisse / point of sale (2026-11-25)
     Route::get('caisse', \App\Livewire\Caisse\Pos::class)->name('caisse.pos');
     Route::get('caisse/tickets', \App\Livewire\Caisse\Tickets::class)->name('caisse.tickets');
