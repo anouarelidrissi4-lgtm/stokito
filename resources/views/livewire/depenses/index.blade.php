@@ -6,6 +6,7 @@
             <p class="text-sm text-slate-500">Loyer, énergie, carburant, salaires… : notez vos frais et gardez la photo du reçu.</p>
         </div>
         <div class="flex items-center gap-2">
+            <a href="{{ route('depenses.recurrentes') }}" wire:navigate class="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"><x-sp-icon name="clock" class="w-4 h-4" /> Récurrentes</a>
             <button type="button" wire:click="export" class="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">Exporter CSV</button>
             <button type="button" wire:click="create" class="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700">
                 <x-sp-icon name="plus" class="w-4 h-4" /> Ajouter une dépense
@@ -72,7 +73,7 @@
                         <tr wire:key="dep-{{ $d->id }}" class="hover:bg-slate-50">
                             <td class="px-4 py-3 text-sm text-slate-600 whitespace-nowrap">{{ $d->date->format('d/m/Y') }}</td>
                             <td class="px-4 py-3 text-sm">
-                                <div class="font-semibold text-slate-900">{{ $d->libelle }}</div>
+                                <div class="font-semibold text-slate-900">{{ $d->libelle }}@if ($d->depense_recurrente_id) <span title="Dépense récurrente" class="ms-1 inline-flex items-center rounded-full bg-amber-50 text-amber-700 px-1.5 text-[11px] font-medium">↻ récurrente</span>@endif</div>
                                 <div class="text-xs text-slate-400">{{ collect([$d->fournisseur?->name, $d->reference])->filter()->implode(' · ') }}</div>
                             </td>
                             <td class="px-4 py-3 text-sm text-slate-600">{{ $d->categorieLabel() }}</td>

@@ -73,6 +73,8 @@ class MenuItems
         'soldes-fournisseurs.index' => ['label' => 'Soldes Fournisseurs', 'route' => 'soldes-fournisseurs.index', 'active' => 'soldes-fournisseurs.index', 'permission' => 'soldes_fournisseurs', 'module' => null, 'admin_override' => false, 'section' => 'achats', 'order' => 60],
 
         'depenses.index' => ['label' => 'Dépenses', 'route' => 'depenses.index', 'active' => 'depenses.index', 'permission' => 'depenses', 'module' => null, 'admin_override' => false, 'section' => 'tresorerie', 'order' => 5],
+
+        'depenses.recurrentes' => ['label' => 'Dépenses récurrentes', 'route' => 'depenses.recurrentes', 'active' => 'depenses.recurrentes*', 'permission' => 'depenses', 'module' => null, 'admin_override' => false, 'section' => 'tresorerie', 'order' => 6],
         'tresorerie.comptes-bancaires' => ['label' => 'Comptes Bancaires', 'route' => 'tresorerie.comptes-bancaires', 'active' => 'tresorerie.comptes-bancaires', 'permission' => 'gestion_comptes_bancaires', 'module' => null, 'admin_override' => false, 'section' => 'tresorerie', 'order' => 10],
         'tresorerie.porte-feuilles' => ['label' => 'Porte-Feuilles', 'route' => 'tresorerie.porte-feuilles', 'active' => 'tresorerie.porte-feuilles', 'permission' => 'porte_feuilles', 'module' => null, 'admin_override' => false, 'section' => 'tresorerie', 'order' => 20],
         'cheques-fournisseurs.index' => ['label' => 'Cheques / Effets Fournisseurs', 'route' => 'cheques-fournisseurs.index', 'active' => 'cheques-fournisseurs.*', 'permission' => null, 'module' => null, 'admin_override' => false, 'section' => 'tresorerie', 'order' => 30],

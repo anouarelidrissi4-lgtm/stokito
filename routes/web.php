@@ -19,6 +19,7 @@ Route::view('logiciel-gestion-de-stock-gratuit', 'seo.logiciel-gratuit')->name('
 Route::view('logiciel-devis-facture-gratuit', 'seo.logiciel-devis-facture')->name('seo.logiciel-devis-facture');
 Route::view('scanner-facture-fournisseur', 'seo.scanner-facture')->name('seo.scanner-facture');
 Route::view('logiciel-de-caisse-gratuit', 'seo.caisse')->name('seo.caisse');
+Route::view('modele-bon-de-commande', 'seo.bon-de-commande')->name('seo.bon-de-commande');
 
 // old guide file names (before the Stokito rebrand, 2026-11-24) -> new ones
 Route::get('docs/guide-stockpilot-{lang}.pdf', fn (string $lang) => redirect('/docs/guide-stokito-'.$lang.'.pdf', 301))->where('lang', 'fr|ar|en');
@@ -30,6 +31,7 @@ $sitemapXml = function () {
         ['loc' => route('seo.logiciel-devis-facture'), 'lastmod' => '2026-11-23', 'changefreq' => 'monthly', 'priority' => '0.9'],
         ['loc' => route('seo.scanner-facture'), 'lastmod' => '2026-11-24', 'changefreq' => 'monthly', 'priority' => '0.9'],
         ['loc' => route('seo.caisse'), 'lastmod' => '2026-11-25', 'changefreq' => 'monthly', 'priority' => '0.9'],
+        ['loc' => route('seo.bon-de-commande'), 'lastmod' => '2026-11-25', 'changefreq' => 'monthly', 'priority' => '0.9'],
         ['loc' => route('blog.index'), 'lastmod' => now()->format('Y-m-d'), 'changefreq' => 'daily', 'priority' => '0.8'],
     ]);
 
@@ -260,6 +262,8 @@ Route::middleware(['auth'])->group(function () {
 
         return \Illuminate\Support\Facades\Storage::disk('local')->response($d->justificatif_path);
     })->whereNumber('depense')->name('depenses.justificatif');
+    Route::get('depenses/recurrentes', \App\Livewire\DepensesRecurrentes\Index::class)->name('depenses.recurrentes');
+    Route::get('depenses/recurrentes/ajouter', \App\Livewire\DepensesRecurrentes\Index::class)->name('depenses.recurrentes.create');
     Route::get('products', \App\Livewire\Products\Index::class)->name('products.index');
     // printable product list (2026-11-25): all filtered products, chosen columns, A4
     Route::get('products/imprimer', function (\Illuminate\Http\Request $request) {

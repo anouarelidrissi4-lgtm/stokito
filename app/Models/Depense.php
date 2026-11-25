@@ -46,7 +46,7 @@ class Depense extends Model
 
     protected $fillable = [
         'date', 'categorie', 'libelle', 'fournisseur_id', 'montant_ttc', 'montant_tva',
-        'mode_paiement', 'tresorerie_compte_id', 'reference', 'justificatif_path', 'notes', 'user_id',
+        'mode_paiement', 'tresorerie_compte_id', 'reference', 'justificatif_path', 'notes', 'user_id', 'depense_recurrente_id',
     ];
 
     protected $casts = [
@@ -73,6 +73,11 @@ class Depense extends Model
     public function tresorerieCompte(): BelongsTo
     {
         return $this->belongsTo(TresorerieCompte::class, 'tresorerie_compte_id');
+    }
+
+    public function recurrente(): BelongsTo
+    {
+        return $this->belongsTo(DepenseRecurrente::class, 'depense_recurrente_id');
     }
 
     public function user(): BelongsTo

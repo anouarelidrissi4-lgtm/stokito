@@ -11,3 +11,4 @@ Artisan::command('inspire', function () {
 \Illuminate\Support\Facades\Schedule::command('demo:reset')->dailyAt('03:40');
 \Illuminate\Support\Facades\Schedule::command('factures:relancer')->dailyAt('09:00');
 \Illuminate\Support\Facades\Schedule::command('caisse:cloturer')->dailyAt('00:15');
+\Illuminate\Support\Facades\Schedule::command('depenses:recurrentes')->dailyAt('06:10');

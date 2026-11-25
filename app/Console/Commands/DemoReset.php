@@ -37,7 +37,7 @@ class DemoReset extends Command
 
     /** Tables holding tenant data, children first. */
     protected array $tables = [
-        'depenses', 'caisse_journal', 'caisse_clotures', 'caisse_tickets',
+        'depenses', 'depenses_recurrentes', 'caisse_journal', 'caisse_clotures', 'caisse_tickets',
         'reglements_clients', 'reglements_fournisseurs', 'avoirs_clients', 'avoirs_fournisseurs',
         'cheques_effets_fournisseurs', 'mouvements_bancaires', 'bons_de_chargement',
         'factures', 'bon_livraisons', 'devis', 'commande_fournisseurs', 'stock_movements',
@@ -204,6 +204,13 @@ class DemoReset extends Command
             ]);
             $dep->syncTresorerie();
         }
+
+        // recurring expense (2026-11-26): monthly Internet, next due date next month
+        $next = \App\Models\DepenseRecurrente::premiereEcheance(now()->startOfMonth()->addMonthNoOverflow(), 5);
+        \App\Models\DepenseRecurrente::create(['libelle' => 'Internet et téléphones', 'categorie' => 'telecom', 'montant_ttc' => $m(390),
+            'montant_tva' => \App\Models\Depense::tvaFromTtc($m(390), 20), 'mode_paiement' => 'prelevement',
+            'tresorerie_compte_id' => TresorerieCompte::where('type', 'banque')->value('id'), 'frequence' => 'mensuelle', 'jour' => 5,
+            'date_debut' => $next, 'prochaine_date' => $next, 'actif' => true]);
 
         $ht = fn ($ttc) => round($ttc / 1.2, 2); // catalogue prices are TTC, document lines are HT
 
