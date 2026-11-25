@@ -84,7 +84,7 @@
         @php
             $kpi = 'relative overflow-hidden rounded-2xl p-4 sm:p-5 min-h-[128px] flex flex-col transition';
             $dark = $kpi.' bg-gradient-to-br from-zinc-900 to-zinc-800 text-white shadow-lg shadow-zinc-900/10 hover:shadow-xl';
-            $yellow = $kpi.' bg-gradient-to-br from-[#ffd84d] to-[#ffc400] text-zinc-900 shadow-lg shadow-amber-500/20 hover:shadow-xl';
+            $yellow = $kpi.' on-yellow bg-gradient-to-br from-[#ffd84d] to-[#ffc400] text-zinc-900 shadow-lg shadow-amber-500/20 hover:shadow-xl';
             $light = $kpi.' bg-white border border-zinc-200 text-zinc-900 shadow-sm hover:border-zinc-300 hover:shadow';
             $lab = 'text-[11px] font-semibold uppercase tracking-wider';
             $val = 'mt-3 ind-h text-2xl sm:text-3xl leading-none tabular-nums';
