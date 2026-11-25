@@ -125,55 +125,55 @@
 <body class="antialiased sp-ind text-zinc-900" x-data="{ menu: false }">
 
 {{-- ============ HEADER (solid, no glass) ============ --}}
-<header class="sticky top-0 z-40 sp-topbar backdrop-blur border-b border-zinc-200 text-zinc-900">
+<header class="fixed top-0 inset-x-0 z-40 text-white border-b transition-colors duration-300" x-data="{ sc: false }" x-init="sc = window.scrollY > 40" @scroll.window="sc = window.scrollY > 40" :class="(sc || menu) ? 'bg-[#0d0d0e]/90 backdrop-blur border-white/10' : 'bg-transparent border-transparent'">
     <div class="max-w-7xl mx-auto h-16 px-4 sm:px-6 flex items-center justify-between gap-4">
         <a href="/" class="flex items-center gap-3 shrink-0">
             <span class="grid place-items-center w-9 h-9 rounded-lg bg-[#ffcc00] text-zinc-900"><x-sp-icon name="cube" class="w-5 h-5" /></span>
             <span class="text-base font-medium">Stokito</span>
-            <span class="hidden 2xl:inline ind-mono text-[11px] text-zinc-400 border border-zinc-200 px-1.5 py-0.5 rounded-lg">v2026</span>
+            <span class="hidden 2xl:inline ind-mono text-[11px] text-white/50 border border-white/20 px-1.5 py-0.5 rounded-lg">v2026</span>
         </a>
-        <nav class="hidden xl:flex items-center gap-6 whitespace-nowrap text-sm font-medium text-zinc-600">
-            <a href="#parcours" class="hidden 2xl:inline hover:text-zinc-900">{{ __('Comment ça marche') }}</a>
-            <a href="#fonctionnalites" class="hover:text-zinc-900">{{ __('Fonctionnalités') }}</a>
-            <a href="#scanner" class="hover:text-zinc-900">{{ __('Scanner IA') }}</a>
-            <a href="#copilot" class="hover:text-zinc-900">{{ __('Copilot') }}</a>
-            <a href="#caisse" class="hover:text-zinc-900">{{ __('Caisse') }}</a>
-            <a href="#ecrans" class="hover:text-zinc-900">{{ __('Écrans') }}</a>
-            <a href="#guide" class="hover:text-zinc-900">{{ __('Guide') }}</a>
-            <a href="#faq" class="hover:text-zinc-900">{{ __('Questions') }}</a>
-            <a href="{{ route('blog.index') }}" class="hover:text-zinc-900">{{ __('Blog') }}</a>
+        <nav class="hidden xl:flex items-center gap-6 whitespace-nowrap text-sm font-medium text-white/75">
+            <a href="#parcours" class="hidden 2xl:inline hover:text-white">{{ __('Comment ça marche') }}</a>
+            <a href="#fonctionnalites" class="hover:text-white">{{ __('Fonctionnalités') }}</a>
+            <a href="#scanner" class="hover:text-white">{{ __('Scanner IA') }}</a>
+            <a href="#copilot" class="hover:text-white">{{ __('Copilot') }}</a>
+            <a href="#caisse" class="hover:text-white">{{ __('Caisse') }}</a>
+            <a href="#ecrans" class="hover:text-white">{{ __('Écrans') }}</a>
+            <a href="#guide" class="hover:text-white">{{ __('Guide') }}</a>
+            <a href="#faq" class="hover:text-white">{{ __('Questions') }}</a>
+            <a href="{{ route('blog.index') }}" class="hover:text-white">{{ __('Blog') }}</a>
         </nav>
         <div class="flex items-center gap-2">
             <div x-data="{ open: false }" class="relative">
-                <button @click="open = !open" type="button" class="h-9 px-2.5 border border-zinc-200 text-xs font-medium text-zinc-600 hover:border-zinc-400 rounded-lg">{{ strtoupper($locale) }}</button>
+                <button @click="open = !open" type="button" class="h-9 px-2.5 border border-white/20 text-xs font-medium text-white/80 hover:bg-white/10 rounded-lg">{{ strtoupper($locale) }}</button>
                 <div x-show="open" @click.outside="open = false" x-cloak class="absolute {{ $rtl ? 'left-0' : 'right-0' }} mt-2 w-36 bg-white text-zinc-900 border border-zinc-200 text-sm rounded-lg">
                     <a href="{{ route('locale.switch', 'fr') }}" class="block px-3 py-2 hover:bg-zinc-100">Français</a>
                     <a href="{{ route('locale.switch', 'ar') }}" class="block px-3 py-2 hover:bg-zinc-100">العربية</a>
                     <a href="{{ route('locale.switch', 'en') }}" class="block px-3 py-2 hover:bg-zinc-100">English</a>
                 </div>
             </div>
-            <a href="{{ $wa }}" target="_blank" rel="noopener" class="hidden sm:flex h-9 px-3 items-center gap-1.5 border border-zinc-200 text-sm font-semibold hover:border-[#25d366] hover:text-[#25d366] rounded-lg">{!! $waIcon !!} <span class="hidden 2xl:inline">WhatsApp</span></a>
-            @guest<a href="{{ route('login') }}" class="flex h-9 px-2.5 sm:px-3 items-center whitespace-nowrap border border-zinc-200 text-sm font-medium hover:border-zinc-400 rounded-lg">{{ __('Se connecter') }}</a>@endguest
-            <a href="{{ auth()->check() ? route('dashboard') : route('register') }}" class="{{ auth()->check() ? 'flex' : 'hidden sm:flex' }} h-9 px-3 sm:px-4 items-center whitespace-nowrap bg-zinc-900 text-white text-sm font-medium hover:bg-zinc-700 rounded-lg">@auth<span class="sm:hidden">{{ __('Mon espace') }}</span><span class="hidden sm:inline">{{ __('Tableau de bord') }}</span>@else{{ __('Créer un compte gratuit') }}@endauth</a>
-            <button type="button" @click="menu = !menu" class="xl:hidden p-2 border border-zinc-200 rounded-lg" aria-label="Menu">
+            <a href="{{ $wa }}" target="_blank" rel="noopener" class="hidden sm:flex h-9 px-3 items-center gap-1.5 border border-white/20 text-sm font-semibold hover:border-[#25d366] hover:text-[#25d366] rounded-lg">{!! $waIcon !!} <span class="hidden 2xl:inline">WhatsApp</span></a>
+            @guest<a href="{{ route('login') }}" class="flex h-9 px-2.5 sm:px-3 items-center whitespace-nowrap border border-white/20 text-sm font-medium hover:bg-white/10 rounded-lg">{{ __('Se connecter') }}</a>@endguest
+            <a href="{{ auth()->check() ? route('dashboard') : route('register') }}" class="{{ auth()->check() ? 'flex' : 'hidden sm:flex' }} h-9 px-3 sm:px-4 items-center whitespace-nowrap bg-[#ffcc00] text-zinc-900 text-sm font-semibold hover:bg-[#ffd633] rounded-lg">@auth<span class="sm:hidden">{{ __('Mon espace') }}</span><span class="hidden sm:inline">{{ __('Tableau de bord') }}</span>@else{{ __('Créer un compte gratuit') }}@endauth</a>
+            <button type="button" @click="menu = !menu" class="xl:hidden p-2 border border-white/20 rounded-lg" aria-label="Menu">
                 <x-sp-icon name="menu" class="w-6 h-6" x-show="!menu" /><x-sp-icon name="x" class="w-6 h-6" x-show="menu" x-cloak />
             </button>
         </div>
     </div>
-    <div x-show="menu" x-cloak @click="menu = false" class="xl:hidden border-t border-zinc-100 px-4 pb-4 pt-2 text-base font-medium">
-        <a href="#parcours" class="block py-2.5 border-b border-zinc-100">{{ __('Comment ça marche') }}</a>
-        <a href="#fonctionnalites" class="block py-2.5 border-b border-zinc-100">{{ __('Fonctionnalités') }}</a>
-        <a href="#scanner" class="block py-2.5 border-b border-zinc-100">{{ __('Scanner IA') }}</a>
-        <a href="#copilot" class="block py-2.5 border-b border-zinc-100">{{ __('Copilot') }}</a>
-        <a href="#caisse" class="block py-2.5 border-b border-zinc-100">{{ __('Caisse') }}</a>
-        <a href="#ecrans" class="block py-2.5 border-b border-zinc-100">{{ __('Écrans') }}</a>
-        <a href="#guide" class="block py-2.5 border-b border-zinc-100">{{ __('Guide') }}</a>
-        <a href="#faq" class="block py-2.5 border-b border-zinc-100">{{ __('Questions') }}</a>
-        <a href="{{ route('blog.index') }}" class="block py-2.5 border-b border-zinc-100">{{ __('Blog') }}</a>
-        @guest<a href="{{ route('register') }}" class="mt-3 flex h-12 items-center justify-center rounded-lg bg-zinc-900 text-white">{{ __('Créer un compte gratuit') }}</a>@endguest
+    <div x-show="menu" x-cloak @click="menu = false" class="xl:hidden border-t border-white/10 px-4 pb-4 pt-2 text-base font-medium">
+        <a href="#parcours" class="block py-2.5 border-b border-white/10">{{ __('Comment ça marche') }}</a>
+        <a href="#fonctionnalites" class="block py-2.5 border-b border-white/10">{{ __('Fonctionnalités') }}</a>
+        <a href="#scanner" class="block py-2.5 border-b border-white/10">{{ __('Scanner IA') }}</a>
+        <a href="#copilot" class="block py-2.5 border-b border-white/10">{{ __('Copilot') }}</a>
+        <a href="#caisse" class="block py-2.5 border-b border-white/10">{{ __('Caisse') }}</a>
+        <a href="#ecrans" class="block py-2.5 border-b border-white/10">{{ __('Écrans') }}</a>
+        <a href="#guide" class="block py-2.5 border-b border-white/10">{{ __('Guide') }}</a>
+        <a href="#faq" class="block py-2.5 border-b border-white/10">{{ __('Questions') }}</a>
+        <a href="{{ route('blog.index') }}" class="block py-2.5 border-b border-white/10">{{ __('Blog') }}</a>
+        @guest<a href="{{ route('register') }}" class="mt-3 flex h-12 items-center justify-center rounded-lg bg-[#ffcc00] text-zinc-900 font-semibold">{{ __('Créer un compte gratuit') }}</a>@endguest
         <div class="grid grid-cols-2 gap-2 pt-3 font-sans text-sm">
-            <a href="{{ $wa }}" target="_blank" rel="noopener" class="flex h-11 items-center justify-center gap-1.5 border border-zinc-200 rounded-lg">{!! $waIcon !!} WhatsApp</a>
-            <a href="{{ auth()->check() ? route('dashboard') : route('login') }}" class="flex h-11 items-center justify-center rounded-lg bg-zinc-900 text-white font-semibold">{{ auth()->check() ? __('Tableau de bord') : __('Se connecter') }}</a>
+            <a href="{{ $wa }}" target="_blank" rel="noopener" class="flex h-11 items-center justify-center gap-1.5 border border-white/20 rounded-lg">{!! $waIcon !!} WhatsApp</a>
+            <a href="{{ auth()->check() ? route('dashboard') : route('login') }}" class="flex h-11 items-center justify-center rounded-lg bg-white text-zinc-900 font-semibold">{{ auth()->check() ? __('Tableau de bord') : __('Se connecter') }}</a>
         </div>
     </div>
 </header>
@@ -206,7 +206,7 @@
         
         <div class="absolute bottom-24 {{ $rtl ? 'left-6' : 'right-6' }} w-64 h-40 hero-dots hidden sm:block"></div>
     </div>
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 pt-12 sm:pt-16 pb-10">
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 pt-28 sm:pt-32 pb-10">
         <div class="grid">
             @foreach ($heroSlides as $k => $s)
                 <div class="[grid-area:1/1] grid lg:grid-cols-12 gap-10 lg:gap-12 items-center transition-all duration-700"
