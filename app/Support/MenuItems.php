@@ -21,9 +21,9 @@ class MenuItems
     public const DEFAULT_SECTIONS = [
         'tableau_de_bord' => ['label' => 'Tableau de bord', 'icon' => '🏠', 'order' => 10],
         'catalogue' => ['label' => 'Catalogue', 'icon' => '📦', 'order' => 20],
-        'caisse' => ['label' => 'Caisse', 'icon' => '🧾', 'order' => 25],
         'ventes' => ['label' => 'Ventes', 'icon' => '👥', 'order' => 30],
         'achats' => ['label' => 'Achats', 'icon' => '🚚', 'order' => 40],
+        'caisse' => ['label' => 'Caisse', 'icon' => '🧾', 'order' => 45],
         'tresorerie' => ['label' => 'Tresorerie', 'icon' => '💰', 'order' => 50],
         'administration' => ['label' => 'Administration', 'icon' => '⚙️', 'order' => 60],
     ];
