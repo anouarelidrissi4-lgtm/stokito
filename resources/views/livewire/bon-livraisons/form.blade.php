@@ -116,7 +116,7 @@
                             <tr wire:key="item-{{ $index }}">
                                 <td class="px-4 py-2">
                                     <div class="flex gap-1">
-                                        <button type="button" wire:click="openProductModal({{ $index }})" title="Nouveau produit" class="shrink-0 h-9 w-9 flex items-center justify-center rounded-md border border-gray-300 text-gray-600 hover:bg-gray-50">+</button>
+                                        <button type="button" wire:click="openProductModal({{ $index }})" title="Créer un produit" class="shrink-0 h-9 w-9 flex items-center justify-center rounded-md border border-gray-300 text-gray-600 hover:bg-gray-50">+</button>
                                         <div class="relative flex-1"
                                             x-data="{
                                                 query: @js(optional($products->firstWhere('id', $item['product_id'] ?: null))->name ?? ''),
