@@ -114,6 +114,33 @@ class ProductsSheetTest extends TestCase
         $this->get(route('products.print', ['cols' => 'ref,achat']))->assertOk()->assertDontSee('Prix achat');
     }
 
+    public function test_weight_type_packaging_fields_and_price_per_kg(): void
+    {
+        $this->companyUser('FR');
+        Livewire::test(Index::class)->call('create')
+            ->set('reference', 'TUB-60')->set('name', 'Tube carré 60×60×2 (6 m)')->set('sale_price', 30)
+            ->set('type', 'Tube')->set('conditionnement', 'Barre de 6 m')
+            ->set('poids', '21.6')->set('prix_achat_kg', '1.15')
+            ->assertSet('purchase_price', 24.84)            // 21,6 kg x 1,15
+            ->call('save')->assertHasNoErrors();
+        $p = Product::where('reference', 'TUB-60')->sole();
+        $this->assertSame('Tube', $p->type);
+        $this->assertSame('Barre de 6 m', $p->conditionnement);
+        $this->assertEquals(21.6, $p->poids);
+        $this->assertEquals(1.15, $p->prix_achat_kg);
+        $this->assertEquals(24.84, $p->purchase_price);
+
+        // exported and re-imported with the new columns
+        $path = ProductSheet::export(Product::with(['category', 'brand', 'fournisseur'])->get(), true);
+        $row = ProductSheet::read($path, 'xlsx')['rows'][0];
+        @unlink($path);
+        $this->assertSame('Tube', $row['type']);
+        $this->assertEquals(21.6, $row['poids']);
+
+        $this->get(route('products.print', ['cols' => 'ref,type,poids,achat_kg']))
+            ->assertOk()->assertSee('Poids KG/ML')->assertSee('21,6')->assertSee('1,15');
+    }
+
     public function test_caisse_has_its_own_menu_section(): void
     {
         $menu = MenuItems::resolve(null);

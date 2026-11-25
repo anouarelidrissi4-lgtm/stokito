@@ -33,6 +33,10 @@ class ProductSheet
         'wholesale_price' => 'Prix de vente gros',
         'stock_qty' => 'Stock',
         'stock_alert_threshold' => "Seuil d'alerte",
+        'type' => 'Type',
+        'conditionnement' => 'Conditionnement',
+        'poids' => 'Poids KG/ML',
+        'prix_achat_kg' => 'Prix achat KG',
     ];
 
     /** extra header spellings accepted on import (normalised, see norm()) */
@@ -49,6 +53,10 @@ class ProductSheet
         'wholesale_price' => ['prix vente gros', 'prix de vente gros', 'prix gros', 'wholesale price'],
         'stock_qty' => ['stock', 'quantite', 'qte', 'qty', 'quantity'],
         'stock_alert_threshold' => ['seuil alerte', 'seuil d alerte', 'seuil', 'alerte', 'stock minimum', 'min'],
+        'type' => ['type', 'famille produit'],
+        'conditionnement' => ['conditionnement', 'colisage', 'emballage'],
+        'poids' => ['poids', 'poids kg', 'poids kg ml', 'poids ml', 'kg ml', 'weight'],
+        'prix_achat_kg' => ['prix achat kg', 'prix d achat kg', 'prix kg', 'prix achat au kg', 'prix d achat au kg'],
     ];
 
     /** Writes the products to a temporary .xlsx file and returns its path. */
@@ -59,7 +67,7 @@ class ProductSheet
         $writer->openToFile($path);
         $sheet = $writer->getCurrentSheet();
         $sheet->setName('Produits');
-        foreach ([1 => 16, 2 => 16, 3 => 42, 4 => 18, 5 => 16, 6 => 22, 7 => 10, 8 => 13, 9 => 16, 10 => 17, 11 => 10, 12 => 13] as $col => $w) {
+        foreach ([1 => 16, 2 => 16, 3 => 42, 4 => 18, 5 => 16, 6 => 22, 7 => 10, 8 => 13, 9 => 16, 10 => 17, 11 => 10, 12 => 13, 13 => 16, 14 => 20, 15 => 13, 16 => 14] as $col => $w) {
             $sheet->setColumnWidth($w, $col);
         }
         $writer->addRow(Row::fromValues(array_values(self::HEADERS), (new Style())->setFontBold()->setFontColor('FFFFFF')->setBackgroundColor('107C41')));
@@ -77,6 +85,10 @@ class ProductSheet
                 $p->wholesale_price !== null ? (float) $p->wholesale_price : '',
                 (float) $p->stock_qty,
                 $p->stock_alert_threshold !== null ? (float) $p->stock_alert_threshold : '',
+                (string) ($p->type ?? ''),
+                (string) ($p->conditionnement ?? ''),
+                $p->poids !== null ? (float) $p->poids : '',
+                $withPurchase && $p->prix_achat_kg !== null ? (float) $p->prix_achat_kg : '',
             ]));
         }
         $writer->close();

@@ -196,6 +196,30 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1">Seuil d'alerte</label>
                         <input wire:model="stock_alert_threshold" type="number" class="w-full rounded-md border-gray-300 text-sm">
                     </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
+                        <input wire:model="type" type="text" list="product-types" placeholder="Ex. : Tube, Tôle, Profilé…" class="w-full rounded-md border-gray-300 text-sm">
+                        <datalist id="product-types">@foreach ($types as $t)<option value="{{ $t }}">@endforeach</datalist>
+                        @error('type') <p class="text-red-600 text-xs">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Conditionnement</label>
+                        <input wire:model="conditionnement" type="text" placeholder="Ex. : Barre de 6 m, Carton de 100…" class="w-full rounded-md border-gray-300 text-sm">
+                        @error('conditionnement') <p class="text-red-600 text-xs">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Poids (KG/ML)</label>
+                        <input wire:model.live.debounce.400ms="poids" type="number" step="0.001" min="0" placeholder="Poids par unité ou par mètre" class="w-full rounded-md border-gray-300 text-sm">
+                        @error('poids') <p class="text-red-600 text-xs">{{ $message }}</p> @enderror
+                    </div>
+                    @if (auth()->user()->hasPermission('produits_prix_achat'))
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Prix d'achat au KG</label>
+                        <input wire:model.live.debounce.400ms="prix_achat_kg" type="number" step="0.001" min="0" class="w-full rounded-md border-gray-300 text-sm">
+                        <p class="text-xs text-gray-400 mt-0.5">Avec le poids, le prix d'achat se calcule (poids × prix au KG).</p>
+                        @error('prix_achat_kg') <p class="text-red-600 text-xs">{{ $message }}</p> @enderror
+                    </div>
+                    @endif
                     @if (auth()->user()->hasPermission('produits_prix_achat'))
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Prix d'achat</label>

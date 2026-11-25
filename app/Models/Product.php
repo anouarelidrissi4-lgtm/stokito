@@ -12,12 +12,15 @@ class Product extends Model
     protected $fillable = [
         'category_id', 'brand_id', 'fournisseur_id', 'reference', 'barcode', 'name', 'image_path', 'unit',
         'purchase_price', 'sale_price', 'wholesale_price', 'tva_rate', 'stock_qty', 'stock_alert_threshold',
+        'type', 'conditionnement', 'poids', 'prix_achat_kg',
     ];
 
     protected $casts = [
         'purchase_price' => 'decimal:2',
         'sale_price' => 'decimal:2',
         'wholesale_price' => 'decimal:2',
+        'poids' => 'decimal:3',
+        'prix_achat_kg' => 'decimal:3',
     ];
 
     public function category(): BelongsTo

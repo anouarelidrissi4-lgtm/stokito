@@ -7,6 +7,10 @@
     @case('marque'){{ $p->brand?->name ?? '—' }}@break
     @case('fournisseur'){{ $p->fournisseur?->name ?? '—' }}@break
     @case('unit'){{ $p->unit ?: '—' }}@break
+    @case('type'){{ $p->type ?: '—' }}@break
+    @case('conditionnement'){{ $p->conditionnement ?: '—' }}@break
+    @case('poids'){{ $p->poids !== null ? rtrim(rtrim(number_format((float) $p->poids, 3, ',', ' '), '0'), ',') : '—' }}@break
+    @case('achat_kg'){{ $p->prix_achat_kg !== null ? rtrim(rtrim(number_format((float) $p->prix_achat_kg, 3, ',', ' '), '0'), ',') : '—' }}@break
     @case('achat'){{ \App\Support\Fmt::money($p->purchase_price) }}@break
     @case('vente'){{ \App\Support\Fmt::money($p->sale_price) }}@break
     @case('gros'){{ $p->wholesale_price !== null ? \App\Support\Fmt::money($p->wholesale_price) : '—' }}@break

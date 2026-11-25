@@ -77,6 +77,15 @@ class Index extends Component
 
     public $stock_alert_threshold = null;
 
+    // 2026-11-25: type, packaging, weight (KG/ML) and purchase price per kg
+    public string $type = '';
+
+    public string $conditionnement = '';
+
+    public $poids = null;
+
+    public $prix_achat_kg = null;
+
     public $importFile = null;
 
     public ?array $importReport = null;
@@ -107,6 +116,10 @@ class Index extends Component
         $this->tva_rate = $p->tva_rate;
         $this->stock_qty = $p->stock_qty;
         $this->stock_alert_threshold = $p->stock_alert_threshold;
+        $this->type = $p->type ?? '';
+        $this->conditionnement = $p->conditionnement ?? '';
+        $this->poids = $p->poids;
+        $this->prix_achat_kg = auth()->user()->hasPermission('produits_prix_achat') ? $p->prix_achat_kg : null;
         $this->reset(['image', 'removeImage']);
         $this->imagePath = $p->image_path;
         $this->showModal = true;
@@ -144,6 +157,10 @@ class Index extends Component
             'tva_rate' => 'nullable|numeric|min:0|max:100',
             'stock_qty' => 'required|integer|min:0',
             'stock_alert_threshold' => 'nullable|integer|min:0',
+            'type' => 'nullable|string|max:100',
+            'conditionnement' => 'nullable|string|max:100',
+            'poids' => 'nullable|numeric|min:0',
+            'prix_achat_kg' => 'nullable|numeric|min:0',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:8192',
         ]);
 
@@ -173,12 +190,37 @@ class Index extends Component
             'stock_qty' => $this->stock_qty,
             'stock_alert_threshold' => $this->stock_alert_threshold,
             'image_path' => $newPath,
+            'type' => trim($this->type) ?: null,
+            'conditionnement' => trim($this->conditionnement) ?: null,
+            'poids' => $this->poids === '' || $this->poids === null ? null : $this->poids,
+            'prix_achat_kg' => auth()->user()->hasPermission('produits_prix_achat')
+                ? ($this->prix_achat_kg === '' || $this->prix_achat_kg === null ? null : $this->prix_achat_kg)
+                : ($this->editingId ? Product::find($this->editingId)?->prix_achat_kg : null),
         ]);
         $this->reset(['image', 'imagePath', 'removeImage']);
 
         $this->showModal = false;
         $this->resetForm();
         session()->flash('success', 'Produit enregistré.');
+    }
+
+    /** weight x price per kg = purchase price (still editable afterwards) */
+    public function updatedPoids(): void
+    {
+        $this->computePurchaseFromKg();
+    }
+
+    public function updatedPrixAchatKg(): void
+    {
+        $this->computePurchaseFromKg();
+    }
+
+    private function computePurchaseFromKg(): void
+    {
+        if (is_numeric($this->poids) && is_numeric($this->prix_achat_kg) && $this->poids > 0 && $this->prix_achat_kg > 0
+            && auth()->user()->hasPermission('produits_prix_achat')) {
+            $this->purchase_price = round((float) $this->poids * (float) $this->prix_achat_kg, 2);
+        }
     }
 
     public function delete(int $id): void
@@ -205,6 +247,10 @@ class Index extends Component
         $this->wholesale_price = null;
         $this->stock_qty = 0;
         $this->stock_alert_threshold = null;
+        $this->type = '';
+        $this->conditionnement = '';
+        $this->poids = null;
+        $this->prix_achat_kg = null;
         $this->resetValidation();
     }
 
@@ -277,6 +323,11 @@ class Index extends Component
             if (($v = $str($r['barcode'] ?? null)) !== '') {
                 $data['barcode'] = $v;
             }
+            foreach (['type', 'conditionnement'] as $f) {
+                if (($v = $str($r[$f] ?? null)) !== '') {
+                    $data[$f] = mb_substr($v, 0, 100);
+                }
+            }
             if (($v = $str($r['unit'] ?? null)) !== '') {
                 $data['unit'] = mb_substr($v, 0, 50);
             }
@@ -289,7 +340,7 @@ class Index extends Component
             if (($v = $str($r['fournisseur'] ?? null)) !== '') {
                 $data['fournisseur_id'] = $fourns[mb_strtolower($v)] ??= Fournisseur::firstOrCreate(['name' => $v])->id;
             }
-            foreach (['sale_price', 'wholesale_price', 'stock_qty', 'stock_alert_threshold'] + ($canBuy ? [4 => 'purchase_price'] : []) as $f) {
+            foreach (array_merge(['sale_price', 'wholesale_price', 'stock_qty', 'stock_alert_threshold', 'poids'], $canBuy ? ['purchase_price', 'prix_achat_kg'] : []) as $f) {
                 if (array_key_exists($f, $r) && ($n = ProductSheet::num($r[$f])) !== null) {
                     $data[$f] = $f === 'stock_qty' || $f === 'stock_alert_threshold' ? (int) round($n) : max(0, $n);
                 }
@@ -327,6 +378,7 @@ class Index extends Component
             'categories' => Category::orderBy('name')->get(),
             'brands' => Brand::orderBy('name')->get(),
             'fournisseurs' => Fournisseur::orderBy('name')->get(),
+            'types' => Product::whereNotNull('type')->distinct()->orderBy('type')->limit(50)->pluck('type'),
             'tvaDefault' => \App\Models\Societe::current()?->tva_rate_default,
         ])->layout('layouts.app');
     }
