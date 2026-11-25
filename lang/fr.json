@@ -278,5 +278,16 @@
     "Les écrans de la démo, reproduits avec ses données fictives. Ouvrez la démo pour les essayer.": "Les écrans de la démo, reproduits avec ses données fictives. Ouvrez la démo pour les essayer.",
     "Nouveau": "Nouveau",
     "Scanner une facture fournisseur": "Scanner une facture fournisseur",
-    "Actions": "Actions"
+    "Actions": "Actions",
+    "Caisse": "Caisse",
+    "Une caisse pour le comptoir, reliée au stock.": "Une caisse pour le comptoir, reliée au stock.",
+    "Scannez, encaissez en espèces, par carte ou par chèque : le rendu de monnaie se calcule et le ticket s’imprime. Chaque vente sort du stock et compte dans votre tableau de bord.": "Scannez, encaissez en espèces, par carte ou par chèque : le rendu de monnaie se calcule et le ticket s’imprime. Chaque vente sort du stock et compte dans votre tableau de bord.",
+    "Tickets numérotés et signés : impossible de les modifier ou de les supprimer": "Tickets numérotés et signés : impossible de les modifier ou de les supprimer",
+    "Erreur ou retour : ticket d’annulation, et chaque réimpression est notée « duplicata »": "Erreur ou retour : ticket d’annulation, et chaque réimpression est notée « duplicata »",
+    "Clôture Z chaque jour, puis chaque mois et chaque année, avec le grand total perpétuel": "Clôture Z chaque jour, puis chaque mois et chaque année, avec le grand total perpétuel",
+    "Archives signées de chaque période et contrôle d’intégrité en un clic": "Archives signées de chaque période et contrôle d’intégrité en un clic",
+    "Essayer la caisse": "Essayer la caisse",
+    "En France : conçue pour les quatre conditions de la loi anti-fraude à la TVA (inaltérabilité, sécurisation, conservation, archivage). À activer dans Ma Société.": "En France : conçue pour les quatre conditions de la loi anti-fraude à la TVA (inaltérabilité, sécurisation, conservation, archivage). À activer dans Ma Société.",
+    "Stokito a-t-il une caisse pour vendre au comptoir ?": "Stokito a-t-il une caisse pour vendre au comptoir ?",
+    "Oui. Activez la caisse dans « Ma Société » : vous scannez ou touchez les produits, encaissez en espèces, carte ou chèque, et le ticket s’imprime. Chaque ticket est numéroté, signé et ne peut plus être modifié ; une erreur se corrige par un ticket d’annulation. Les clôtures Z journalières, mensuelles et annuelles sont automatiques.": "Oui. Activez la caisse dans « Ma Société » : vous scannez ou touchez les produits, encaissez en espèces, carte ou chèque, et le ticket s’imprime. Chaque ticket est numéroté, signé et ne peut plus être modifié ; une erreur se corrige par un ticket d’annulation. Les clôtures Z journalières, mensuelles et annuelles sont automatiques."
 }

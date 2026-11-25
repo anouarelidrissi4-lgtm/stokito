@@ -418,5 +418,16 @@
     "L’application, écran par écran": "التطبيق، شاشة بشاشة",
     "Les écrans de la démo, reproduits avec ses données fictives. Ouvrez la démo pour les essayer.": "شاشات النسخة التجريبية معروضة ببياناتها الوهمية. افتح النسخة التجريبية لتجربتها.",
     "Scanner une facture fournisseur": "مسح فاتورة مورّد",
-    "Actions": "إجراءات"
+    "Actions": "إجراءات",
+    "Caisse": "الصندوق",
+    "Une caisse pour le comptoir, reliée au stock.": "صندوق للبيع في المحل، مرتبط بالمخزون.",
+    "Scannez, encaissez en espèces, par carte ou par chèque : le rendu de monnaie se calcule et le ticket s’imprime. Chaque vente sort du stock et compte dans votre tableau de bord.": "امسح واستخلص نقدا أو بالبطاقة أو بالشيك: يُحسب الباقي وتُطبع التذكرة. كل بيع ينقص من المخزون ويُحتسب في لوحة القيادة.",
+    "Tickets numérotés et signés : impossible de les modifier ou de les supprimer": "تذاكر مرقمة وموقعة: لا يمكن تعديلها أو حذفها",
+    "Erreur ou retour : ticket d’annulation, et chaque réimpression est notée « duplicata »": "خطأ أو إرجاع: تذكرة إلغاء، وكل إعادة طبع تحمل عبارة «نسخة»",
+    "Clôture Z chaque jour, puis chaque mois et chaque année, avec le grand total perpétuel": "إغلاق Z كل يوم ثم كل شهر وكل سنة، مع المجموع الدائم",
+    "Archives signées de chaque période et contrôle d’intégrité en un clic": "أرشيف موقع لكل فترة وتحقق من السلامة بنقرة واحدة",
+    "Essayer la caisse": "جرّب الصندوق",
+    "En France : conçue pour les quatre conditions de la loi anti-fraude à la TVA (inaltérabilité, sécurisation, conservation, archivage). À activer dans Ma Société.": "في فرنسا: مصمم للشروط الأربعة لقانون مكافحة الغش في الضريبة على القيمة المضافة (عدم القابلية للتغيير، التأمين، الحفظ، الأرشفة). فعّله في Ma Société.",
+    "Stokito a-t-il une caisse pour vendre au comptoir ?": "هل يتوفر Stokito على صندوق للبيع في المحل؟",
+    "Oui. Activez la caisse dans « Ma Société » : vous scannez ou touchez les produits, encaissez en espèces, carte ou chèque, et le ticket s’imprime. Chaque ticket est numéroté, signé et ne peut plus être modifié ; une erreur se corrige par un ticket d’annulation. Les clôtures Z journalières, mensuelles et annuelles sont automatiques.": "نعم. فعّل الصندوق في «Ma Société»: امسح المنتجات أو اضغط عليها، استخلص نقدا أو بالبطاقة أو بالشيك، وتُطبع التذكرة. كل تذكرة مرقمة وموقعة ولا يمكن تعديلها؛ ويُصحَّح الخطأ بتذكرة إلغاء. والإغلاقات Z اليومية والشهرية والسنوية تلقائية."
 }

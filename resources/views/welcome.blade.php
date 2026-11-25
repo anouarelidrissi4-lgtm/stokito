@@ -8,6 +8,7 @@
         ['Mes factures affichent-elles les identifiants de mon entreprise ?', 'Oui, selon votre pays : SIRET, N° TVA et RCS en France ; ICE, IF, RC, Taxe professionnelle et CNSS au Maroc. Les identifiants du client, la TVA détaillée et le montant en lettres sont aussi imprimés. Faites valider vos mentions par votre comptable.'],
         ['Comment le stock se met-il à jour ?', 'Le stock baisse quand un bon de livraison passe en « Livré » ou quand vous faites une facture directe. Il augmente quand vous marquez une commande fournisseur comme reçue. L’inventaire corrige les écarts.'],
         ['Puis-je saisir une facture fournisseur en la prenant en photo ?', 'Oui. Dans « Nouveau bon de commande », touchez « Photo ou PDF » : Stokito lit le fournisseur, la date, le numéro et les lignes de la facture, puis retrouve vos produits. Vous vérifiez avant d’enregistrer. 30 factures par mois sont incluses gratuitement.'],
+        ['Stokito a-t-il une caisse pour vendre au comptoir ?', 'Oui. Activez la caisse dans « Ma Société » : vous scannez ou touchez les produits, encaissez en espèces, carte ou chèque, et le ticket s’imprime. Chaque ticket est numéroté, signé et ne peut plus être modifié ; une erreur se corrige par un ticket d’annulation. Les clôtures Z journalières, mensuelles et annuelles sont automatiques.'],
         ['Plusieurs employés peuvent-ils travailler en même temps ?', 'Oui. Chaque employé a son compte et vous choisissez ce qu’il peut voir : par exemple cacher les prix d’achat et les marges aux vendeurs.'],
         ['Puis-je importer mes produits depuis Excel ?', 'Oui. Exportez la liste pour obtenir le modèle, remplissez-le dans Excel puis importez-le : les catégories manquantes sont créées automatiquement.'],
         ['Mes données sont-elles sauvegardées ?', 'Oui. Une sauvegarde automatique est faite chaque nuit et chaque société ne voit que ses propres données.'],
@@ -163,6 +164,7 @@
             <a href="#parcours" class="hidden 2xl:inline hover:text-[#ffcc00]">{{ __('Comment ça marche') }}</a>
             <a href="#fonctionnalites" class="hover:text-[#ffcc00]">{{ __('Fonctionnalités') }}</a>
             <a href="#scanner" class="hover:text-[#ffcc00]">{{ __('Scanner IA') }}</a>
+            <a href="#caisse" class="hover:text-[#ffcc00]">{{ __('Caisse') }}</a>
             <a href="#ecrans" class="hover:text-[#ffcc00]">{{ __('Écrans') }}</a>
             <a href="#guide" class="hover:text-[#ffcc00]">{{ __('Guide') }}</a>
             <a href="#faq" class="hover:text-[#ffcc00]">{{ __('Questions') }}</a>
@@ -189,6 +191,7 @@
         <a href="#parcours" class="block py-2.5 border-b border-[#2a2a2a]">{{ __('Comment ça marche') }}</a>
         <a href="#fonctionnalites" class="block py-2.5 border-b border-[#2a2a2a]">{{ __('Fonctionnalités') }}</a>
         <a href="#scanner" class="block py-2.5 border-b border-[#2a2a2a]">{{ __('Scanner IA') }}</a>
+        <a href="#caisse" class="block py-2.5 border-b border-[#2a2a2a]">{{ __('Caisse') }}</a>
         <a href="#ecrans" class="block py-2.5 border-b border-[#2a2a2a]">{{ __('Écrans') }}</a>
         <a href="#guide" class="block py-2.5 border-b border-[#2a2a2a]">{{ __('Guide') }}</a>
         <a href="#faq" class="block py-2.5 border-b border-[#2a2a2a]">{{ __('Questions') }}</a>
@@ -545,6 +548,61 @@
                     <b class="ind-mono">182,00 € HT</b>
                     <span class="bg-[#111] text-[#ffcc00] ind-h uppercase tracking-wider text-sm px-3 py-1">{{ __('Enregistrer') }}</span>
                 </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{{-- ============ CAISSE (2026-11-25) ============ --}}
+<section id="caisse" class="py-20 sm:py-24 scroll-mt-20 bg-[#111] text-white border-b-2 border-[#111]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 grid lg:grid-cols-12 gap-12 items-center">
+        <div class="lg:col-span-6">
+            <p class="ind-mono text-xs text-[#9a9a9a]"><span class="bg-[#ffcc00] text-[#111] px-1.5 py-0.5 me-1">{{ __('NOUVEAU') }}</span> MOD-08 · {{ __('Caisse') }}</p>
+            <h2 class="mt-3 ind-h text-4xl sm:text-5xl uppercase leading-[0.95]">{{ __('Une caisse pour le comptoir, reliée au stock.') }}</h2>
+            <p class="mt-5 text-[#cfcfcf]">{{ __('Scannez, encaissez en espèces, par carte ou par chèque : le rendu de monnaie se calcule et le ticket s’imprime. Chaque vente sort du stock et compte dans votre tableau de bord.') }}</p>
+            <ul class="mt-6 space-y-2.5 text-sm">
+                @foreach ([
+                    __('Tickets numérotés et signés : impossible de les modifier ou de les supprimer'),
+                    __('Erreur ou retour : ticket d’annulation, et chaque réimpression est notée « duplicata »'),
+                    __('Clôture Z chaque jour, puis chaque mois et chaque année, avec le grand total perpétuel'),
+                    __('Archives signées de chaque période et contrôle d’intégrité en un clic'),
+                ] as $pt)
+                    <li class="flex gap-3"><span class="mt-0.5 grid place-items-center w-5 h-5 shrink-0 bg-[#ffcc00] text-[#111] text-[11px] font-bold">✓</span><span>{{ $pt }}</span></li>
+                @endforeach
+            </ul>
+            <div class="mt-8 flex flex-wrap items-center gap-3">
+                <a href="{{ route('register') }}" class="ind-btn bg-[#ffcc00] text-[#111] !shadow-[4px_4px_0_#fff]">{{ __('Créer un compte gratuit') }} <span aria-hidden="true">{{ $rtl ? '←' : '→' }}</span></a>
+                <a href="{{ route('demo.login') }}" class="ind-btn bg-white text-[#111] !shadow-[4px_4px_0_#ffcc00]">{{ __('Essayer la caisse') }}</a>
+            </div>
+            <p class="mt-4 ind-mono text-[11px] text-[#9a9a9a]">{{ __('En France : conçue pour les quatre conditions de la loi anti-fraude à la TVA (inaltérabilité, sécurisation, conservation, archivage). À activer dans Ma Société.') }}</p>
+        </div>
+
+        {{-- coded receipt + Z (fictional demo data) --}}
+        <div class="lg:col-span-6 flex flex-col sm:flex-row items-center sm:items-start justify-center gap-6" dir="ltr" aria-hidden="true">
+            <div class="w-[290px] bg-white text-[#111] px-5 py-6 ind-mono text-[11.5px] leading-snug shadow-[10px_10px_0_#ffcc00] -rotate-1">
+                <div class="text-center font-bold text-[13px]">DÉMO MATÉRIAUX SAS</div>
+                <div class="text-center text-[10px] text-[#555]">12 rue de l’Industrie, 69007 Lyon<br>SIRET : 000 000 000 00000</div>
+                <div class="my-2 border-t border-dashed border-[#111]"></div>
+                <div class="flex justify-between"><span>Ticket T-000128</span><span>25/11 10:15</span></div>
+                <div class="my-2 border-t border-dashed border-[#111]"></div>
+                @foreach ([['Disque à tronçonner 115', '4 x 1,00', '4,00'], ['Électrodes 2,5 mm (5 kg)', '1 x 16,50', '16,50'], ['Fer rond Ø8 (12 m)', '2 x 5,50', '11,00']] as [$n, $q, $t])
+                    <div>{{ $n }}</div><div class="flex justify-between ps-3 text-[#444]"><span>{{ $q }}</span><span>{{ $t }}</span></div>
+                @endforeach
+                <div class="my-2 border-t border-dashed border-[#111]"></div>
+                <div class="flex justify-between font-bold text-[14px]"><span>TOTAL TTC</span><span>31,50 €</span></div>
+                <div class="flex justify-between text-[10px] text-[#555]"><span>TVA 20 % sur 26,25</span><span>5,25</span></div>
+                <div class="my-2 border-t border-dashed border-[#111]"></div>
+                <div class="flex justify-between"><span>Espèces</span><span>50,00</span></div>
+                <div class="flex justify-between font-bold"><span>Rendu</span><span>18,50</span></div>
+                <div class="mt-3 text-center text-[9px] text-[#666]">Stokito Caisse · Signature 7FA9095F</div>
+            </div>
+            <div class="w-[220px] sm:mt-16 border-2 border-[#ffcc00] p-4 ind-mono text-[11px] text-[#ffcc00] rotate-1">
+                <div class="ind-h text-2xl text-white">CLÔTURE Z</div>
+                <div class="text-[#bbb]">Jour · 25/11/2026 · Z n° 42</div>
+                <div class="mt-3 flex justify-between"><span>Ventes</span><span class="text-white">37</span></div>
+                <div class="flex justify-between"><span>Annulations</span><span class="text-white">1</span></div>
+                <div class="flex justify-between"><span>Total TTC</span><span class="text-white">1 284,60</span></div>
+                <div class="mt-2 pt-2 border-t border-[#444] flex justify-between"><span>Grand total</span><span class="text-white">48 912,30</span></div>
             </div>
         </div>
     </div>

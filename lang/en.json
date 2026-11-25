@@ -399,5 +399,16 @@
     "L’application, écran par écran": "The app, screen by screen",
     "Les écrans de la démo, reproduits avec ses données fictives. Ouvrez la démo pour les essayer.": "The demo screens, reproduced with its fictional data. Open the demo to try them.",
     "Scanner une facture fournisseur": "Scan a supplier invoice",
-    "Actions": "Actions"
+    "Actions": "Actions",
+    "Caisse": "Till",
+    "Une caisse pour le comptoir, reliée au stock.": "A till for the counter, linked to your stock.",
+    "Scannez, encaissez en espèces, par carte ou par chèque : le rendu de monnaie se calcule et le ticket s’imprime. Chaque vente sort du stock et compte dans votre tableau de bord.": "Scan, take cash, card or cheque: the change is worked out and the receipt prints. Every sale leaves the stock and counts in your dashboard.",
+    "Tickets numérotés et signés : impossible de les modifier ou de les supprimer": "Numbered, signed receipts: they cannot be changed or deleted",
+    "Erreur ou retour : ticket d’annulation, et chaque réimpression est notée « duplicata »": "Mistake or return: a cancellation receipt, and every reprint is marked “duplicate”",
+    "Clôture Z chaque jour, puis chaque mois et chaque année, avec le grand total perpétuel": "Z closure every day, then every month and year, with the perpetual grand total",
+    "Archives signées de chaque période et contrôle d’intégrité en un clic": "Signed archives of each period and a one-click integrity check",
+    "Essayer la caisse": "Try the till",
+    "En France : conçue pour les quatre conditions de la loi anti-fraude à la TVA (inaltérabilité, sécurisation, conservation, archivage). À activer dans Ma Société.": "In France: built for the four conditions of the VAT anti-fraud law (inalterability, security, retention, archiving). Switch it on in Ma Société.",
+    "Stokito a-t-il une caisse pour vendre au comptoir ?": "Does Stokito have a till for counter sales?",
+    "Oui. Activez la caisse dans « Ma Société » : vous scannez ou touchez les produits, encaissez en espèces, carte ou chèque, et le ticket s’imprime. Chaque ticket est numéroté, signé et ne peut plus être modifié ; une erreur se corrige par un ticket d’annulation. Les clôtures Z journalières, mensuelles et annuelles sont automatiques.": "Yes. Switch the till on in “Ma Société”: scan or tap the products, take cash, card or cheque, and the receipt prints. Every receipt is numbered, signed and can no longer be changed; a mistake is corrected with a cancellation receipt. Daily, monthly and yearly Z closures are automatic."
 }
