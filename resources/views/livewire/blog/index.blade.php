@@ -55,7 +55,7 @@
                 <p class="mt-3 text-zinc-300 max-w-xl">{{ __('Stock, devis, bons de livraison et factures au même endroit. Créez votre espace en une minute, sans carte bancaire.') }}</p>
             </div>
             <div class="flex flex-col gap-3">
-                <a href="{{ route('register') }}" class="ind-btn bg-[#ffcc00] text-zinc-900 justify-center">{{ __('Ajouter un compte gratuit') }}</a>
+                <a href="{{ route('register') }}" class="ind-btn bg-[#ffcc00] text-zinc-900 justify-center">{{ __('Créer un compte gratuit') }}</a>
                 <a href="{{ route('demo.login') }}" class="ind-btn bg-white text-zinc-900 justify-center">{{ __('Tester la démo') }}</a>
             </div>
         </div>

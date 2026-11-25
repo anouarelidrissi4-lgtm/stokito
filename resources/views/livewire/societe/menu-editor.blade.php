@@ -1,3 +1,4 @@
+@php $__ic = ['tableau_de_bord' => 'home', 'catalogue' => 'cube', 'caisse' => 'receipt', 'ventes' => 'cart', 'achats' => 'truck', 'tresorerie' => 'wallet', 'administration' => 'cog']; @endphp
 <div class="bg-white shadow rounded-lg overflow-hidden mt-6">
     <div class="p-6 flex items-center justify-between border-b border-gray-100">
         <div>
@@ -56,7 +57,7 @@
                                     <select wire:model="items.{{ $index }}.section" class="w-full rounded-md border-gray-300 text-sm">
                                         <option value="">Sans section</option>
                                         @foreach ($sectionOptions as $opt)
-                                            <option value="{{ $opt['key'] }}">{{ $opt['icon'] }} {{ $opt['label'] }}</option>
+                                            <option value="{{ $opt['key'] }}">{{ $opt['label'] }}</option>
                                         @endforeach
                                     </select>
                                 </td>
@@ -77,7 +78,7 @@
             <div x-data="{ open: false }" class="border border-gray-200 rounded-lg" wire:key="section-block-{{ $section['key'] }}">
                 <button type="button" @click="open = ! open" class="w-full flex items-center gap-2 px-4 py-3 bg-gray-50 rounded-t-lg text-left">
                     <span class="text-gray-400 text-sm shrink-0" x-text="open ? '▾' : '▸'"></span>
-                    <span class="text-lg">{{ $section['icon'] }}</span>
+                    <span class="grid place-items-center w-7 h-7 rounded-lg bg-[#ffcc00]/25 text-zinc-800"><x-sp-icon :name="$__ic[$section['key'] ?? ''] ?? 'folder'" class="w-4 h-4" /></span>
                     <span class="text-sm font-semibold text-gray-700">{{ $section['label'] }}</span>
                     <span class="text-xs text-gray-400 ml-auto">{{ collect($items)->where('section', $section['key'])->count() }} lien(s)</span>
                 </button>
@@ -135,7 +136,7 @@
                                         <select wire:model="items.{{ $index }}.section" class="w-full rounded-md border-gray-300 text-sm">
                                             <option value="">Sans section</option>
                                             @foreach ($sectionOptions as $opt)
-                                                <option value="{{ $opt['key'] }}">{{ $opt['icon'] }} {{ $opt['label'] }}</option>
+                                                <option value="{{ $opt['key'] }}">{{ $opt['label'] }}</option>
                                             @endforeach
                                         </select>
                                     </td>

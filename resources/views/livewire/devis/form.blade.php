@@ -120,8 +120,8 @@
                         <span class="text-sm text-gray-600">Normal</span>
                         <span class="relative inline-block w-10 h-5">
                             <input wire:model.live="tarif_gros" type="checkbox" class="peer sr-only">
-                            <span class="absolute inset-0 border border-zinc-200 bg-white peer-checked:bg-[#ffcc00] transition-colors rounded-lg"></span>
-                            <span class="absolute left-0.5 top-0.5 w-4 h-4 bg-zinc-900 transition-transform peer-checked:translate-x-5"></span>
+                            <span class="absolute inset-0 rounded-full bg-zinc-300 peer-checked:bg-[#ffcc00] transition-colors"></span>
+                            <span class="absolute left-0.5 top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform peer-checked:translate-x-5"></span>
                         </span>
                         <span class="text-sm text-gray-600">En Gros</span>
                     </label>

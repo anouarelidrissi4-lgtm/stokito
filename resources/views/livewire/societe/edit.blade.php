@@ -120,8 +120,8 @@
                     <label class="inline-flex items-center gap-2 cursor-pointer">
                         <span class="relative inline-block w-10 h-5">
                             <input wire:model="stock_verification" type="checkbox" class="peer sr-only">
-                            <span class="absolute inset-0 border border-zinc-200 bg-white peer-checked:bg-[#ffcc00] transition-colors rounded-lg"></span>
-                            <span class="absolute left-0.5 top-0.5 w-4 h-4 bg-zinc-900 transition-transform peer-checked:translate-x-5"></span>
+                            <span class="absolute inset-0 rounded-full bg-zinc-300 peer-checked:bg-[#ffcc00] transition-colors"></span>
+                            <span class="absolute left-0.5 top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform peer-checked:translate-x-5"></span>
                         </span>
                     </label>
                 </div>
@@ -130,8 +130,8 @@
                     <label class="inline-flex items-center gap-2 cursor-pointer">
                         <span class="relative inline-block w-10 h-5">
                             <input wire:model="show_ref_facture" type="checkbox" class="peer sr-only">
-                            <span class="absolute inset-0 border border-zinc-200 bg-white peer-checked:bg-[#ffcc00] transition-colors rounded-lg"></span>
-                            <span class="absolute left-0.5 top-0.5 w-4 h-4 bg-zinc-900 transition-transform peer-checked:translate-x-5"></span>
+                            <span class="absolute inset-0 rounded-full bg-zinc-300 peer-checked:bg-[#ffcc00] transition-colors"></span>
+                            <span class="absolute left-0.5 top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform peer-checked:translate-x-5"></span>
                         </span>
                         <span class="text-sm text-gray-600">Afficher désignation et référence</span>
                     </label>
@@ -141,8 +141,8 @@
                     <label class="inline-flex items-center gap-2 cursor-pointer">
                         <span class="relative inline-block w-10 h-5">
                             <input wire:model="show_ref_bl" type="checkbox" class="peer sr-only">
-                            <span class="absolute inset-0 border border-zinc-200 bg-white peer-checked:bg-[#ffcc00] transition-colors rounded-lg"></span>
-                            <span class="absolute left-0.5 top-0.5 w-4 h-4 bg-zinc-900 transition-transform peer-checked:translate-x-5"></span>
+                            <span class="absolute inset-0 rounded-full bg-zinc-300 peer-checked:bg-[#ffcc00] transition-colors"></span>
+                            <span class="absolute left-0.5 top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform peer-checked:translate-x-5"></span>
                         </span>
                         <span class="text-sm text-gray-600">Afficher désignation et référence</span>
                     </label>
@@ -268,8 +268,8 @@
                 <label class="inline-flex items-center gap-2 cursor-pointer">
                     <span class="relative inline-block w-10 h-5">
                         <input wire:model="bons_chargement_enabled" type="checkbox" class="peer sr-only">
-                        <span class="absolute inset-0 border border-zinc-200 bg-white peer-checked:bg-[#ffcc00] transition-colors rounded-lg"></span>
-                        <span class="absolute left-0.5 top-0.5 w-4 h-4 bg-zinc-900 transition-transform peer-checked:translate-x-5"></span>
+                        <span class="absolute inset-0 rounded-full bg-zinc-300 peer-checked:bg-[#ffcc00] transition-colors"></span>
+                        <span class="absolute left-0.5 top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform peer-checked:translate-x-5"></span>
                     </span>
                     <span class="text-sm text-gray-600">Activer les bons de chargement</span>
                 </label>
@@ -279,8 +279,8 @@
                 <label class="inline-flex items-center gap-2 cursor-pointer">
                     <span class="relative inline-block w-10 h-5">
                         <input wire:model="caisse_enabled" type="checkbox" class="peer sr-only">
-                        <span class="absolute inset-0 border border-zinc-200 bg-white peer-checked:bg-[#ffcc00] transition-colors rounded-lg"></span>
-                        <span class="absolute left-0.5 top-0.5 w-4 h-4 bg-zinc-900 transition-transform peer-checked:translate-x-5"></span>
+                        <span class="absolute inset-0 rounded-full bg-zinc-300 peer-checked:bg-[#ffcc00] transition-colors"></span>
+                        <span class="absolute left-0.5 top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform peer-checked:translate-x-5"></span>
                     </span>
                     <span class="text-sm text-gray-600">Activer la caisse : tickets, paiements et clôtures Z</span>
                 </label>

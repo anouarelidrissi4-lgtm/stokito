@@ -17,10 +17,11 @@
                 <li><a href="{{ route('seo.logiciel-devis-facture') }}" class="hover:text-zinc-900">{{ __('Logiciel devis facture gratuit') }}</a></li>
                 <li><a href="{{ route('seo.scanner-facture') }}" class="hover:text-zinc-900">{{ __('Scanner de factures fournisseurs') }}</a></li>
                 <li><a href="{{ route('seo.caisse') }}" class="hover:text-zinc-900">{{ __('Logiciel de caisse gratuit') }}</a></li>
+                <li><a href="{{ route('seo.bon-de-commande') }}" class="hover:text-zinc-900">{{ __('Modèle de bon de commande') }}</a></li>
                 <li><a href="{{ $home }}#parcours" class="hover:text-zinc-900">{{ __('Comment ça marche') }}</a></li>
                 <li><a href="{{ $home }}#fonctionnalites" class="hover:text-zinc-900">{{ __('Fonctionnalités') }}</a></li>
                 <li><a href="{{ $home }}#ecrans" class="hover:text-zinc-900">{{ __('Écrans') }}</a></li>
-                <li><a href="{{ route('register') }}" class="hover:text-zinc-900">{{ __('Ajouter un compte gratuit') }}</a></li>
+                <li><a href="{{ route('register') }}" class="hover:text-zinc-900">{{ __('Créer un compte gratuit') }}</a></li>
                 <li><a href="{{ route('demo.login') }}" class="hover:text-zinc-900">{{ __('Tester la démo') }}</a></li>
             </ul>
         </div>
