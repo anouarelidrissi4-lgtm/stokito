@@ -60,9 +60,9 @@
         .hero-dots { background-image: radial-gradient(rgba(255,204,0,.45) 1.6px, transparent 1.7px); background-size: 22px 22px; }
         .hero-bar { animation: heroBar 7s linear forwards; }
         @keyframes heroBar { from { width: 0 } to { width: 100% } }
-        .hero-ring { animation: heroSpin 60s linear infinite; }
-        @keyframes heroSpin { to { transform: rotate(360deg) } }
-        @media (prefers-reduced-motion: reduce) { .hero-ring, .hero-bar { animation: none !important; } .hero-bar { width: 100%; } }
+        .hero-mark { animation: heroFloat 6s ease-in-out infinite; }
+        @keyframes heroFloat { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-10px) } }
+        @media (prefers-reduced-motion: reduce) { .hero-mark, .hero-bar { animation: none !important; } .hero-bar { width: 100%; } }
         /* ---------- small card loops (8s) ---------- */
         .lp-loop * { animation-duration: 8s; animation-iteration-count: infinite; }
         .c-line { opacity: 0; animation-name: cLine; }
@@ -219,13 +219,12 @@
                     </div>
                     <div class="lg:col-span-6" aria-hidden="true">
                         <div class="relative mx-auto w-full max-w-[400px] lg:max-w-[580px] aspect-square">
-                            <svg class="hero-ring absolute inset-0 w-full h-full" viewBox="0 0 200 200" fill="none">
-                                <circle cx="100" cy="100" r="74" fill="#1c1c20"/>
-                                <circle cx="100" cy="100" r="90" stroke="#ffcc00" stroke-width="9" stroke-linecap="round" stroke-dasharray="250 26 190 100" transform="rotate(-70 100 100)"/>
-                                <circle cx="100" cy="100" r="70" stroke="#ffcc00" stroke-opacity=".35" stroke-width="3" stroke-linecap="round" stroke-dasharray="90 40 160 150" transform="rotate(30 100 100)"/>
-                                <circle cx="30" cy="40" r="8" fill="#ffcc00"/>
-                                <circle cx="172" cy="150" r="5" fill="#ffcc00" fill-opacity=".6"/>
+                            <svg class="hero-mark absolute inset-0 w-full h-full" viewBox="0 0 24 24" fill="none" stroke-linejoin="round" stroke-linecap="round">
+                                <path d="M12 1.2 2.4 6.3v11.4l9.6 5.1 9.6-5.1V6.3z" fill="#1c1c20"/>
+                                <path d="M12 1.2 2.4 6.3v11.4l9.6 5.1 9.6-5.1V6.3z" stroke="#ffcc00" stroke-width="1.1"/>
+                                <path d="M2.4 6.3 12 11.4l9.6-5.1M12 11.4v11.4" stroke="#ffcc00" stroke-opacity=".45" stroke-width=".55"/>
                             </svg>
+                            <span class="absolute top-[2%] {{ $rtl ? 'right-[2%]' : 'left-[2%]' }} grid place-items-center w-[17%] aspect-square rounded-2xl bg-[#ffcc00] text-zinc-900 shadow-xl shadow-black/40 -rotate-6"><x-sp-icon name="cube" style="width:55%;height:55%" /></span>
                             <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full lg:w-[96%] rounded-xl bg-white shadow-2xl shadow-black/50 ring-1 ring-white/10 overflow-hidden {{ $k % 2 ? 'rotate-[1.5deg]' : '-rotate-[1.5deg]' }}">
                                 <div class="h-7 flex items-center gap-1.5 px-3 bg-zinc-100 border-b border-zinc-200">
                                     <span class="w-2.5 h-2.5 rounded-full bg-[#ff5f57]"></span><span class="w-2.5 h-2.5 rounded-full bg-[#febc2e]"></span><span class="w-2.5 h-2.5 rounded-full bg-[#28c840]"></span>
