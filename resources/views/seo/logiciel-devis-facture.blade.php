@@ -60,7 +60,7 @@
             </div>
             <figure class="border border-amber-300 bg-white shadow-sm rounded-lg">
                 <div class="h-8 flex items-center px-3 border-b border-zinc-200 bg-zinc-50 ind-mono text-[11px] text-zinc-500">stokito.com/devis/create</div>
-                <img src="/images/screens/screen-devis_form.webp?v=20261124" width="1400" height="871" alt="Logiciel devis facture gratuit Stokito : formulaire de devis avec client, produits, quantités, remise et total TTC" class="w-full">
+                <img src="/images/screens/screen-devis_form.webp?v=20261125m" width="1400" height="871" alt="Logiciel devis facture gratuit Stokito : formulaire de devis avec client, produits, quantités, remise et total TTC" class="w-full">
                 <figcaption class="px-3 py-2 border-t border-zinc-200 text-xs text-zinc-600">Création d’un devis dans Stokito (démo, données fictives) : une fois accepté, il devient bon de livraison puis facture.</figcaption>
             </figure>
         </div>
@@ -182,7 +182,7 @@
         </div>
         <p>Votre logo, votre adresse, votre SIREN et vos conditions de paiement se règlent une fois dans « Ma Société » et apparaissent sur chaque PDF. Une même facture peut mélanger <strong>plusieurs taux de TVA</strong> (20 %, 10 %, 5,5 %…) avec une ligne de TVA par taux. Pour une entreprise française, Stokito ajoute aussi les mentions que vous activez : « TVA non applicable, art. 293 B du CGI », pénalités de retard, indemnité forfaitaire de 40 €, escompte, adresse de livraison et nature des opérations. Les avoirs, les clients, le catalogue et l’import Excel sont inclus.</p>
         <figure class="my-8 border border-zinc-200 bg-white shadow-xl shadow-zinc-900/10 rounded-xl">
-            <img src="/images/screens/screen-factures.webp?v=20261124" width="1400" height="871" loading="lazy" alt="Liste des factures dans le logiciel devis facture Stokito : numéro, client, montant TTC, montant payé et statut" class="w-full">
+            <img src="/images/screens/screen-factures.webp?v=20261125m" width="1400" height="871" loading="lazy" alt="Liste des factures dans le logiciel devis facture Stokito : numéro, client, montant TTC, montant payé et statut" class="w-full">
             <figcaption class="px-4 py-2 border-t border-zinc-200 text-sm text-zinc-600">La liste des factures dans Stokito : le statut payé, partiel ou en retard se met à jour avec les règlements (démo, données fictives).</figcaption>
         </figure>
         <h3>Ce que Stokito ne fait pas encore</h3>

@@ -59,7 +59,7 @@
             </div>
             <figure class="border border-amber-300 bg-white shadow-sm rounded-lg">
                 <div class="h-8 flex items-center px-3 border-b border-zinc-200 bg-zinc-50 ind-mono text-[11px] text-zinc-500">stokito.com/products</div>
-                <img src="/images/screens/screen-products.webp?v=20261124" width="1400" height="871" alt="Logiciel de gestion de stock gratuit Stokito : liste des produits avec prix d’achat, prix de vente et quantités en stock" class="w-full">
+                <img src="/images/screens/screen-products.webp?v=20261125m" width="1400" height="871" alt="Logiciel de gestion de stock gratuit Stokito : liste des produits avec prix d’achat, prix de vente et quantités en stock" class="w-full">
                 <figcaption class="px-3 py-2 border-t border-zinc-200 text-xs text-zinc-600">Liste des produits dans Stokito (démo, données fictives) : stock coloré selon le seuil d’alerte.</figcaption>
             </figure>
         </div>
@@ -159,7 +159,7 @@
         </div>
         <p>Ce que Stokito ne fait pas encore : ce n’est pas une plateforme de facturation électronique agréée, et la gestion de plusieurs dépôts n’est pas disponible. Les factures sont produites en PDF.</p>
         <figure class="my-8 border border-zinc-200 bg-white shadow-xl shadow-zinc-900/10 rounded-xl">
-            <img src="/images/screens/screen-inventaire.webp?v=20261124" width="1400" height="871" loading="lazy" alt="Écran d’inventaire du logiciel de gestion de stock Stokito : stock système, quantité comptée et écart par produit" class="w-full">
+            <img src="/images/screens/screen-inventaire.webp?v=20261125m" width="1400" height="871" loading="lazy" alt="Écran d’inventaire du logiciel de gestion de stock Stokito : stock système, quantité comptée et écart par produit" class="w-full">
             <figcaption class="px-4 py-2 border-t border-zinc-200 text-sm text-zinc-600">L’inventaire dans Stokito : l’écart apparaît avant de corriger le stock (démo, données fictives).</figcaption>
         </figure>
         <p>Pour voir chaque écran pas à pas, téléchargez le <a href="/docs/guide-stokito-fr.pdf" target="_blank" rel="noopener">guide d’utilisation (PDF)</a>, ou ouvrez la <a href="{{ route('demo.login') }}">démo avec des données fictives</a>.</p>

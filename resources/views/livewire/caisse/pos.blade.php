@@ -59,7 +59,7 @@
 
         {{-- ticket --}}
         <div id="ticket" class="scroll-mt-20 lg:sticky lg:top-4 border border-zinc-200 bg-white shadow-lg shadow-zinc-900/5 rounded-xl">
-            <div class="bg-zinc-900 text-white px-4 py-2 flex items-center justify-between">
+            <div class="bg-zinc-50 text-zinc-900 border-b border-zinc-200 px-4 py-2 flex items-center justify-between">
                 <span class="ind-h text-lg">Ticket en cours</span>
                 <span class="ind-mono text-[11px] text-[#bbb]">{{ count($cart) }} ligne(s)</span>
             </div>
@@ -125,7 +125,7 @@
         <div class="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center p-0 sm:p-4" wire:click.self="$set('payOpen', false)">
             <div class="w-full sm:max-w-md bg-white border border-zinc-200 shadow-xl shadow-zinc-900/10 max-h-[95vh] overflow-y-auto rounded-xl">
                 <div class="bg-zinc-900 text-white px-4 py-3 flex justify-between items-end">
-                    <span class="ind-h text-lg text-amber-300">Paiement</span>
+                    <span class="ind-h text-lg text-white">Paiement</span>
                     <span class="ind-h text-3xl leading-none">{{ $money($t['total_ttc']) }} <span class="text-sm text-[#bbb]">{{ $currency }}</span></span>
                 </div>
                 <div class="p-4 space-y-3">

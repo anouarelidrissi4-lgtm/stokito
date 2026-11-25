@@ -21,7 +21,7 @@
 
     <div class="border border-zinc-200 bg-white overflow-x-auto rounded-lg">
         <table class="min-w-full text-sm">
-            <thead class="bg-zinc-900 text-white ind-mono text-[11px]">
+            <thead class="bg-zinc-50 text-zinc-500 text-xs font-medium border-b border-zinc-200">
                 <tr><th class="px-3 py-2 text-start">N°</th><th class="px-3 py-2 text-start">Heure</th><th class="px-3 py-2 text-start">Client</th><th class="px-3 py-2 text-start">Paiement</th><th class="px-3 py-2 text-end">Total TTC</th><th class="px-3 py-2"></th></tr>
             </thead>
             <tbody class="divide-y divide-[#e3e0d8]">

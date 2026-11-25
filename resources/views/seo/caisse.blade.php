@@ -50,7 +50,7 @@
             </div>
             <figure class="border border-amber-300 bg-white shadow-sm rounded-lg">
                 <div class="h-8 flex items-center px-3 border-b border-zinc-200 bg-zinc-50 ind-mono text-[11px] text-zinc-500">stokito.com/caisse</div>
-                <img src="/images/screens/screen-caisse-pos.webp?v=20261125" width="1400" height="966" alt="Logiciel de caisse gratuit Stokito : produits à toucher ou scanner à gauche, ticket en cours avec total TTC et bouton Encaisser à droite" class="w-full">
+                <img src="/images/screens/screen-caisse-pos.webp?v=20261125m" width="1272" height="800" alt="Logiciel de caisse gratuit Stokito : produits à toucher ou scanner à gauche, ticket en cours avec total TTC et bouton Encaisser à droite" class="w-full">
                 <figcaption class="px-3 py-2 border-t border-zinc-200 text-xs text-zinc-600">L’écran de caisse de Stokito (démo, données fictives).</figcaption>
             </figure>
         </div>
@@ -119,7 +119,7 @@
                 <figcaption class="px-3 py-2 border-t border-zinc-200 text-xs text-zinc-600">Un ticket de caisse (données fictives).</figcaption>
             </figure>
             <figure class="border border-zinc-200 bg-white shadow-xl shadow-zinc-900/10 rounded-xl">
-                <img src="/images/screens/screen-caisse-clotures.webp?v=20261125" width="1400" height="708" loading="lazy" alt="Clôtures de caisse Z dans Stokito : total non clôturé, contrôle d’intégrité, clôtures journalières avec grand total perpétuel et archives" class="w-full">
+                <img src="/images/screens/screen-caisse-clotures.webp?v=20261125m" width="1144" height="872" loading="lazy" alt="Clôtures de caisse Z dans Stokito : total non clôturé, contrôle d’intégrité, clôtures journalières avec grand total perpétuel et archives" class="w-full">
                 <figcaption class="px-3 py-2 border-t border-zinc-200 text-xs text-zinc-600">Les clôtures Z et les archives (données fictives).</figcaption>
             </figure>
         </div>

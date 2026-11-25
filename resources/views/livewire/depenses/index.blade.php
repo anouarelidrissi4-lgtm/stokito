@@ -19,15 +19,15 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
         <div class="bg-white rounded-xl border border-slate-200 p-4">
-            <div class="text-xs font-semibold uppercase text-slate-500">Total TTC</div>
+            <div class="text-xs font-semibold text-slate-500">Total TTC</div>
             <div class="mt-1 text-2xl font-bold text-slate-900">{{ $money($totTtc) }} <span class="text-sm font-medium text-slate-400">{{ $currency }}</span></div>
         </div>
         <div class="bg-white rounded-xl border border-slate-200 p-4">
-            <div class="text-xs font-semibold uppercase text-slate-500">Dont TVA</div>
+            <div class="text-xs font-semibold text-slate-500">Dont TVA</div>
             <div class="mt-1 text-2xl font-bold text-slate-900">{{ $money($totTva) }} <span class="text-sm font-medium text-slate-400">{{ $currency }}</span></div>
         </div>
         <div class="bg-white rounded-xl border border-slate-200 p-4">
-            <div class="text-xs font-semibold uppercase text-slate-500">Par catégorie</div>
+            <div class="text-xs font-semibold text-slate-500">Par catégorie</div>
             <div class="mt-1 space-y-0.5 text-sm">
                 @forelse ($parCategorie->take(4) as $c)
                     <div class="flex justify-between gap-2"><span class="truncate text-slate-600">{{ \App\Models\Depense::CATEGORIES[$c->categorie] ?? $c->categorie }}</span><span class="font-semibold text-slate-900 whitespace-nowrap">{{ $money($c->total) }}</span></div>
@@ -58,12 +58,12 @@
             <table class="min-w-full divide-y divide-slate-100">
                 <thead class="bg-slate-50">
                     <tr>
-                        <th class="px-4 py-3 text-start text-xs font-semibold text-slate-500 uppercase">Date</th>
-                        <th class="px-4 py-3 text-start text-xs font-semibold text-slate-500 uppercase">Libellé</th>
-                        <th class="px-4 py-3 text-start text-xs font-semibold text-slate-500 uppercase">Catégorie</th>
-                        <th class="px-4 py-3 text-start text-xs font-semibold text-slate-500 uppercase">Paiement</th>
-                        <th class="px-4 py-3 text-end text-xs font-semibold text-slate-500 uppercase">TVA</th>
-                        <th class="px-4 py-3 text-end text-xs font-semibold text-slate-500 uppercase">TTC</th>
+                        <th class="px-4 py-3 text-start text-xs font-semibold text-slate-500">Date</th>
+                        <th class="px-4 py-3 text-start text-xs font-semibold text-slate-500">Libellé</th>
+                        <th class="px-4 py-3 text-start text-xs font-semibold text-slate-500">Catégorie</th>
+                        <th class="px-4 py-3 text-start text-xs font-semibold text-slate-500">Paiement</th>
+                        <th class="px-4 py-3 text-end text-xs font-semibold text-slate-500">TVA</th>
+                        <th class="px-4 py-3 text-end text-xs font-semibold text-slate-500">TTC</th>
                         <th class="px-4 py-3"></th>
                     </tr>
                 </thead>

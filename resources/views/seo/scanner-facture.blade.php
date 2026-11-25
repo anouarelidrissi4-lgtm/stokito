@@ -61,7 +61,7 @@
             </div>
             <figure class="border border-amber-300 bg-white shadow-sm rounded-lg">
                 <div class="h-8 flex items-center px-3 border-b border-zinc-200 bg-zinc-50 ind-mono text-[11px] text-zinc-500">stokito.com/commande-fournisseurs/create</div>
-                <img src="/images/screens/screen-scanner-facture.webp?v=20261124" width="1400" height="1557" alt="Scanner facture fournisseur dans Stokito : bon de commande rempli automatiquement avec le fournisseur, le numéro de facture, la date et quatre lignes lues sur la photo" class="w-full">
+                <img src="/images/screens/screen-scanner-facture.webp?v=20261125m" width="992" height="1092" alt="Scanner facture fournisseur dans Stokito : bon de commande rempli automatiquement avec le fournisseur, le numéro de facture, la date et quatre lignes lues sur la photo" class="w-full">
                 <figcaption class="px-3 py-2 border-t border-zinc-200 text-xs text-zinc-600">Résultat réel du scanner sur une facture d’exemple (données fictives) : 4 lignes lues, 1 produit reconnu, 1 à vérifier, 2 à créer.</figcaption>
             </figure>
         </div>
@@ -135,7 +135,7 @@
             <li><strong>Introuvable</strong> : le bouton « Créer ce produit » ouvre une fiche déjà remplie avec la désignation, la référence et le prix d’achat lus sur la facture.</li>
         </ul>
         <figure class="my-8 border border-zinc-200 bg-white shadow-xl shadow-zinc-900/10 rounded-xl">
-            <img src="/images/screens/screen-scanner-produit.webp?v=20261124" width="1000" height="943" loading="lazy" alt="Fiche nouveau produit préremplie par le scanner de factures : référence PSF18, désignation Perceuse sans fil 18V, prix d’achat 89 et fournisseur sélectionné" class="w-full">
+            <img src="/images/screens/screen-scanner-produit.webp?v=20261125m" width="696" height="670" loading="lazy" alt="Fiche nouveau produit préremplie par le scanner de factures : référence PSF18, désignation Perceuse sans fil 18V, prix d’achat 89 et fournisseur sélectionné" class="w-full">
             <figcaption class="px-4 py-2 border-t border-zinc-200 text-sm text-zinc-600">« Créer ce produit » : la fiche s’ouvre avec ce qui a été lu sur la facture. Il reste à indiquer le prix de vente (données fictives).</figcaption>
         </figure>
 

@@ -34,12 +34,12 @@
 
     <div class="flex mb-3" role="tablist">
         @foreach (['jour' => 'Jours', 'mois' => 'Mois', 'annee' => 'Années'] as $k => $l)
-            <button type="button" wire:click="$set('type', '{{ $k }}')" class="ind-h uppercase tracking-wider px-4 py-1.5 border border-zinc-200 -me-0.5 {{ $type === $k ? 'bg-zinc-900 text-amber-300' : 'bg-white' }} rounded-lg">{{ $l }}</button>
+            <button type="button" wire:click="$set('type', '{{ $k }}')" class="px-4 py-1.5 text-sm font-semibold border border-zinc-200 -me-0.5 {{ $type === $k ? 'bg-zinc-900 text-white border-zinc-900' : 'bg-white text-zinc-700' }} rounded-lg">{{ $l }}</button>
         @endforeach
     </div>
     <div class="border border-zinc-200 bg-white overflow-x-auto rounded-lg">
         <table class="min-w-full text-sm">
-            <thead class="bg-zinc-900 text-white ind-mono text-[11px]">
+            <thead class="bg-zinc-50 text-zinc-500 text-xs font-medium border-b border-zinc-200">
                 <tr><th class="px-3 py-2 text-start">Z N°</th><th class="px-3 py-2 text-start">Période</th><th class="px-3 py-2 text-start">Tickets</th><th class="px-3 py-2 text-end">Total TTC</th><th class="px-3 py-2 text-end">Grand total perpétuel</th><th class="px-3 py-2"></th></tr>
             </thead>
             <tbody class="divide-y divide-[#e3e0d8]">
@@ -52,7 +52,7 @@
                         <td class="px-3 py-2.5 text-end ind-mono">{{ $money($c->cumul_ttc) }}</td>
                         <td class="px-3 py-2.5 text-end whitespace-nowrap"><div class="inline-flex gap-2">
                             <a href="{{ route('caisse.clotures.print', $c->id) }}" target="_blank" class="border border-zinc-200 bg-white px-2 py-1 text-xs font-semibold hover:bg-zinc-100 rounded-lg">Imprimer</a>
-                            <a href="{{ route('caisse.clotures.archive', $c->id) }}" class="bg-zinc-900 text-white px-2 py-1 text-xs font-semibold" title="Archive signée (ZIP) : tickets, lignes, paiements, clôtures et journal de la période">Archive</a>
+                            <a href="{{ route('caisse.clotures.archive', $c->id) }}" class="bg-zinc-900 text-white px-2.5 py-1 text-xs font-semibold rounded-lg" title="Archive signée (ZIP) : tickets, lignes, paiements, clôtures et journal de la période">Archive</a>
                         </div></td>
                     </tr>
                 @empty
@@ -68,7 +68,7 @@
             <div class="ind-mono text-[11px] text-zinc-500">ARCHIVES</div>
             <p class="mt-1 text-sm text-zinc-600">Le bouton <b>Archive</b> d’une clôture télécharge un ZIP signé : tickets, lignes, paiements, clôtures et journal de la période, en CSV, avec l’empreinte de chaque fichier. Gardez les archives mensuelles et annuelles (au moins 6 ans).</p>
             <label class="mt-3 block text-sm font-semibold">Vérifier une archive
-                <input type="file" wire:model="archiveFile" accept=".zip" class="mt-1 block w-full text-sm file:me-3 file:border-2 file:border-[#111] file:bg-white file:px-3 file:py-1.5 file:text-sm file:font-semibold"></label>
+                <input type="file" wire:model="archiveFile" accept=".zip" class="mt-1 block w-full text-sm file:me-3 file:border file:border-zinc-300 file:rounded-lg file:bg-white file:px-3 file:py-1.5 file:text-sm file:font-semibold"></label>
             <div wire:loading wire:target="archiveFile" class="mt-2 text-sm">Vérification…</div>
             @error('archiveFile') <p class="mt-2 text-sm text-[#b42318] font-semibold">{{ $message }}</p> @enderror
             @if ($archiveCheck)

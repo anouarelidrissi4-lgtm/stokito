@@ -5,28 +5,28 @@
         $flags = \App\Support\Countries::ALL;
     @endphp
     <div>
-        <p class="ind-mono text-xs text-zinc-500 uppercase">Superadmin</p>
+        <p class="ind-mono text-xs text-zinc-500">Superadmin</p>
         <h1 class="ind-h text-4xl leading-none mt-1">Inscriptions</h1>
     </div>
 
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <div class="{{ $card }}">
-            <div class="ind-mono text-[11px] uppercase text-zinc-500">Sociétés inscrites</div>
+            <div class="ind-mono text-[11px] text-zinc-500">Sociétés inscrites</div>
             <div class="mt-2 ind-h text-4xl leading-none">{{ (int) $stats->total }}</div>
             <div class="mt-1 text-xs text-slate-500">{{ (int) $stats->self }} en libre-service</div>
         </div>
         <div class="{{ $card }}">
-            <div class="ind-mono text-[11px] uppercase text-zinc-500">Nouvelles</div>
+            <div class="ind-mono text-[11px] text-zinc-500">Nouvelles</div>
             <div class="mt-2 ind-h text-4xl leading-none">{{ (int) $stats->d7 }} <span class="text-sm font-medium text-slate-400">7 j</span></div>
             <div class="mt-1 text-xs text-slate-500">{{ (int) $stats->d30 }} sur 30 jours</div>
         </div>
         <div class="{{ $card }}">
-            <div class="ind-mono text-[11px] uppercase text-zinc-500">Actives</div>
+            <div class="ind-mono text-[11px] text-zinc-500">Actives</div>
             <div class="mt-2 ind-h text-4xl leading-none text-emerald-700">{{ $pct((int) $stats->actifs, (int) $stats->total) }} %</div>
             <div class="mt-1 text-xs text-slate-500">{{ (int) $stats->actifs }} ont fait un devis ou une facture</div>
         </div>
         <div class="{{ $card }}">
-            <div class="ind-mono text-[11px] uppercase text-zinc-500">Pays</div>
+            <div class="ind-mono text-[11px] text-zinc-500">Pays</div>
             <div class="mt-2 flex flex-wrap gap-1.5">
                 @foreach ($pays as $cc => $n)
                     <span class="border border-zinc-200 px-2 py-0.5 text-sm font-semibold rounded-lg">{{ $flags[$cc]['name'] ?? $cc }} · {{ $n }}</span>
@@ -49,7 +49,7 @@
 
     <div class="bg-white border border-zinc-200 overflow-x-auto rounded-lg">
         <table class="min-w-full text-sm">
-            <thead class="bg-zinc-900 text-white text-xs uppercase">
+            <thead class="bg-zinc-50 text-zinc-500 text-xs border-b border-zinc-200">
                 <tr>
                     <th class="text-start px-4 py-3">Société</th>
                     <th class="text-start px-4 py-3">Contact</th>
