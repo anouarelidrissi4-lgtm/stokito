@@ -23,7 +23,7 @@ Route::view('logiciel-de-caisse-gratuit', 'seo.caisse')->name('seo.caisse');
 // old guide file names (before the Stokito rebrand, 2026-11-24) -> new ones
 Route::get('docs/guide-stockpilot-{lang}.pdf', fn (string $lang) => redirect('/docs/guide-stokito-'.$lang.'.pdf', 301))->where('lang', 'fr|ar|en');
 
-Route::get('sitemap.xml', function () {
+$sitemapXml = function () {
     $urls = collect([
         ['loc' => url('/'), 'lastmod' => now()->format('Y-m-d'), 'changefreq' => 'weekly', 'priority' => '1.0'],
         ['loc' => route('seo.logiciel-gratuit'), 'lastmod' => '2026-11-23', 'changefreq' => 'monthly', 'priority' => '0.9'],
@@ -56,7 +56,11 @@ Route::get('sitemap.xml', function () {
     $xml .= '</urlset>';
 
     return response($xml, 200)->header('Content-Type', 'application/xml');
-})->name('sitemap');
+};
+Route::get('sitemap.xml', $sitemapXml)->name('sitemap');
+// same sitemap under the /blog prefix that robots.txt already allowed (2026-11-25):
+// Google keeps its copy of robots.txt up to 24 h, so /sitemap.xml stayed "could not be read".
+Route::get('blog-sitemap.xml', $sitemapXml)->name('sitemap.blog');
 
 Route::get('locale/{locale}', function (string $locale) {
     if (in_array($locale, \App\Http\Middleware\SetLocale::SUPPORTED)) {

@@ -16,3 +16,4 @@ Allow: /site.webmanifest
 Disallow: /
 
 Sitemap: https://stokito.com/sitemap.xml
+Sitemap: https://stokito.com/blog-sitemap.xml
