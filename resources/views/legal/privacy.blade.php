@@ -1,6 +1,6 @@
 <x-legal-page title="Politique de confidentialité" ref="SP-PRIV">
 <h2>1. Qui sommes-nous ?</h2>
-<p>Stokito (stokito.com) est un logiciel en ligne de gestion de stock, de devis et de facturation. Pour toute question sur vos données, contactez-nous sur WhatsApp au <a href="https://wa.me/212676035777">+212 676 035 777</a>.</p>
+<p>Stokito (stokito.com) est un logiciel en ligne de gestion de stock, de devis et de facturation, édité par Anouar Elidrissi, responsable du traitement de vos données (adresse dans les <a href="{{ route('legal.mentions') }}">mentions légales</a>). Pour toute question sur vos données, écrivez à <a href="mailto:contact@stokito.com">contact@stokito.com</a> ou contactez-nous sur WhatsApp au <a href="https://wa.me/212676035777">+212 676 035 777</a>.</p>
 
 <h2>2. Quelles données nous traitons</h2>
 <ul>

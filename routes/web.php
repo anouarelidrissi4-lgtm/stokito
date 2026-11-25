@@ -12,6 +12,7 @@ Route::get('blog/{slug}', \App\Livewire\Blog\Show::class)->name('blog.show');
 
 Route::view('conditions-utilisation', 'legal.terms')->name('legal.terms');
 Route::view('confidentialite', 'legal.privacy')->name('legal.privacy');
+Route::view('mentions-legales', 'legal.mentions')->name('legal.mentions');
 
 // SEO pillar page (FR), 2026-11-23
 Route::view('logiciel-gestion-de-stock-gratuit', 'seo.logiciel-gratuit')->name('seo.logiciel-gratuit');

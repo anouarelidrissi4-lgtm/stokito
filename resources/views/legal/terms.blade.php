@@ -25,5 +25,5 @@
 <p>Le traitement de vos données est décrit dans notre <a href="{{ route('legal.privacy') }}">politique de confidentialité</a>.</p>
 
 <h2>8. Contact</h2>
-<p>Pour toute question : WhatsApp <a href="https://wa.me/212676035777">+212 676 035 777</a>.</p>
+<p>Stokito est édité par Anouar Elidrissi (voir les <a href="{{ route('legal.mentions') }}">mentions légales</a>). Pour toute question : <a href="mailto:contact@stokito.com">contact@stokito.com</a> ou WhatsApp <a href="https://wa.me/212676035777">+212 676 035 777</a>.</p>
 </x-legal-page>

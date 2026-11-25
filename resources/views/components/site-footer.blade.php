@@ -49,5 +49,6 @@
         <span>&copy; {{ date('Y') }} STOKITO · {{ __('Tous droits réservés.') }}</span>
         <a href="{{ route('legal.terms') }}" class="hover:text-[#ffcc00]">{{ __('Conditions d’utilisation') }}</a>
         <a href="{{ route('legal.privacy') }}" class="hover:text-[#ffcc00]">{{ __('Politique de confidentialité') }}</a>
+        <a href="{{ route('legal.mentions') }}" class="hover:text-[#ffcc00]">{{ __('Mentions légales') }}</a>
     </div>
 </footer>

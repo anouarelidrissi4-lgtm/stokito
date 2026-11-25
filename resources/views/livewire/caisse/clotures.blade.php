@@ -89,7 +89,7 @@
             </dl>
             <p class="mt-3 text-xs text-[#555]">Fonctions : tickets numérotés sans rupture et signés, annulation par ticket négatif, clôtures journalières, mensuelles et annuelles avec grand total perpétuel, journal des événements, duplicatas, archives signées, contrôle d’intégrité.</p>
             @if ($france)
-                <p class="mt-2 text-xs text-[#555]">En France, une entreprise assujettie à la TVA qui encaisse des particuliers doit pouvoir présenter un certificat ou une attestation individuelle de l’éditeur, établie selon le <a href="https://bofip.impots.gouv.fr/bofip/10692-PGP.html/identifiant=BOI-LETTRE-000242-20260325" target="_blank" rel="noopener" class="underline decoration-[#ffcc00] decoration-2 font-semibold">modèle officiel (BOI-LETTRE-000242)</a>. Les informations ci-dessus servent à la remplir.</p>
+                <p class="mt-2 text-xs text-[#555]">En France, une entreprise assujettie à la TVA qui encaisse des particuliers doit pouvoir présenter un certificat ou une attestation individuelle de l’éditeur, établie selon le <a href="https://bofip.impots.gouv.fr/bofip/10692-PGP.html/identifiant=BOI-LETTRE-000242-20260325" target="_blank" rel="noopener" class="underline decoration-[#ffcc00] decoration-2 font-semibold">modèle officiel (BOI-LETTRE-000242)</a>. Stokito ne délivre pas encore cette attestation : sans elle, la caisse convient aux entreprises en franchise en base de TVA et à celles qui vendent uniquement à des professionnels.</p>
             @endif
         </div>
     </div>

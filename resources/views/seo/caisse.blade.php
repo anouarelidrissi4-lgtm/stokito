@@ -11,6 +11,7 @@
         ['Quelle est l’amende sans attestation ni certificat ?', '7 500 € par logiciel concerné, selon l’article 1770 duodecies du Code général des impôts. L’entreprise dispose ensuite de 60 jours pour se mettre en conformité.'],
         ['L’attestation de l’éditeur est-elle encore acceptée ?', 'Oui. La loi de finances pour 2026 a rétabli la possibilité de justifier la conformité par une attestation individuelle de l’éditeur, à côté du certificat délivré par un organisme accrédité. L’attestation suit un modèle officiel (BOI-LETTRE-000242).'],
         ['La caisse Stokito est-elle certifiée NF525 ?', 'Non. Elle est conçue pour les quatre conditions de la loi : tickets signés et chaînés, impossibles à modifier ou à supprimer, clôtures, journal des événements et archives signées. Elle n’a pas de certificat NF525.'],
+        ['Stokito fournit-il l’attestation de l’éditeur ?', 'Pas pour le moment. Les entreprises en franchise en base de TVA et celles qui vendent uniquement à des professionnels n’en ont pas besoin. Une entreprise assujettie à la TVA qui encaisse des particuliers en France doit utiliser pour ces encaissements un logiciel certifié ou attesté.'],
         ['Faut-il du matériel spécial ?', 'Non. Un ordinateur, une tablette ou un téléphone avec Internet suffit. Une imprimante de tickets 80 mm et une douchette code-barres USB sont pratiques mais facultatives : la caméra du téléphone peut scanner les codes-barres.'],
         ['La caisse fonctionne-t-elle sans Internet ?', 'Non. Stokito est un logiciel en ligne : la caisse a besoin d’une connexion pour enregistrer les ventes.'],
     ];
@@ -138,7 +139,7 @@
 
         <h2 id="limites">Ce que la caisse Stokito ne fait pas</h2>
         <ul>
-            <li>Elle n’est <strong>pas certifiée NF525</strong>.</li>
+            <li>Elle n’est <strong>pas certifiée NF525</strong>, et l’éditeur ne délivre <strong>pas encore d’attestation individuelle</strong>. Si votre entreprise est assujettie à la TVA et encaisse des particuliers en France, utilisez pour ces encaissements un logiciel certifié ou attesté. Sans attestation, la caisse Stokito convient aux entreprises en <strong>franchise en base de TVA</strong> et à celles qui vendent <strong>uniquement à des professionnels</strong>, qui ne sont pas concernées par l’obligation.</li>
             <li>Elle ne fonctionne <strong>pas hors connexion</strong>.</li>
             <li>Elle n’est pas reliée au terminal de paiement : le paiement par carte se saisit sur l’écran de caisse.</li>
             <li>Elle ne commande pas l’ouverture d’un tiroir-caisse.</li>

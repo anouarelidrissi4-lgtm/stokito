@@ -1,4 +1,4 @@
-@props(['title' => '', 'ref' => ''])
+@props(['title' => '', 'ref' => '', 'updated' => '23/11/2026'])
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -26,7 +26,7 @@
         </div>
     </header>
     <main class="max-w-3xl mx-auto px-4 py-12 legal">
-        <p class="ind-mono text-xs text-[#666]">DOC · {{ $ref }} · Mise à jour : 23/11/2026</p>
+        <p class="ind-mono text-xs text-[#666]">DOC · {{ $ref }} · Mise à jour : {{ $updated }}</p>
         <h1 class="ind-h text-5xl uppercase leading-none mt-2">{{ $title }}</h1>
         {{ $slot }}
     </main>
