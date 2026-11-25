@@ -55,6 +55,7 @@
 
         /* ---------- industrial / dépôt art direction (2026-11-23) ---------- */
         .ind-btn:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0 #111; }
+        .hero-grid { background-image: linear-gradient(to right, rgba(24,24,27,.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(24,24,27,.06) 1px, transparent 1px); background-size: 44px 44px; -webkit-mask-image: radial-gradient(ellipse 75% 70% at 50% 35%, #000 40%, transparent 100%); mask-image: radial-gradient(ellipse 75% 70% at 50% 35%, #000 40%, transparent 100%); }
         /* ---------- hero loop: devis -> BL -> stock -> facture -> WhatsApp (14s) ---------- */
         .hx { --d: 14s; }
         .hx * { animation-duration: var(--d); animation-iteration-count: infinite; animation-timing-function: ease; }
@@ -201,7 +202,14 @@
 <a href="{{ $wa }}" target="_blank" rel="noopener" aria-label="WhatsApp" class="fixed bottom-5 {{ $rtl ? 'left-5' : 'right-5' }} z-40 h-14 w-14 grid place-items-center bg-[#25d366] text-white border border-zinc-200 shadow-md shadow-zinc-900/5 rounded-lg"><span class="[&>svg]:h-7 [&>svg]:w-7">{!! $waIcon !!}</span></a>
 
 {{-- ============ HERO ============ --}}
-<section class="relative bg-zinc-50 overflow-hidden border-b border-zinc-200">
+<section class="relative overflow-hidden border-b border-zinc-200 bg-[#fbfaf7]">
+    {{-- hero background (2026-11-25): faint grid fading out + soft brand-yellow light behind the document --}}
+    <div aria-hidden="true" class="pointer-events-none absolute inset-0">
+        <div class="absolute inset-0 hero-grid"></div>
+        <div class="absolute -top-40 {{ $rtl ? '-left-24' : '-right-24' }} w-[720px] h-[720px] rounded-full bg-[#ffcc00] opacity-[.22] blur-[120px]"></div>
+        <div class="absolute -bottom-48 {{ $rtl ? '-right-32' : '-left-32' }} w-[560px] h-[560px] rounded-full bg-amber-200 opacity-30 blur-[110px]"></div>
+        <div class="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-white"></div>
+    </div>
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 pt-12 pb-24 sm:pt-16 lg:pb-28 grid lg:grid-cols-12 gap-12 items-center">
         <div class="lg:col-span-6">
             <div class="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-medium text-zinc-600 shadow-sm">
