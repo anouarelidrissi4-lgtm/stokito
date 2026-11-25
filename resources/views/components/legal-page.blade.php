@@ -19,7 +19,7 @@
     </style>
 </head>
 <body class="bg-white text-zinc-900">
-    <header class="bg-white/90 backdrop-blur border-b border-zinc-200 text-zinc-900">
+    <header class="sp-topbar backdrop-blur border-b border-zinc-200 text-zinc-900">
         <div class="max-w-3xl mx-auto h-16 px-4 flex items-center justify-between">
             <a href="/" class="flex items-center gap-3"><span class="grid place-items-center w-9 h-9 rounded-lg bg-[#ffcc00] text-zinc-900"><x-sp-icon name="cube" class="w-5 h-5" /></span><span class="text-base font-medium">Stokito</span></a>
             <a href="{{ route('register') }}" class="text-sm font-semibold rounded-lg bg-zinc-900 text-white px-4 py-2">Créer un compte</a>

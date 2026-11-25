@@ -146,7 +146,7 @@
 <body class="antialiased sp-ind text-zinc-900" x-data="{ menu: false }">
 
 {{-- ============ HEADER (solid, no glass) ============ --}}
-<header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-zinc-200 text-zinc-900">
+<header class="sticky top-0 z-40 sp-topbar backdrop-blur border-b border-zinc-200 text-zinc-900">
     <div class="max-w-7xl mx-auto h-16 px-4 sm:px-6 flex items-center justify-between gap-4">
         <a href="/" class="flex items-center gap-3 shrink-0">
             <span class="grid place-items-center w-9 h-9 rounded-lg bg-[#ffcc00] text-zinc-900"><x-sp-icon name="cube" class="w-5 h-5" /></span>
