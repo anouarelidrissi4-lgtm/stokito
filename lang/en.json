@@ -1,4 +1,8 @@
 {
+    "Créer un devis": "Create a quote",
+    "Créer un bon de livraison": "Create a delivery note",
+    "Créer une facture": "Create an invoice",
+    "Créer un bon de commande": "Create a purchase order",
     "Ligne :n : un autre produit porte déjà ce nom": "Line :n: another product already has this name",
     "Liste des clients": "Customer list",
     "client(s)": "customer(s)",
