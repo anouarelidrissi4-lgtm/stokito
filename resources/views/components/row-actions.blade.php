@@ -6,7 +6,7 @@
         style: '',
         toggle() {
             if (this.open) { this.open = false; return; }
-            const r = this.$refs.btn.getBoundingClientRect(), w = 224;
+            const r = this.$refs.btn.getBoundingClientRect(), w = 264;
             const rtl = document.documentElement.dir === 'rtl';
             const left = Math.max(8, Math.min(window.innerWidth - w - 8, rtl ? r.left : r.right - w));
             const below = window.innerHeight - r.bottom > 280;
@@ -20,7 +20,7 @@
         <svg class="w-3.5 h-3.5 transition-transform" :class="open && 'rotate-180'" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
     </button>
     <div x-show="open" x-cloak x-transition.opacity.duration.100ms @click="open = false" :style="style" role="menu"
-        class="fixed z-50 w-56 bg-white border border-zinc-200 shadow-md shadow-zinc-900/5 py-1 text-sm text-zinc-900 [&>*]:flex [&>*]:w-full [&>*]:items-center [&>*]:gap-2 [&>*]:px-4 [&>*]:py-2.5 [&>*]:text-start [&>*]:font-medium [&>*:hover]:bg-[#fff3c4] rounded-lg">
+        class="fixed z-50 w-[264px] bg-white border border-zinc-200 shadow-md shadow-zinc-900/5 py-1 text-sm text-zinc-900 [&>*]:flex [&>*]:w-full [&>*]:items-center [&>*]:gap-2 [&>*]:px-4 [&>*]:py-2.5 [&>*]:text-start [&>*]:font-medium [&>*:hover]:bg-[#fff3c4] rounded-lg">
         {{ $slot }}
     </div>
 </div>

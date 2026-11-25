@@ -61,11 +61,50 @@ class Index extends Component
     {
         $this->requirePermission('devis_valider');
         $devis = Devis::with('items')->findOrFail($id);
+        if ($devis->bonLivraisons()->exists() || $devis->factures()->exists()) {
+            session()->flash('error', 'Ce devis a déjà un bon de livraison ou une facture.');
 
-        $bl = $devis->toBonLivraison();
+            return;
+        }
+
+        // "Valider en bon de livraison" (2026-11-25): the quote becomes accepted, then the BL is created
+        $bl = \Illuminate\Support\Facades\DB::transaction(function () use ($devis) {
+            if (in_array($devis->status, ['draft', 'sent'], true)) {
+                $devis->update(['status' => 'accepted']);
+            }
+
+            return $devis->toBonLivraison();
+        });
 
         session()->flash('success', 'Bon de livraison '.$bl->numero.' cree a partir du devis.');
         return $this->redirect(route('bon-livraisons.index'), navigate: true);
+    }
+
+    /** Copy a quote (lines included) as a new draft dated today, then open it (2026-11-25). */
+    public function duplicate($id)
+    {
+        $this->requirePermission('devis_creer');
+        $src = Devis::with('items')->findOrFail($id);
+        $copy = \Illuminate\Support\Facades\DB::transaction(function () use ($src) {
+            $days = $src->date && $src->valid_until ? max(1, $src->date->diffInDays($src->valid_until)) : 30;
+            $new = $src->replicate(['numero', 'sent_at']);
+            $new->numero = \App\Support\Tenant::nextNumero(Devis::class, 'DEV-');
+            $new->date = today();
+            $new->valid_until = today()->addDays($days);
+            $new->status = 'draft';
+            $new->sent_at = null;
+            $new->save();
+            foreach ($src->items as $item) {
+                $line = $item->replicate();
+                $line->devis_id = $new->id;
+                $line->save();
+            }
+
+            return $new;
+        });
+        session()->flash('success', 'Devis '.$src->numero.' dupliqué : '.$copy->numero.'.');
+
+        return $this->redirect(route('devis.edit', $copy->id), navigate: true);
     }
 
     public function render()
