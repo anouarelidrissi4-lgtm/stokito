@@ -29,6 +29,12 @@ trait CopilotPrefill
         if (! empty($p['items'])) {
             $this->items = $p['items'];
         }
+        // extra fields (an invoice read in the Copilot chat: n° facture fournisseur, date, VAT, supplier to create…)
+        foreach ((array) ($p['props'] ?? []) as $prop => $value) {
+            if (property_exists($this, $prop)) {
+                $this->{$prop} = $value;
+            }
+        }
         session()->flash('success', 'Préparé par le Copilot : vérifiez puis enregistrez.');
     }
 }

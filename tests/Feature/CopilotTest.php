@@ -131,6 +131,45 @@ class CopilotTest extends TestCase
         $this->assertCount(4, session('copilot.thread'));
     }
 
+    public function test_an_invoice_dropped_in_the_chat_becomes_a_prefilled_purchase_order(): void
+    {
+        $this->companyUser('FR');
+        $sup = \App\Models\Fournisseur::create(['name' => 'Quincaillerie Rhône Pro', 'ice' => '81234567800027']);
+        $p = $this->product('VIS-440');
+        $fake = new class extends \App\Support\InvoiceScanner
+        {
+            public function isConfigured(): bool
+            {
+                return true;
+            }
+
+            public function scan(string $path, string $mime): array
+            {
+                return ['input_tokens' => 4000, 'output_tokens' => 600, 'data' => [
+                    'est_une_facture' => true, 'fournisseur' => ['nom' => 'Quincaillerie Rhône Pro', 'identifiant' => '812 345 678 00027', 'adresse' => '', 'telephone' => '', 'email' => ''],
+                    'numero_facture' => 'FA-24-11872', 'date' => '2026-11-18', 'devise' => 'EUR',
+                    'lignes' => [['designation' => 'Vis inox', 'reference' => 'VIS-440', 'code_barres' => '', 'quantite' => 10, 'prix_unitaire_ht' => 6.5, 'taux_tva' => 20, 'total_ht' => 65],
+                        ['designation' => 'Frais de port', 'reference' => '', 'code_barres' => '', 'quantite' => 1, 'prix_unitaire_ht' => 12, 'taux_tva' => 20, 'total_ht' => 12]],
+                    'remise_globale_ht' => null, 'total_ht' => 77, 'total_tva' => 15.4, 'total_ttc' => 92.4]];
+            }
+        };
+        $this->app->instance(\App\Support\InvoiceScanner::class, $fake);
+
+        $c = Livewire::test(Chat::class)->set('attachment', \Illuminate\Http\UploadedFile::fake()->image('facture.jpg'))
+            ->assertSee('Facture lue')->assertSee('Ouvrir le bon de commande pré-rempli');
+        $this->assertSame('ok', AiScan::where('kind', 'facture_fournisseur')->sole()->status);
+        $url = collect($c->get('thread'))->last()['actions'][0]['url'];
+        $key = substr($url, strpos($url, 'copilot=') + 8);
+
+        Livewire::withQueryParams(['copilot' => $key])->test(\App\Livewire\CommandeFournisseurs\Form::class)
+            ->assertSet('fournisseur_id', $sup->id)
+            ->assertSet('reference_fournisseur', 'FA-24-11872')
+            ->assertSet('date', '2026-11-18')
+            ->assertSet('items.0.product_id', $p->id)
+            ->assertSet('items.1.scan.status', 'new');
+        $this->assertSame(0, \App\Models\CommandeFournisseur::count());
+    }
+
     public function test_demo_and_monthly_limit_block_the_copilot(): void
     {
         $this->companyUser('FR', [], ['is_demo' => true]);

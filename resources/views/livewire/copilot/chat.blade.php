@@ -49,6 +49,12 @@
                     </div>
                 </div>
             @endforelse
+            <div wire:loading.flex wire:target="attachment" class="justify-start">
+                <div class="border-2 border-[#111] bg-[#fff3c4] px-4 py-3 text-sm flex items-center gap-2">
+                    <svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" class="opacity-25"/><path d="M22 12a10 10 0 0 0-10-10" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+                    Lecture de la facture (10 à 40 secondes)…
+                </div>
+            </div>
             <div wire:loading.flex wire:target="send,ask" class="justify-start">
                 <div class="border-2 border-[#111] bg-[#f4f2ec] px-4 py-3 text-sm flex items-center gap-2">
                     <svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" class="opacity-25"/><path d="M22 12a10 10 0 0 0-10-10" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
@@ -60,8 +66,18 @@
             <textarea wire:model="input" rows="2" maxlength="1500" dir="auto" placeholder="Ex. : Facture pour Bâti Plus, 20 tubes carrés 40×40 à 15 € HT"
                 @keydown.enter="if (! $event.shiftKey) { $event.preventDefault(); $el.form.requestSubmit(); }"
                 class="flex-1 resize-none border-2 border-[#111] px-3 py-2 text-[15px] focus:ring-[#ffcc00] focus:border-[#111]"></textarea>
-            <button type="submit" wire:loading.attr="disabled" wire:target="send,ask" class="shrink-0 ind-h uppercase tracking-wider border-2 border-[#111] bg-[#ffcc00] px-4 sm:px-5 disabled:opacity-40">Envoyer</button>
+            <div class="shrink-0 flex flex-col gap-2">
+                <button type="submit" wire:loading.attr="disabled" wire:target="send,ask,attachment" class="flex-1 ind-h uppercase tracking-wider border-2 border-[#111] bg-[#ffcc00] px-4 sm:px-5 disabled:opacity-40">Envoyer</button>
+                <label title="Joindre une facture fournisseur (photo ou PDF) : le Copilot la lit et prépare le bon de commande"
+                    class="cursor-pointer inline-flex items-center justify-center gap-1.5 border-2 border-[#111] bg-white px-3 py-1.5 text-xs font-bold hover:bg-[#fff3c4]"
+                    wire:loading.class="opacity-40 pointer-events-none" wire:target="attachment,send,ask">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.66-.9l.82-1.2A2 2 0 0 1 10.07 4h3.86a2 2 0 0 1 1.66.9l.82 1.2a2 2 0 0 0 1.66.9H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><circle cx="12" cy="13" r="3"/></svg>
+                    Facture
+                    <input type="file" wire:model="attachment" accept="image/*,application/pdf" class="sr-only">
+                </label>
+            </div>
         </form>
+        @error('attachment') <p class="px-3 pb-2 text-sm font-semibold text-[#b42318]">{{ $message }}</p> @enderror
     </div>
     <p class="mt-2 text-xs text-[#777]">Le Copilot peut se tromper : vérifiez les documents avant de les enregistrer. Vos messages sont traités par Anthropic (modèle Claude) uniquement pour vous répondre.</p>
 </div>
