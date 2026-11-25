@@ -80,71 +80,87 @@
             <a href="/docs/guide-stokito-en.pdf" target="_blank" rel="noopener" class="inline-flex items-center bg-white border border-zinc-200 px-3 py-1.5 text-sm font-bold hover:bg-zinc-50 rounded-lg">English (PDF)</a>
         </div>
 
-        {{-- KPIs --}}
+        {{-- KPIs (2026-11-25): big filled cards like the user's reference, only Stokito colours (ink / yellow / white) --}}
+        @php
+            $kpi = 'relative overflow-hidden rounded-2xl p-4 sm:p-5 min-h-[128px] flex flex-col transition';
+            $dark = $kpi.' bg-gradient-to-br from-zinc-900 to-zinc-800 text-white shadow-lg shadow-zinc-900/10 hover:shadow-xl';
+            $yellow = $kpi.' bg-gradient-to-br from-[#ffd84d] to-[#ffc400] text-zinc-900 shadow-lg shadow-amber-500/20 hover:shadow-xl';
+            $light = $kpi.' bg-white border border-zinc-200 text-zinc-900 shadow-sm hover:border-zinc-300 hover:shadow';
+            $lab = 'text-[11px] font-semibold uppercase tracking-wider';
+            $val = 'mt-3 ind-h text-2xl sm:text-3xl leading-none tabular-nums';
+            $cur = 'text-sm font-medium opacity-60';
+            $icoDark = 'grid place-items-center w-9 h-9 shrink-0 rounded-xl bg-[#ffcc00] text-zinc-900';
+            $icoYellow = 'grid place-items-center w-9 h-9 shrink-0 rounded-xl bg-zinc-900 text-[#ffcc00]';
+            $icoLight = 'grid place-items-center w-9 h-9 shrink-0 rounded-xl bg-[#ffcc00]/25 text-zinc-900';
+        @endphp
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-            <div class="{{ $card }} p-4 sm:p-5">
-                <div class="flex items-center gap-2 text-[13px] font-medium text-zinc-500"><x-sp-icon name="chart" class="w-4 h-4 text-zinc-400" /> {{ __('CA du mois') }}</div>
-                <div class="mt-2 ind-h text-2xl sm:text-3xl leading-none text-slate-900">{{ $money($caMois) }} <span class="text-sm font-medium text-slate-400">{{ $currency }}</span></div>
+            <div class="{{ $dark }}">
+                <span aria-hidden="true" class="pointer-events-none absolute -end-10 -bottom-12 w-36 h-36 rounded-full bg-white/5"></span>
+                <div class="flex items-start justify-between gap-3"><span class="{{ $lab }} text-white/70">{{ __('CA du mois') }}</span><span class="{{ $icoDark }}"><x-sp-icon name="chart" class="w-5 h-5" /></span></div>
+                <div class="{{ $val }}">{{ $money($caMois) }} <span class="{{ $cur }}">{{ $currency }}</span></div>
                 @if ($caEvolution !== null)
-                    <div class="mt-1 text-xs font-semibold {{ $caEvolution >= 0 ? 'text-emerald-600' : 'text-rose-600' }}">{{ $caEvolution >= 0 ? '▲' : '▼' }} {{ abs($caEvolution) }}% {{ __('vs mois dernier') }}</div>
+                    <div class="mt-auto pt-2 text-xs font-semibold {{ $caEvolution >= 0 ? 'text-[#ffcc00]' : 'text-white/70' }}">{{ $caEvolution >= 0 ? '▲' : '▼' }} {{ abs($caEvolution) }}% {{ __('vs mois dernier') }}</div>
                 @else
-                    <div class="mt-1 text-xs text-slate-400">{{ __('Factures TTC du mois') }}</div>
+                    <div class="mt-auto pt-2 text-xs text-white/60">{{ __('Factures TTC du mois') }}</div>
                 @endif
             </div>
-            <div class="{{ $card }} p-4 sm:p-5">
-                <div class="flex items-center gap-2 text-[13px] font-medium text-zinc-500"><x-sp-icon name="coins" class="w-4 h-4 text-zinc-400" /> {{ __('Encaissé ce mois') }}</div>
-                <div class="mt-2 ind-h text-2xl sm:text-3xl leading-none text-slate-900">{{ $money($encaisseMois) }} <span class="text-sm font-medium text-slate-400">{{ $currency }}</span></div>
-                <div class="mt-1 text-xs text-slate-400">{{ __('Règlements clients') }}</div>
+            <div class="{{ $yellow }}">
+                <span aria-hidden="true" class="pointer-events-none absolute -end-10 -bottom-12 w-36 h-36 rounded-full bg-white/25"></span>
+                <div class="flex items-start justify-between gap-3"><span class="{{ $lab }} text-zinc-900/70">{{ __('Encaissé ce mois') }}</span><span class="{{ $icoYellow }}"><x-sp-icon name="coins" class="w-5 h-5" /></span></div>
+                <div class="{{ $val }}">{{ $money($encaisseMois) }} <span class="{{ $cur }}">{{ $currency }}</span></div>
+                <div class="mt-auto pt-2 text-xs text-zinc-900/70">{{ __('Règlements clients') }}</div>
             </div>
-            <a href="{{ route('factures.index') }}" wire:navigate class="{{ $card }} p-4 sm:p-5 hover:border-zinc-300 hover:shadow transition">
-                <div class="flex items-center gap-2 text-[13px] font-medium text-zinc-500"><x-sp-icon name="clock" class="w-4 h-4 text-zinc-400" /> {{ __('Impayés') }}</div>
-                <div class="mt-2 ind-h text-2xl sm:text-3xl leading-none {{ $totalImpayes > 0 ? 'text-amber-600' : 'text-slate-900' }}">{{ $money($totalImpayes) }} <span class="text-sm font-medium text-slate-400">{{ $currency }}</span></div>
-                <div class="mt-1 text-xs text-slate-400">{{ trans_choice('{0} Aucune facture|{1} :count facture|[2,*] :count factures', $impayes->count(), ['count' => $impayes->count()]) }}</div>
+            <a href="{{ route('factures.index') }}" wire:navigate class="{{ $dark }}">
+                <span aria-hidden="true" class="pointer-events-none absolute -end-10 -bottom-12 w-36 h-36 rounded-full bg-white/5"></span>
+                <div class="flex items-start justify-between gap-3"><span class="{{ $lab }} text-white/70">{{ __('Impayés') }}</span><span class="{{ $icoDark }}"><x-sp-icon name="clock" class="w-5 h-5" /></span></div>
+                <div class="{{ $val }}">{{ $money($totalImpayes) }} <span class="{{ $cur }}">{{ $currency }}</span></div>
+                <div class="mt-auto pt-2 text-xs text-white/60">{{ trans_choice('{0} Aucune facture|{1} :count facture|[2,*] :count factures', $impayes->count(), ['count' => $impayes->count()]) }}</div>
             </a>
-            <a href="{{ route('products.index') }}" wire:navigate class="{{ $card }} p-4 sm:p-5 hover:border-zinc-300 hover:shadow transition">
-                <div class="flex items-center gap-2 text-[13px] font-medium text-zinc-500"><x-sp-icon name="alert" class="w-4 h-4 text-zinc-400" /> {{ __('Stock bas') }}</div>
-                <div class="mt-2 ind-h text-2xl sm:text-3xl leading-none {{ $lowStock->count() ? 'text-rose-600' : 'text-slate-900' }}">{{ $lowStock->count() }} <span class="text-sm font-medium text-slate-400">{{ __('produits') }}</span></div>
-                <div class="mt-1 text-xs text-slate-400">{{ $devisEnCours }} {{ __('devis en cours') }}</div>
+            <a href="{{ route('products.index') }}" wire:navigate class="{{ $yellow }}">
+                <span aria-hidden="true" class="pointer-events-none absolute -end-10 -bottom-12 w-36 h-36 rounded-full bg-white/25"></span>
+                <div class="flex items-start justify-between gap-3"><span class="{{ $lab }} text-zinc-900/70">{{ __('Stock bas') }}</span><span class="{{ $icoYellow }}"><x-sp-icon name="alert" class="w-5 h-5" /></span></div>
+                <div class="{{ $val }}">{{ $lowStock->count() }} <span class="{{ $cur }}">{{ __('produits') }}</span></div>
+                <div class="mt-auto pt-2 text-xs text-zinc-900/70">{{ $devisEnCours }} {{ __('devis en cours') }}</div>
             </a>
         </div>
 
-        {{-- KPIs, second row (2026-11-24) --}}
+        {{-- KPIs, second row (2026-11-24): same layout, white --}}
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             @if ($u->hasPermission('marges'))
-            <div class="{{ $card }} p-4 sm:p-5">
-                <div class="flex items-center gap-2 text-[13px] font-medium text-zinc-500"><x-sp-icon name="chart" class="w-4 h-4 text-zinc-400" /> {{ __('Marge brute du mois') }}</div>
-                <div class="mt-2 ind-h text-2xl sm:text-3xl leading-none {{ $margeMois < 0 ? 'text-rose-600' : 'text-emerald-700' }}">{{ $money($margeMois) }} <span class="text-sm font-medium text-slate-400">{{ $currency }}</span></div>
-                <div class="mt-1 text-xs text-slate-400">{{ $margePct !== null ? $margePct.' % '.__('du CA HT') : __('Aucune facture ce mois') }}</div>
+            <div class="{{ $light }}">
+                <div class="flex items-start justify-between gap-3"><span class="{{ $lab }} text-zinc-500">{{ __('Marge brute du mois') }}</span><span class="{{ $icoLight }}"><x-sp-icon name="chart" class="w-5 h-5" /></span></div>
+                <div class="{{ $val }} {{ $margeMois < 0 ? 'text-red-600' : '' }}">{{ $money($margeMois) }} <span class="{{ $cur }}">{{ $currency }}</span></div>
+                <div class="mt-auto pt-2 text-xs text-zinc-500">{{ $margePct !== null ? $margePct.' % '.__('du CA HT') : __('Aucune facture ce mois') }}</div>
             </div>
             @endif
             @if ($u->hasPermission('depenses'))
-            <a href="{{ route('depenses.index') }}" wire:navigate class="{{ $card }} p-4 sm:p-5 hover:border-zinc-300 hover:shadow transition">
-                <div class="flex items-center gap-2 text-[13px] font-medium text-zinc-500"><x-sp-icon name="wallet" class="w-4 h-4 text-zinc-400" /> {{ __('Dépenses du mois') }}</div>
-                <div class="mt-2 ind-h text-2xl sm:text-3xl leading-none text-slate-900">{{ $money($depensesMoisTtc) }} <span class="text-sm font-medium text-slate-400">{{ $currency }}</span></div>
+            <a href="{{ route('depenses.index') }}" wire:navigate class="{{ $light }}">
+                <div class="flex items-start justify-between gap-3"><span class="{{ $lab }} text-zinc-500">{{ __('Dépenses du mois') }}</span><span class="{{ $icoLight }}"><x-sp-icon name="wallet" class="w-5 h-5" /></span></div>
+                <div class="{{ $val }}">{{ $money($depensesMoisTtc) }} <span class="{{ $cur }}">{{ $currency }}</span></div>
                 @if ($u->hasPermission('marges'))
                     @php $resultat = $margeMois - $depensesMoisHt; @endphp
-                    <div class="mt-1 text-xs {{ $resultat < 0 ? 'text-rose-600 font-semibold' : 'text-slate-400' }}">{{ __('Marge moins dépenses (HT)') }} : {{ $money($resultat) }}</div>
+                    <div class="mt-auto pt-2 text-xs {{ $resultat < 0 ? 'text-red-600 font-semibold' : 'text-zinc-500' }}">{{ __('Marge moins dépenses (HT)') }} : {{ $money($resultat) }}</div>
                 @else
-                    <div class="mt-1 text-xs text-slate-400">{{ __('Loyer, énergie, carburant…') }}</div>
+                    <div class="mt-auto pt-2 text-xs text-zinc-500">{{ __('Loyer, énergie, carburant…') }}</div>
                 @endif
             </a>
             @endif
             @if ($u->hasPermission('produits_prix_achat'))
-            <a href="{{ route('products.index') }}" wire:navigate class="{{ $card }} p-4 sm:p-5 hover:border-zinc-300 hover:shadow transition">
-                <div class="flex items-center gap-2 text-[13px] font-medium text-zinc-500"><x-sp-icon name="cube" class="w-4 h-4 text-zinc-400" /> {{ __('Valeur du stock') }}</div>
-                <div class="mt-2 ind-h text-2xl sm:text-3xl leading-none text-slate-900">{{ $money($valeurStock) }} <span class="text-sm font-medium text-slate-400">{{ $currency }}</span></div>
-                <div class="mt-1 text-xs {{ $dormants ? 'text-amber-700 font-semibold' : 'text-slate-400' }}">{{ $dormants ? $dormants.' '.__('produits sans vente depuis 90 j') : __('Au prix d’achat HT') }}</div>
+            <a href="{{ route('products.index') }}" wire:navigate class="{{ $light }}">
+                <div class="flex items-start justify-between gap-3"><span class="{{ $lab }} text-zinc-500">{{ __('Valeur du stock') }}</span><span class="{{ $icoLight }}"><x-sp-icon name="cube" class="w-5 h-5" /></span></div>
+                <div class="{{ $val }}">{{ $money($valeurStock) }} <span class="{{ $cur }}">{{ $currency }}</span></div>
+                <div class="mt-auto pt-2 text-xs {{ $dormants ? 'text-zinc-900 font-semibold' : 'text-zinc-500' }}">{{ $dormants ? $dormants.' '.__('produits sans vente depuis 90 j') : __('Au prix d’achat HT') }}</div>
             </a>
             @endif
-            <a href="{{ route('devis.index') }}" wire:navigate class="{{ $card }} p-4 sm:p-5 hover:border-zinc-300 hover:shadow transition">
-                <div class="flex items-center gap-2 text-[13px] font-medium text-zinc-500"><x-sp-icon name="doc" class="w-4 h-4 text-zinc-400" /> {{ __('Devis en attente') }}</div>
-                <div class="mt-2 ind-h text-2xl sm:text-3xl leading-none text-slate-900">{{ $money($devisAttenteMontant) }} <span class="text-sm font-medium text-slate-400">{{ $currency }}</span></div>
-                <div class="mt-1 text-xs text-slate-400">{{ $devisAttenteCount }} {{ __('devis') }}@if ($tauxAcceptation !== null) · {{ $tauxAcceptation }} % {{ __('acceptés (90 j)') }}@endif</div>
+            <a href="{{ route('devis.index') }}" wire:navigate class="{{ $light }}">
+                <div class="flex items-start justify-between gap-3"><span class="{{ $lab }} text-zinc-500">{{ __('Devis en attente') }}</span><span class="{{ $icoLight }}"><x-sp-icon name="doc" class="w-5 h-5" /></span></div>
+                <div class="{{ $val }}">{{ $money($devisAttenteMontant) }} <span class="{{ $cur }}">{{ $currency }}</span></div>
+                <div class="mt-auto pt-2 text-xs text-zinc-500">{{ $devisAttenteCount }} {{ __('devis') }}@if ($tauxAcceptation !== null) · {{ $tauxAcceptation }} % {{ __('acceptés (90 j)') }}@endif</div>
             </a>
-            <div class="{{ $card }} p-4 sm:p-5">
-                <div class="flex items-center gap-2 text-[13px] font-medium text-zinc-500"><x-sp-icon name="coins" class="w-4 h-4 text-zinc-400" /> {{ __('TVA facturée ce mois') }}</div>
-                <div class="mt-2 ind-h text-2xl sm:text-3xl leading-none text-slate-900">{{ $money($tvaMois) }} <span class="text-sm font-medium text-slate-400">{{ $currency }}</span></div>
-                <div class="mt-1 text-xs text-slate-400">{{ __('Sur les factures du mois') }}</div>
+            <div class="{{ $light }}">
+                <div class="flex items-start justify-between gap-3"><span class="{{ $lab }} text-zinc-500">{{ __('TVA facturée ce mois') }}</span><span class="{{ $icoLight }}"><x-sp-icon name="coins" class="w-5 h-5" /></span></div>
+                <div class="{{ $val }}">{{ $money($tvaMois) }} <span class="{{ $cur }}">{{ $currency }}</span></div>
+                <div class="mt-auto pt-2 text-xs text-zinc-500">{{ __('Sur les factures du mois') }}</div>
             </div>
         </div>
 
