@@ -20,6 +20,28 @@ class Index extends Component
 
     public string $numeroSearch = '';
 
+    public string $dateStart = '';
+
+    public string $dateEnd = '';
+
+    public function updating($name): void
+    {
+        if (in_array($name, ['dateStart', 'dateEnd'], true)) {
+            $this->resetPage();
+        }
+    }
+
+    public function resetFilters(): void
+    {
+        $this->reset(['search', 'numeroSearch', 'dateStart', 'dateEnd']);
+        $this->resetPage();
+    }
+
+    protected function filters(): array
+    {
+        return ['search' => $this->search, 'numeroSearch' => $this->numeroSearch, 'dateStart' => $this->dateStart, 'dateEnd' => $this->dateEnd];
+    }
+
     public function mount()
     {
         $this->requirePermission('devis_consulter');
@@ -109,15 +131,9 @@ class Index extends Component
 
     public function render()
     {
-        $devisList = Devis::query()
-            ->with('client')
-            ->when($this->search, fn ($q) => $q->where('numero', 'like', "%{$this->search}%")
-                ->orWhereHas('client', fn ($q2) => $q2->where('name', 'like', "%{$this->search}%")))
-            ->when($this->numeroSearch, fn ($q) => $q->where('numero', 'like', "%{$this->numeroSearch}%"))
-            ->latest('date')
-            ->paginate(10);
+        $devisList = \App\Support\SalesLists::devis($this->filters())->paginate(10);
 
-        return view('livewire.devis.index', ['devisList' => $devisList])
+        return view('livewire.devis.index', ['devisList' => $devisList, 'totals' => \App\Support\SalesLists::totals('devis', $this->filters()), 'printUrl' => route('devis.print', array_filter($this->filters()))])
             ->layout('layouts.app');
     }
 }

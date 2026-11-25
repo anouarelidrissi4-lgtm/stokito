@@ -27,7 +27,7 @@ class Index extends Component
     public function render()
     {
         $clients = Client::query()
-            ->when($this->search, fn ($q) => $q->where('name', 'like', "%{$this->search}%"))
+            ->when($this->search, fn ($q) => $q->where(fn ($w) => $w->where('name', 'like', "%{$this->search}%")->orWhere('prenom', 'like', "%{$this->search}%")->orWhere('code', 'like', "%{$this->search}%")))
             ->when($this->mode === 'plafonds', fn ($q) => $q->whereNotNull('credit_limit')->where('credit_limit', '>', 0))
             ->orderBy('name')
             ->paginate(15);
@@ -38,7 +38,9 @@ class Index extends Component
             return $client;
         });
 
-        return view('livewire.client-reports.index', ['clients' => $clients])
+        return view('livewire.client-reports.index', ['clients' => $clients,
+            'totalSoldes' => $this->mode === 'soldes' ? \App\Support\SalesLists::totalSoldes($this->search) : null,
+            'printUrl' => $this->mode === 'soldes' ? route('soldes-clients.print', array_filter(['search' => $this->search])) : null])
             ->layout('layouts.app');
     }
 }

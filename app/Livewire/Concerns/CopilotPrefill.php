@@ -35,6 +35,6 @@ trait CopilotPrefill
                 $this->{$prop} = $value;
             }
         }
-        session()->flash('success', 'Préparé par le Copilot : vérifiez puis enregistrez.');
+        session()->flash('success', $p['message'] ?? 'Préparé par le Copilot : vérifiez puis enregistrez.');
     }
 }

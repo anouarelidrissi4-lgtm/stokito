@@ -3,10 +3,12 @@
         <h1 class="text-2xl font-bold text-gray-900">{{ $pageTitle }}</h1>
     </div>
 
+    @if ($totalSoldes !== null)
+        <x-list-totals :totals="['Total dû par les clients' => \App\Support\Fmt::money($totalSoldes), 'Clients' => (string) $clients->total()]" />
+    @endif
+
     <div class="bg-white shadow rounded-lg overflow-hidden">
-        <div class="p-4 border-b">
-            <input wire:model.live.debounce.300ms="search" type="text" placeholder="Rechercher un client..." class="w-full rounded-md border-gray-300 text-sm">
-        </div>
+        <x-list-toolbar :print-url="$printUrl" placeholder="Client, prénom, code client…" :dates="false" />
         <div class="overflow-x-auto">
 <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
@@ -22,7 +24,7 @@
             <tbody class="bg-white divide-y divide-gray-200">
                 @forelse ($clients as $client)
                     <tr wire:key="cl-{{ $client->id }}">
-                        <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ $client->name }}</td>
+                        <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ \App\Support\SalesLists::clientLabel($client) }}@if ($client->code)<span class="block text-xs font-normal text-gray-400">{{ $client->code }}</span>@endif</td>
                         @if ($mode === 'plafonds')
                             <td class="px-6 py-4 text-sm text-right text-gray-500 whitespace-nowrap">{{ \App\Support\Fmt::money($client->credit_limit) }}</td>
                         @endif

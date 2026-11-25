@@ -117,6 +117,8 @@ class Facture extends Model
             $this->status = 'partiellement_payee';
         } elseif ($this->due_date && $this->due_date->isPast()) {
             $this->status = 'en_retard';
+        } elseif (in_array($this->status, ['payee', 'partiellement_payee'], true)) {
+            $this->status = 'envoyee';   // its payments were deleted (2026-11-26)
         }
 
         $this->save();

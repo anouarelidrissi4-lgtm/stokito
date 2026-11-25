@@ -264,6 +264,18 @@ Route::middleware(['auth'])->group(function () {
     })->whereNumber('depense')->name('depenses.justificatif');
     Route::get('depenses/recurrentes', \App\Livewire\DepensesRecurrentes\Index::class)->name('depenses.recurrentes');
     Route::get('depenses/recurrentes/ajouter', \App\Livewire\DepensesRecurrentes\Index::class)->name('depenses.recurrentes.create');
+    // printable sales lists (2026-11-26), same filters as the screen
+    foreach (['devis' => ['devis', 'devis_consulter'], 'bon-livraisons' => ['bl', 'bl_consulter'], 'factures' => ['factures', 'factures_consulter'],
+              'reglements-clients' => ['reglements', 'gestion_reglements_clients'], 'soldes-clients' => ['soldes', 'soldes_clients']] as $prefix => [$listType, $perm]) {
+        Route::get($prefix.'/imprimer', function (\Illuminate\Http\Request $request) use ($listType, $perm, $prefix) {
+            abort_unless(auth()->user()->hasPermission($perm), 403);
+            $f = $request->only(['search', 'numeroSearch', 'dateStart', 'dateEnd']);
+            [$title, $cols, $rows] = \App\Support\SalesLists::printData($listType, $f);
+            $totals = $listType === 'soldes' ? ['Total dû par les clients' => \App\Support\Fmt::money(\App\Support\SalesLists::totalSoldes((string) ($f['search'] ?? '')))] : \App\Support\SalesLists::totals($listType, $f);
+
+            return view('print.list', ['title' => $title, 'cols' => $cols, 'rows' => $rows, 'totals' => $totals, 'filters' => $f, 'societe' => \App\Models\Societe::current(), 'back' => route($prefix.'.index')]);
+        })->name($prefix.'.print');
+    }
     Route::get('products', \App\Livewire\Products\Index::class)->name('products.index');
     // printable product list (2026-11-25): all filtered products, chosen columns, A4
     Route::get('products/imprimer', function (\Illuminate\Http\Request $request) {

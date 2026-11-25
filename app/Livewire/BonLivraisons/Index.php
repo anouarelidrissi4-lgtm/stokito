@@ -12,6 +12,40 @@ class Index extends Component
 
     public string $search = '';
 
+    public string $dateStart = '';
+
+    public string $dateEnd = '';
+
+    public function updating($name): void
+    {
+        if (in_array($name, ['search', 'dateStart', 'dateEnd'], true)) {
+            $this->resetPage();
+        }
+    }
+
+    public function resetFilters(): void
+    {
+        $this->reset(['search', 'dateStart', 'dateEnd']);
+        $this->resetPage();
+    }
+
+    protected function filters(): array
+    {
+        return ['search' => $this->search, 'dateStart' => $this->dateStart, 'dateEnd' => $this->dateEnd];
+    }
+
+    /** opens "Ajouter un bon de livraison" already filled with this BL's lines (nothing saved yet) */
+    public function duplicate($id)
+    {
+        $this->requirePermission('bl_creer');
+        $bl = BonLivraison::with('items')->findOrFail($id);
+        $url = \App\Support\SalesLists::prefillUrl(\App\Livewire\BonLivraisons\Form::class, 'bon-livraisons.create', $bl,
+            ['show_prices' => (bool) $bl->show_prices, 'tva_rate' => $bl->tva_rate, 'remise_type' => $bl->remise_type ?? 'percent', 'remise_value' => $bl->remise_value ?? 0],
+            'Copie de '.$bl->numero.' : vérifiez puis enregistrez (nouveau numéro).');
+
+        return $this->redirect($url, navigate: true);
+    }
+
     public function mount()
     {
         $this->requirePermission('bl_consulter');
@@ -36,14 +70,9 @@ class Index extends Component
 
     public function render()
     {
-        $bonLivraisons = BonLivraison::query()
-            ->with(['client', 'facture'])
-            ->when($this->search, fn ($q) => $q->where('numero', 'like', "%{$this->search}%")
-                ->orWhereHas('client', fn ($q2) => $q2->where('name', 'like', "%{$this->search}%")))
-            ->latest('date')
-            ->paginate(10);
+        $bonLivraisons = \App\Support\SalesLists::bonLivraisons($this->filters())->paginate(10);
 
-        return view('livewire.bon-livraisons.index', ['bonLivraisons' => $bonLivraisons])
+        return view('livewire.bon-livraisons.index', ['bonLivraisons' => $bonLivraisons, 'totals' => \App\Support\SalesLists::totals('bl', $this->filters()), 'printUrl' => route('bon-livraisons.print', array_filter($this->filters()))])
             ->layout('layouts.app');
     }
 }

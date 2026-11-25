@@ -66,21 +66,38 @@ class Index extends Component
         $this->selectAll = false;
     }
 
+    protected function filters(): array
+    {
+        return ['search' => $this->search, 'dateStart' => $this->dateStart, 'dateEnd' => $this->dateEnd];
+    }
+
     protected function filteredQuery()
     {
-        return Facture::query()
-            ->with(['client', 'bonLivraison'])
-            ->when($this->search, fn ($q) => $q->where('numero', 'like', "%{$this->search}%")
-                ->orWhereHas('client', fn ($q2) => $q2->where('name', 'like', "%{$this->search}%"))
-                ->orWhereHas('bonLivraison', fn ($q2) => $q2->where('numero', 'like', "%{$this->search}%")))
-            ->when($this->dateStart, fn ($q) => $q->whereDate('date', '>=', $this->dateStart))
-            ->when($this->dateEnd, fn ($q) => $q->whereDate('date', '<=', $this->dateEnd))
-            ->latest('date');
+        return \App\Support\SalesLists::factures($this->filters());
+    }
+
+    public function updating($name): void
+    {
+        if (in_array($name, ['dateStart', 'dateEnd'], true)) {
+            $this->resetPage();
+        }
+    }
+
+    /** opens "Ajouter une facture" already filled with this invoice's lines (nothing saved, no number used) */
+    public function duplicate($id)
+    {
+        $f = Facture::with('items')->findOrFail($id);
+        $url = \App\Support\SalesLists::prefillUrl(\App\Livewire\Factures\Form::class, 'factures.create', $f,
+            ['tva_rate' => $f->tva_rate, 'remise_type' => $f->remise_type ?? 'percent', 'remise_value' => $f->remise_value ?? 0,
+             'adresse_livraison' => (string) $f->adresse_livraison, 'nature_operation' => (string) $f->nature_operation],
+            'Copie de '.$f->numero.' : vérifiez puis enregistrez (nouveau numéro).');
+
+        return $this->redirect($url, navigate: true);
     }
 
     public function render()
     {
-        return view('livewire.factures.index', ['factures' => $this->filteredQuery()->paginate(10)])
+        return view('livewire.factures.index', ['factures' => $this->filteredQuery()->paginate(10), 'totals' => \App\Support\SalesLists::totals('factures', $this->filters()), 'printUrl' => route('factures.print', array_filter($this->filters()))])
             ->layout('layouts.app');
     }
 }

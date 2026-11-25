@@ -20,6 +20,28 @@ class ReglementClient extends Model
         'date' => 'date',
     ];
 
+    protected static function booted(): void
+    {
+        // a deleted payment leaves no treasury entry behind and the invoice goes back to unpaid (2026-11-26)
+        static::deleted(function (ReglementClient $r) {
+            MouvementBancaire::where('reference_type', 'reglement_client')->where('reference_id', $r->id)->delete();
+            if ($r->facture_id && ($f = Facture::find($r->facture_id))) {
+                $f->refreshStatus();
+            }
+        });
+    }
+
+    /** undo applyEffects() before an edit (the invoice status is refreshed again by applyEffects) */
+    public function removeEffects(): void
+    {
+        MouvementBancaire::where('reference_type', 'reglement_client')->where('reference_id', $this->id)->delete();
+    }
+
+    public function modeLabel(): string
+    {
+        return \App\Support\SalesLists::MODES[$this->mode] ?? ucfirst((string) $this->mode);
+    }
+
     public function client(): BelongsTo
     {
         return $this->belongsTo(Client::class);
