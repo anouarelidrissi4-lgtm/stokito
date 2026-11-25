@@ -262,17 +262,18 @@ Route::middleware(['auth'])->group(function () {
         abort_unless(auth()->user()->hasPermission('produits_consulter'), 403);
         $search = trim((string) $request->query('q', ''));
         $cat = $request->query('categorie');
-        $cols = array_intersect(explode(',', (string) $request->query('cols', 'categorie,marque,fournisseur,achat,gros')), ['categorie', 'marque', 'fournisseur', 'achat', 'gros']);
-        if (! auth()->user()->hasPermission('produits_prix_achat')) {
-            $cols = array_diff($cols, ['achat']);
-        }
+        // columns in the order chosen in the list ("Colonnes" panel); default = the user's saved choice
+        $all = \App\Support\ProductColumns::for(auth()->user());
+        $labels = array_column($all, null, 'key');
+        $keys = $request->filled('cols') ? explode(',', (string) $request->query('cols')) : array_column(array_filter($all, fn ($c) => $c['visible']), 'key');
+        $cols = array_values(array_filter(array_map(fn ($k) => $labels[$k] ?? null, array_unique($keys))));
         $products = \App\Models\Product::with(['category', 'brand', 'fournisseur'])
             ->when($search !== '', fn ($q) => $q->where(fn ($w) => $w->where('name', 'like', "%{$search}%")->orWhere('reference', 'like', "%{$search}%")->orWhere('barcode', $search)))
             ->when($cat, fn ($q) => $q->where('category_id', $cat))
             ->orderBy('name')->get();
 
         return view('products.print', [
-            'products' => $products, 'cols' => array_values($cols), 'search' => $search,
+            'products' => $products, 'cols' => $cols, 'search' => $search, 'tvaDefault' => \App\Models\Societe::current()?->tva_rate_default,
             'category' => $cat ? \App\Models\Category::find($cat)?->name : null,
             'societe' => \App\Models\Societe::current(),
         ]);

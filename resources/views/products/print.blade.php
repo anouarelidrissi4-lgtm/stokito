@@ -1,7 +1,7 @@
 @php
     $rtl = app()->getLocale() === 'ar';
     $money = fn ($v) => \App\Support\Fmt::money($v);
-    $has = fn ($c) => in_array($c, $cols, true);
+    $has = fn ($k) => in_array($k, array_column($cols, 'key'), true);
     $valeurAchat = $products->sum(fn ($p) => max(0, (float) $p->stock_qty) * (float) $p->purchase_price);
     $valeurVente = $products->sum(fn ($p) => max(0, (float) $p->stock_qty) * (float) $p->sale_price);
     $currency = $societe->currency ?? '';
@@ -14,7 +14,7 @@
     <meta name="robots" content="noindex">
     <title>{{ __('Liste des produits') }} · {{ $societe->name ?? 'Stokito' }}</title>
     <style>
-        @page { size: A4 {{ count($cols) >= 4 ? 'landscape' : 'portrait' }}; margin: 12mm 10mm; }
+        @page { size: A4 {{ count($cols) >= 7 ? 'landscape' : 'portrait' }}; margin: 12mm 10mm; }
         * { box-sizing: border-box; }
         body { margin: 0; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; color: #18181b; font-size: 11.5px; background: #f4f4f5; }
         .sheet { max-width: 1100px; margin: 24px auto; background: #fff; padding: 28px 32px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
@@ -32,7 +32,7 @@
         tr { page-break-inside: avoid; }
         .num { text-align: end; white-space: nowrap; font-variant-numeric: tabular-nums; }
         .ref { font-weight: 600; white-space: nowrap; }
-        .low { color: #b45309; font-weight: 600; } .out { color: #dc2626; font-weight: 600; }
+        .text-amber-600 { color: #b45309; } .text-red-600 { color: #dc2626; } .text-green-600 { color: #15803d; } .font-semibold { font-weight: 600; }
         .totals { margin-top: 14px; display: flex; gap: 24px; justify-content: flex-end; font-size: 12px; }
         .totals b { font-size: 13px; }
         footer { margin-top: 18px; font-size: 10px; color: #a1a1aa; display: flex; justify-content: space-between; }
@@ -61,32 +61,18 @@
         <table>
             <thead>
                 <tr>
-                    <th>Réf.</th>
-                    <th>{{ __('Désignation') }}</th>
-                    @if ($has('categorie'))<th>{{ __('Catégorie') }}</th>@endif
-                    @if ($has('marque'))<th>{{ __('Marque') }}</th>@endif
-                    @if ($has('fournisseur'))<th>{{ __('Fournisseur') }}</th>@endif
-                    @if ($has('achat'))<th class="num">{{ __('Prix achat') }}</th>@endif
-                    <th class="num">{{ __('Prix vente TTC') }}</th>
-                    @if ($has('gros'))<th class="num">{{ __('Prix gros') }}</th>@endif
-                    <th class="num">{{ __('Stock') }}</th>
+                    @foreach ($cols as $c)<th class="{{ $c['align'] === 'right' ? 'num' : '' }}">{{ $c['label'] }}</th>@endforeach
                 </tr>
             </thead>
             <tbody>
                 @forelse ($products as $p)
                     <tr>
-                        <td class="ref">{{ $p->reference }}</td>
-                        <td>{{ $p->name }}</td>
-                        @if ($has('categorie'))<td>{{ $p->category?->name ?? '—' }}</td>@endif
-                        @if ($has('marque'))<td>{{ $p->brand?->name ?? '—' }}</td>@endif
-                        @if ($has('fournisseur'))<td>{{ $p->fournisseur?->name ?? '—' }}</td>@endif
-                        @if ($has('achat'))<td class="num">{{ $money($p->purchase_price) }}</td>@endif
-                        <td class="num">{{ $money($p->sale_price) }}</td>
-                        @if ($has('gros'))<td class="num">{{ $p->wholesale_price !== null ? $money($p->wholesale_price) : '—' }}</td>@endif
-                        <td class="num {{ $p->stock_qty <= 0 ? 'out' : ($p->isLowStock() ? 'low' : '') }}">{{ \App\Support\Fmt::qty($p->stock_qty) }} <span class="muted">{{ $p->unit }}</span></td>
+                        @foreach ($cols as $c)
+                            <td class="{{ $c['align'] === 'right' ? 'num' : '' }} {{ $c['key'] === 'ref' ? 'ref' : '' }}">@include('livewire.products.cell', ['key' => $c['key'], 'p' => $p])@if ($c['key'] === 'stock') <span class="muted">{{ $p->unit }}</span>@endif</td>
+                        @endforeach
                     </tr>
                 @empty
-                    <tr><td colspan="9" class="muted" style="text-align:center;padding:24px">{{ __('Aucun produit.') }}</td></tr>
+                    <tr><td colspan="{{ max(1, count($cols)) }}" class="muted" style="text-align:center;padding:24px">{{ __('Aucun produit.') }}</td></tr>
                 @endforelse
             </tbody>
         </table>

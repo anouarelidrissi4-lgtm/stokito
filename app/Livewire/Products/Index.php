@@ -7,6 +7,7 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Fournisseur;
 use App\Models\Product;
+use App\Support\ProductColumns;
 use App\Support\ProductSheet;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
@@ -31,9 +32,19 @@ class Index extends Component
 
     public bool $removeImage = false;
 
+    /** columns of the list, in the user's order (2026-11-25) */
+    public array $columns = [];
+
     public function mount(): void
     {
         $this->requirePermission('produits_consulter');
+        $this->columns = ProductColumns::for(auth()->user());
+    }
+
+    /** "Colonnes" panel: show/hide + order, saved on the user (follows them on every device). */
+    public function saveColumns(array $list): void
+    {
+        $this->columns = ProductColumns::save(auth()->user(), $list);
     }
 
     #[Validate('required|string|max:255')]
@@ -316,6 +327,7 @@ class Index extends Component
             'categories' => Category::orderBy('name')->get(),
             'brands' => Brand::orderBy('name')->get(),
             'fournisseurs' => Fournisseur::orderBy('name')->get(),
+            'tvaDefault' => \App\Models\Societe::current()?->tva_rate_default,
         ])->layout('layouts.app');
     }
 }

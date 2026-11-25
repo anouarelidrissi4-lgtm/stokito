@@ -1,7 +1,5 @@
 <div class="py-6 px-4 sm:px-6 lg:px-8" x-data="{
-        cols: (() => { const d = { categorie: true, marque: true, fournisseur: true, achat: true, gros: true }; try { return Object.assign(d, JSON.parse(localStorage.getItem('products_cols') || '{}')) } catch (e) { return d } })(),
-        toggle(key) { this.cols[key] = !this.cols[key]; try { localStorage.setItem('products_cols', JSON.stringify(this.cols)) } catch (e) {} },
-        printUrl() { return '{{ route('products.print') }}?' + new URLSearchParams({ q: this.$wire.search || '', categorie: this.$wire.categoryFilter || '', cols: Object.keys(this.cols).filter(k => this.cols[k]).join(',') }) }
+        printUrl() { return '{{ route('products.print') }}?' + new URLSearchParams({ q: this.$wire.search || '', categorie: this.$wire.categoryFilter || '', cols: this.$wire.columns.filter(c => c.visible).map(c => c.key).join(',') }) }
     }">
     <h1 class="text-2xl font-bold text-gray-900 mb-6">{{ __('Produits') }}</h1>
 
@@ -50,29 +48,37 @@
                 Imprimer
             </a>
 
-            <div class="relative ms-auto" x-data="{ open: false }">
-                <button @click="open = ! open" type="button" class="flex items-center gap-1.5 border border-gray-300 text-gray-700 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-gray-50">
+            <div class="relative ms-auto" x-data="{ open: false, saving: false, draft: [],
+                    show() { this.draft = JSON.parse(JSON.stringify(this.$wire.columns)); this.open = !this.open },
+                    move(i, d) { const j = i + d; if (j < 0 || j >= this.draft.length) return; const t = this.draft[i]; this.draft[i] = this.draft[j]; this.draft[j] = t },
+                    async save() { this.saving = true; await this.$wire.saveColumns(this.draft); this.saving = false; this.open = false } }">
+                <button @click="show()" type="button" class="flex items-center gap-1.5 border border-gray-300 text-gray-700 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-gray-50">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M3 4a1 1 0 011-1h3a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM8 4a1 1 0 011-1h3a1 1 0 011 1v12a1 1 0 01-1 1H9a1 1 0 01-1-1V4zM13 4a1 1 0 011-1h3a1 1 0 011 1v12a1 1 0 01-1 1h-3a1 1 0 01-1-1V4z" /></svg>
                     Colonnes
+                    <svg class="h-3.5 w-3.5 transition-transform" :class="open && 'rotate-180'" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M5.5 7.5 10 12l4.5-4.5z"/></svg>
                 </button>
-                <div x-show="open" @click.outside="open = false" x-cloak class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border z-20 text-sm p-2 space-y-1">
-                    <label class="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer">
-                        <input type="checkbox" :checked="cols.categorie" @change="toggle('categorie')" class="rounded border-gray-300"> Catégorie
-                    </label>
-                    <label class="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer">
-                        <input type="checkbox" :checked="cols.marque" @change="toggle('marque')" class="rounded border-gray-300"> Marque
-                    </label>
-                    <label class="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer">
-                        <input type="checkbox" :checked="cols.fournisseur" @change="toggle('fournisseur')" class="rounded border-gray-300"> Fournisseurs
-                    </label>
-                    @if (auth()->user()->hasPermission('produits_prix_achat'))
-                    <label class="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer">
-                        <input type="checkbox" :checked="cols.achat" @change="toggle('achat')" class="rounded border-gray-300"> Prix Achat
-                    </label>
-                    @endif
-                    <label class="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer">
-                        <input type="checkbox" :checked="cols.gros" @change="toggle('gros')" class="rounded border-gray-300"> Prix Vente Gros
-                    </label>
+                <div x-show="open" @click.outside="open = false" @keydown.escape.window="open = false" x-cloak x-transition.origin.top.right
+                    class="absolute end-0 mt-2 w-[calc(100vw-2rem)] max-w-sm bg-white rounded-xl shadow-2xl border border-zinc-200 z-30 text-sm">
+                    <div class="px-4 pt-4 pb-2">
+                        <div class="font-semibold text-zinc-900">Colonnes à afficher</div>
+                        <div class="text-xs text-zinc-500 mt-0.5">Cochez les colonnes et utilisez les flèches pour changer l'ordre.</div>
+                    </div>
+                    <ul class="px-2 max-h-[60vh] overflow-y-auto space-y-1">
+                        <template x-for="(c, i) in draft" :key="c.key">
+                            <li class="flex items-center gap-2 rounded-lg border px-2.5 py-1.5 transition-colors" :class="c.visible ? 'border-zinc-200 bg-white' : 'border-transparent bg-zinc-50'">
+                                <label class="flex-1 flex items-center gap-2.5 cursor-pointer min-w-0">
+                                    <input type="checkbox" x-model="c.visible" class="rounded border-zinc-300 text-zinc-900 focus:ring-[#ffcc00]">
+                                    <span class="truncate" :class="c.visible ? 'text-zinc-900 font-medium' : 'text-zinc-400'" x-text="c.label"></span>
+                                </label>
+                                <button type="button" @click="move(i, -1)" :disabled="i === 0" class="grid place-items-center w-8 h-8 rounded-md border border-zinc-200 text-zinc-600 hover:bg-zinc-100 disabled:opacity-30" title="Monter">&uarr;</button>
+                                <button type="button" @click="move(i, 1)" :disabled="i === draft.length - 1" class="grid place-items-center w-8 h-8 rounded-md border border-zinc-200 text-zinc-600 hover:bg-zinc-100 disabled:opacity-30" title="Descendre">&darr;</button>
+                            </li>
+                        </template>
+                    </ul>
+                    <div class="p-3 flex gap-2">
+                        <button type="button" @click="open = false" class="px-3 py-2 rounded-lg text-zinc-600 hover:bg-zinc-100">Annuler</button>
+                        <button type="button" @click="save()" :disabled="saving" class="flex-1 py-2 rounded-lg bg-zinc-900 text-white font-semibold hover:bg-zinc-700 disabled:opacity-60" x-text="saving ? 'Enregistrement...' : 'Enregistrer'">Enregistrer</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -81,38 +87,20 @@
 <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ref</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Désignation</th>
-                    <th x-show="cols.categorie" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Catégorie</th>
-                    <th x-show="cols.marque" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Marque</th>
-                    <th x-show="cols.fournisseur" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fournisseurs</th>
-                    @if (auth()->user()->hasPermission('produits_prix_achat'))
-                    <th x-show="cols.achat" class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Prix Achat</th>
-                    @endif
-                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Prix Vente TTC</th>
-                    <th x-show="cols.gros" class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Prix Vente Gros</th>
-                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Stock</th>
+                    @foreach ($columns as $c)
+                        @continue(! $c['visible'])
+                        <th class="px-4 py-3 text-{{ $c['align'] === 'right' ? 'right' : 'left' }} text-xs font-medium text-gray-500 uppercase whitespace-nowrap">{{ $c['label'] }}</th>
+                    @endforeach
                     <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase print:hidden">Actions</th>
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
                 @forelse ($products as $product)
                     <tr wire:key="prod-{{ $product->id }}">
-                        <td class="px-4 py-3 text-sm font-medium text-gray-900">{{ $product->reference }}</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">{{ $product->name }}</td>
-                        <td x-show="cols.categorie" class="px-4 py-3 text-sm text-gray-500">{{ $product->category?->name ?? '-' }}</td>
-                        <td x-show="cols.marque" class="px-4 py-3 text-sm text-gray-500">{{ $product->brand?->name ?? 'Sans marque' }}</td>
-                        <td x-show="cols.fournisseur" class="px-4 py-3 text-sm text-gray-500">{{ $product->fournisseur?->name ?? '-' }}</td>
-                        @if (auth()->user()->hasPermission('produits_prix_achat'))
-                        <td x-show="cols.achat" class="px-4 py-3 text-sm text-right text-gray-700 whitespace-nowrap">{{ \App\Support\Fmt::money($product->purchase_price) }}</td>
-                        @endif
-                        <td class="px-4 py-3 text-sm text-right text-gray-700 whitespace-nowrap">{{ \App\Support\Fmt::money($product->sale_price) }}</td>
-                        <td x-show="cols.gros" class="px-4 py-3 text-sm text-right text-gray-700">{{ $product->wholesale_price !== null ? \App\Support\Fmt::money($product->wholesale_price) : '-' }}</td>
-                        <td class="px-4 py-3 text-sm text-right">
-                            <span class="font-semibold {{ $product->stock_qty <= 0 ? 'text-red-600' : ($product->isLowStock() ? 'text-amber-600' : 'text-green-600') }}">
-                                {{ \App\Support\Fmt::qty($product->stock_qty) }}
-                            </span>
-                        </td>
+                        @foreach ($columns as $c)
+                            @continue(! $c['visible'])
+                            <td class="px-4 py-3 text-sm {{ $c['align'] === 'right' ? 'text-right whitespace-nowrap text-gray-700' : ($c['key'] === 'ref' ? 'font-medium text-gray-900 whitespace-nowrap' : ($c['key'] === 'name' ? 'text-gray-900 min-w-[200px]' : 'text-gray-500')) }}">@include('livewire.products.cell', ['key' => $c['key'], 'p' => $product])</td>
+                        @endforeach
                         <td class="px-4 py-3 text-right print:hidden">
                             <div class="flex items-center justify-end gap-1.5">
                                 <button wire:click="edit({{ $product->id }})" title="Modifier" class="h-8 w-8 flex items-center justify-center rounded-md bg-amber-400 text-white hover:bg-amber-500">
@@ -125,7 +113,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="10" class="px-6 py-8 text-center text-sm text-gray-400">Aucun produit.</td></tr>
+                    <tr><td colspan="20" class="px-6 py-8 text-center text-sm text-gray-400">Aucun produit.</td></tr>
                 @endforelse
             </tbody>
         </table>

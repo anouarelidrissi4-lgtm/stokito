@@ -34,6 +34,7 @@ class User extends Authenticatable
             'is_demo' => 'boolean',
             'is_superadmin' => 'boolean',
             'permissions' => 'array',
+            'ui_prefs' => 'array',
         ];
     }
 

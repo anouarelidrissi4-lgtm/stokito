@@ -86,9 +86,32 @@ class ProductsSheetTest extends TestCase
         foreach (range(1, 12) as $i) {
             $this->product(sprintf('P-%02d', $i));
         }
-        $this->get(route('products.print', ['cols' => 'marque']))
+        $this->get(route('products.print', ['cols' => 'ref,marque']))
             ->assertOk()->assertSee('P-01')->assertSee('P-12')->assertSee('Marque')->assertDontSee('Prix achat');
         $this->get(route('products.print', ['q' => 'P-03']))->assertOk()->assertSee('P-03')->assertDontSee('P-04');
+    }
+
+    public function test_columns_order_and_visibility_are_saved_per_user(): void
+    {
+        $admin = $this->companyUser('FR');
+        $this->product('A-1');
+        Livewire::test(Index::class)
+            ->call('saveColumns', [['key' => 'stock', 'visible' => true], ['key' => 'name', 'visible' => true], ['key' => 'ref', 'visible' => false], ['key' => 'hack', 'visible' => true]])
+            ->assertSet('columns.0.key', 'stock')->assertSet('columns.1.key', 'name')->assertSet('columns.2.visible', false);
+        $saved = $admin->fresh()->ui_prefs['products_columns'];
+        $this->assertSame(['stock', 'name', 'ref'], array_slice(array_column($saved, 'key'), 0, 3));
+        $this->assertNotContains('hack', array_column($saved, 'key'));
+        // a fresh page load keeps the order
+        Livewire::test(Index::class)->assertSet('columns.0.key', 'stock');
+
+        // an employee without the purchase-price right never gets that column, even if posted
+        $emp = new \App\Models\User();
+        $emp->forceFill(['name' => 'Emp', 'email' => uniqid('e').'@example.test', 'password' => bcrypt('secret-pass-123'), 'role' => 'user', 'status' => 'active',
+            'project_id' => $admin->project_id, 'is_demo' => false, 'email_verified_at' => now(), 'permissions' => ['produits_consulter']])->save();
+        $this->actingAs($emp);
+        Livewire::test(Index::class)->call('saveColumns', [['key' => 'achat', 'visible' => true]]);
+        $this->assertNotContains('achat', array_column($emp->fresh()->ui_prefs['products_columns'], 'key'));
+        $this->get(route('products.print', ['cols' => 'ref,achat']))->assertOk()->assertDontSee('Prix achat');
     }
 
     public function test_caisse_has_its_own_menu_section(): void
