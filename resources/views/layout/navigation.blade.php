@@ -13,6 +13,36 @@
     $sectionIcons = ['tableau_de_bord' => 'home', 'catalogue' => 'cube', 'caisse' => 'receipt', 'ventes' => 'cart', 'achats' => 'truck', 'tresorerie' => 'wallet', 'administration' => 'cog'];
     $quickKeys = ['devis.create', 'bon-livraisons.create', 'commande-fournisseurs.create'];
     $isActive = fn ($item) => $item['active'] && request()->routeIs($item['active']);
+    // document sub-groups (2026-11-25): an "Ajouter" row and a "Liste" row folded under the document name
+    $docGroups = [
+        'devis' => ['Devis', 'doc'], 'bon-livraisons' => ['Bons de livraison', 'truck'], 'factures' => ['Factures', 'doc'],
+        'avoirs-clients' => ['Avoirs', 'coins'], 'commande-fournisseurs' => ['Bons de commande', 'cart'], 'avoirs-fournisseurs' => ['Avoirs', 'coins'],
+    ];
+    $groupOf = function ($item) use ($docGroups) {
+        $k = $item['key'];
+        foreach (['.create', '.index'] as $suf) {
+            if (str_ends_with($k, $suf) && isset($docGroups[substr($k, 0, -strlen($suf))])) {
+                return substr($k, 0, -strlen($suf));
+            }
+        }
+
+        return null;
+    };
+    // consecutive items of the same group -> one entry ['group' => key, 'items' => [...]]
+    $grouped = function ($items) use ($groupOf) {
+        $out = [];
+        foreach ($items as $it) {
+            $g = $groupOf($it);
+            $last = count($out) - 1;
+            if ($g && $last >= 0 && ($out[$last]['group'] ?? null) === $g) {
+                $out[$last]['items'][] = $it;
+            } else {
+                $out[] = ['group' => $g, 'items' => [$it]];
+            }
+        }
+
+        return $out;
+    };
     // industrial style (2026-11-23): active = yellow label with ink border
     $linkClass = fn ($on) => 'flex items-center gap-2.5 px-3 py-2 text-[14px] transition-colors rounded-lg '
         .($on ? 'bg-white text-zinc-900 font-semibold shadow-sm ring-1 ring-zinc-200' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 font-medium');
@@ -75,8 +105,29 @@
                         <x-sp-icon name="chevron" class="w-4 h-4 text-slate-400 transition-transform {{ $rtl ? 'rotate-180' : '' }}" x-bind:class="open && '{{ $rtl ? '!-rotate-90' : 'rotate-90' }}'" />
                     </button>
                     <div x-show="open" x-collapse.duration.150ms class="mt-0.5 space-y-0.5 {{ $rtl ? 'pr-7' : 'pl-7' }}">
-                        @foreach ($items as $item)
-                            <a href="{{ route($item['route']) }}" wire:navigate class="{{ $linkClass($isActive($item)) }} !py-1.5">@if (str_ends_with($item['key'], '.create'))<x-sp-icon name="plus" class="w-3.5 h-3.5 -ms-0.5 shrink-0" />@endif{{ __($item['label']) }}</a>
+                        @foreach ($grouped($items) as $entry)
+                            @if ($entry['group'] && count($entry['items']) > 1)
+                                @php
+                                    [$gLabel, $gIcon] = $docGroups[$entry['group']];
+                                    $gActive = collect($entry['items'])->contains(fn ($i) => $isActive($i));
+                                @endphp
+                                <div x-data="{ sub: {{ $gActive ? 'true' : 'false' }} }">
+                                    <button type="button" @click="sub = !sub" class="sp-subgroup w-full flex items-center gap-2 px-3 py-1.5 text-[14px] font-semibold rounded-lg {{ $gActive ? 'text-zinc-900' : 'text-zinc-700' }} hover:bg-zinc-100">
+                                        <x-sp-icon :name="$gIcon" class="w-4 h-4 shrink-0 text-zinc-500" />
+                                        <span class="flex-1 text-start">{{ __($gLabel) }}</span>
+                                        <x-sp-icon name="chevron" class="w-3.5 h-3.5 text-zinc-400 transition-transform {{ $rtl ? 'rotate-180' : '' }}" x-bind:class="sub && '{{ $rtl ? '!-rotate-90' : 'rotate-90' }}'" />
+                                    </button>
+                                    <div x-show="sub" x-collapse.duration.150ms class="mt-0.5 space-y-0.5 {{ $rtl ? 'pr-4' : 'pl-4' }}">
+                                        @foreach ($entry['items'] as $item)
+                                            <a href="{{ route($item['route']) }}" wire:navigate class="{{ $linkClass($isActive($item)) }} !py-1.5 !text-[13.5px]"><span class="w-1.5 h-1.5 rounded-full ring-1 ring-current shrink-0 opacity-60"></span>{{ __($item['label']) }}</a>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @else
+                                @foreach ($entry['items'] as $item)
+                                    <a href="{{ route($item['route']) }}" wire:navigate class="{{ $linkClass($isActive($item)) }} !py-1.5">@if (str_ends_with($item['key'], '.create'))<x-sp-icon name="plus" class="w-3.5 h-3.5 -ms-0.5 shrink-0" />@endif{{ __($item['label']) }}</a>
+                                @endforeach
+                            @endif
                         @endforeach
                         @if ($super)
                             <a href="{{ route('projects.index') }}" wire:navigate class="{{ $linkClass(request()->routeIs('projects.index')) }} !py-1.5">{{ __('Projets (global)') }}</a>
