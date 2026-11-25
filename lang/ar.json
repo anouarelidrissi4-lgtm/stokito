@@ -1,4 +1,13 @@
 {
+    "Liste des clients": "قائمة الزبناء",
+    "client(s)": "زبون(ات)",
+    "Code client": "رمز الزبون",
+    "Nom": "الاسم",
+    "Prénom": "الاسم الشخصي",
+    "Téléphone": "الهاتف",
+    "Adresse": "العنوان",
+    "Solde": "الرصيد",
+    "Aucun client.": "لا يوجد زبناء.",
     "Vente au comptoir": "البيع في المحل",
     "Tickets": "التذاكر",
     "Clôtures (Z)": "الإغلاقات (Z)",

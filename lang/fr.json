@@ -1,4 +1,13 @@
 {
+    "Liste des clients": "Liste des clients",
+    "client(s)": "client(s)",
+    "Code client": "Code client",
+    "Nom": "Nom",
+    "Prénom": "Prénom",
+    "Téléphone": "Téléphone",
+    "Adresse": "Adresse",
+    "Solde": "Solde",
+    "Aucun client.": "Aucun client.",
     "Vente au comptoir": "Vente au comptoir",
     "Tickets": "Tickets",
     "Clôtures (Z)": "Clôtures (Z)",

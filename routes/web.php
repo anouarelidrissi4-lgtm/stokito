@@ -308,6 +308,17 @@ Route::middleware(['auth'])->group(function () {
     })->whereNumber('id')->name('caisse.clotures.archive');
     Route::get('brands', \App\Livewire\Brands\Index::class)->name('brands.index');
     Route::get('clients', \App\Livewire\Clients\Index::class)->name('clients.index');
+    // printable client list (2026-11-25)
+    Route::get('clients/imprimer', function (\Illuminate\Http\Request $request) {
+        abort_unless(auth()->user()->hasPermission('gestion_clients'), 403);
+        $search = trim((string) $request->query('q', ''));
+
+        return view('clients.print', [
+            'clients' => \App\Livewire\Clients\Index::searchQuery($search)->get(),
+            'search' => $search,
+            'societe' => \App\Models\Societe::current(),
+        ]);
+    })->name('clients.print');
     Route::get('fournisseurs', \App\Livewire\Fournisseurs\Index::class)->name('fournisseurs.index');
 
     Route::get('devis', \App\Livewire\Devis\Index::class)->name('devis.index');

@@ -1,4 +1,13 @@
 {
+    "Liste des clients": "Customer list",
+    "client(s)": "customer(s)",
+    "Code client": "Customer code",
+    "Nom": "Name",
+    "Prénom": "First name",
+    "Téléphone": "Phone",
+    "Adresse": "Address",
+    "Solde": "Balance",
+    "Aucun client.": "No customers.",
     "Vente au comptoir": "Counter sale",
     "Tickets": "Receipts",
     "Clôtures (Z)": "Z reports",
