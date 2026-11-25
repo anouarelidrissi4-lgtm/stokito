@@ -175,3 +175,24 @@ html.dark .text-red-600 { color: #f87171 !important; }
 html.dark .sp-app .bg-indigo-600 { background-color: #f4f4f5 !important; color: #18181b !important; }
 html.dark .sp-app .hover\:bg-indigo-700:hover, html.dark .sp-app .hover\:bg-indigo-500:hover { background-color: #e4e4e7 !important; }
 html.dark .sp-app main .text-indigo-600, html.dark .sp-app main .text-indigo-700 { color: #f4f4f5 !important; text-decoration-color: #52525b; }
+
+/* app header buttons (2026-11-25): white pills with a soft brand-yellow tint on one side */
+html:not(.dark) .sp-topbar > div:last-child > span, html:not(.dark) .sp-topbar > div:last-child :is(a, button):not(.absolute *):not(.fixed *):not([type=submit].sr-only) {
+    background-image: linear-gradient(90deg, #fff 0%, #fff 45%, rgba(255, 204, 0, .22) 100%);
+    border: 1px solid rgba(234, 179, 8, .35) !important;
+    border-radius: .65rem !important;
+    box-shadow: 0 1px 2px rgba(161, 98, 7, .08);
+    transition: background-color .15s, box-shadow .15s, border-color .15s;
+}
+html:not(.dark) [dir=rtl] .sp-topbar > div:last-child :is(a, button):not(.absolute *):not(.fixed *) {
+    background-image: linear-gradient(270deg, #fff 0%, #fff 45%, rgba(255, 204, 0, .22) 100%);
+}
+html:not(.dark) .sp-topbar > div:last-child :is(a, button):not(.absolute *):not(.fixed *):hover {
+    background-image: linear-gradient(90deg, #fffbe6 0%, rgba(255, 204, 0, .35) 100%);
+    border-color: rgba(234, 179, 8, .6) !important;
+    box-shadow: 0 2px 8px rgba(234, 179, 8, .18);
+}
+html.dark .sp-topbar > div:last-child > span, html.dark .sp-topbar > div:last-child :is(a, button):not(.absolute *):not(.fixed *) {
+    border: 1px solid rgba(255, 204, 0, .22) !important; border-radius: .65rem !important;
+    background-image: linear-gradient(90deg, transparent 45%, rgba(255, 204, 0, .10) 100%);
+}
