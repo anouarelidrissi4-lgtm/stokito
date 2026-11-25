@@ -1,7 +1,33 @@
 <div class="py-6 px-4 sm:px-6 lg:px-8" x-data="{
         printUrl() { return '{{ route('products.print') }}?' + new URLSearchParams({ q: this.$wire.search || '', categorie: this.$wire.categoryFilter || '', cols: this.$wire.columns.filter(c => c.visible).map(c => c.key).join(',') }) }
     }">
-    <h1 class="text-2xl font-bold text-gray-900 mb-6">{{ __('Produits') }}</h1>
+    @php
+        $canBuy = auth()->user()->hasPermission('produits_prix_achat');
+        $canMarge = $canBuy && auth()->user()->hasPermission('marges');
+        $fmtTot = fn ($v) => \App\Support\Fmt::money($v);
+        $totNote = 'Stock actuel ('.$totals['n'].' produit(s)'.($search !== '' || $categoryFilter !== '' ? ', selon la recherche' : '').') : quantité × prix. Marge = vente HT − achat.';
+    @endphp
+    <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3 mb-4">
+        <h1 class="text-2xl font-bold text-gray-900 shrink-0">{{ __('Produits') }}</h1>
+        <div class="grid gap-2 grid-cols-1 sm:grid-cols-3 xl:flex xl:gap-3" title="{{ $totNote }}">
+            @if ($canBuy)
+            <div class="rounded-xl border border-zinc-200 bg-white shadow-sm px-4 py-2 flex sm:block items-baseline justify-between gap-2 xl:min-w-[190px]">
+                <div class="text-xs font-medium text-zinc-500">Total d'achat</div>
+                <div class="text-base sm:text-lg font-bold text-zinc-900 tabular-nums whitespace-nowrap">{{ $fmtTot($totals['achat']) }} <span class="text-xs font-medium text-zinc-400">{{ $currency }}</span></div>
+            </div>
+            @endif
+            <div class="rounded-xl border border-zinc-200 bg-white shadow-sm px-4 py-2 flex sm:block items-baseline justify-between gap-2 xl:min-w-[190px]">
+                <div class="text-xs font-medium text-zinc-500">Total prix de vente TTC</div>
+                <div class="text-base sm:text-lg font-bold text-zinc-900 tabular-nums whitespace-nowrap">{{ $fmtTot($totals['vente']) }} <span class="text-xs font-medium text-zinc-400">{{ $currency }}</span></div>
+            </div>
+            @if ($canMarge)
+            <div class="rounded-xl border border-zinc-200 bg-white shadow-sm px-4 py-2 flex sm:block items-baseline justify-between gap-2 xl:min-w-[190px]">
+                <div class="text-xs font-medium text-zinc-500">Total marge <span class="text-zinc-400">(HT)</span></div>
+                <div class="text-base sm:text-lg font-bold tabular-nums whitespace-nowrap {{ $totals['marge'] < 0 ? 'text-red-600' : 'text-emerald-700' }}">{{ $fmtTot($totals['marge']) }} <span class="text-xs font-medium text-zinc-400">{{ $currency }}</span></div>
+            </div>
+            @endif
+        </div>
+    </div>
 
     @if (session('error'))
         <div class="mb-4 bg-red-50 text-red-700 px-4 py-2 rounded-lg text-sm print:hidden">{{ session('error') }}</div>
@@ -82,31 +108,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-
-        @php
-            $canBuy = auth()->user()->hasPermission('produits_prix_achat');
-            $canMarge = $canBuy && auth()->user()->hasPermission('marges');
-            $fmtTot = fn ($v) => \App\Support\Fmt::money($v);
-        @endphp
-        <div class="px-4 py-3 border-b border-zinc-200 bg-zinc-50/60 grid gap-2 sm:gap-3 {{ $canMarge ? 'sm:grid-cols-3' : ($canBuy ? 'sm:grid-cols-2' : 'sm:grid-cols-1') }}">
-            @if ($canBuy)
-            <div class="rounded-xl border border-zinc-200 bg-white px-3 py-2 sm:px-4 sm:py-3 flex sm:block items-baseline justify-between gap-2">
-                <div class="text-xs font-medium text-zinc-500">Total d'achat</div>
-                <div class="sm:mt-1 text-base sm:text-xl font-bold text-zinc-900 tabular-nums">{{ $fmtTot($totals['achat']) }} <span class="text-sm font-medium text-zinc-400">{{ $currency }}</span></div>
-            </div>
-            @endif
-            <div class="rounded-xl border border-zinc-200 bg-white px-3 py-2 sm:px-4 sm:py-3 flex sm:block items-baseline justify-between gap-2">
-                <div class="text-xs font-medium text-zinc-500">Total prix de vente TTC</div>
-                <div class="sm:mt-1 text-base sm:text-xl font-bold text-zinc-900 tabular-nums">{{ $fmtTot($totals['vente']) }} <span class="text-sm font-medium text-zinc-400">{{ $currency }}</span></div>
-            </div>
-            @if ($canMarge)
-            <div class="rounded-xl border border-zinc-200 bg-white px-3 py-2 sm:px-4 sm:py-3 flex sm:block items-baseline justify-between gap-2">
-                <div class="text-xs font-medium text-zinc-500">Total marge <span class="text-zinc-400">(HT)</span></div>
-                <div class="sm:mt-1 text-base sm:text-xl font-bold tabular-nums {{ $totals['marge'] < 0 ? 'text-red-600' : 'text-emerald-700' }}">{{ $fmtTot($totals['marge']) }} <span class="text-sm font-medium text-zinc-400">{{ $currency }}</span></div>
-            </div>
-            @endif
-            <p class="sm:col-span-full text-[11px] text-zinc-400">Sur le stock actuel ({{ $totals['n'] }} produit(s){{ $search !== '' || $categoryFilter !== '' ? ', selon la recherche' : '' }}) : quantité × prix. Marge = vente HT − achat.</p>
         </div>
 
         <div class="overflow-x-auto">
