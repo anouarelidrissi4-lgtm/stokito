@@ -66,6 +66,18 @@
             radial-gradient(900px 620px at 15% 8%, rgba(255,204,0,.30), transparent 60%),
             radial-gradient(700px 500px at 95% 105%, rgba(255,204,0,.14), transparent 60%),
             linear-gradient(200deg, #0b0b0c 0%, #141414 45%, #1e1a0c 100%); }
+        .gd-book { transition: translate .55s cubic-bezier(.2,.8,.2,1), rotate .55s cubic-bezier(.2,.8,.2,1), box-shadow .3s; animation: gdFloat 6s ease-in-out infinite; }
+        .gd-b2 { translate: -78px 10px; rotate: -12deg; animation-delay: -2s; }
+        .gd-b1 { translate: -8px -8px; rotate: -3deg; animation-delay: -4s; }
+        .gd-b0 { translate: 62px 6px; rotate: 8deg; }
+        .gd-stack:hover .gd-b2 { translate: -120px 14px; rotate: -16deg; }
+        .gd-stack:hover .gd-b0 { translate: 100px 10px; rotate: 13deg; }
+        .gd-stack[data-on="0"] .gd-b0, .gd-stack[data-on="1"] .gd-b1, .gd-stack[data-on="2"] .gd-b2 { rotate: 0deg; z-index: 5; box-shadow: 0 30px 60px -12px rgba(0,0,0,.45), 0 0 0 3px #ffcc00; }
+        .gd-stack[data-on="0"] .gd-b0 { translate: 40px -22px; }
+        .gd-stack[data-on="1"] .gd-b1 { translate: -8px -26px; }
+        .gd-stack[data-on="2"] .gd-b2 { translate: -60px -22px; }
+        @keyframes gdFloat { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-8px) } }
+        @media (prefers-reduced-motion: reduce) { .gd-book { animation: none; transition: none; } }
         .hero-bar { animation: heroBar 7s linear forwards; }
         @keyframes heroBar { from { width: 0 } to { width: 100% } }
         .hero-mark { animation: heroFloat 6s ease-in-out infinite; }
@@ -619,24 +631,52 @@
 {{-- ============ SCREENS (coded replicas, 2026-11-24) ============ --}}
 @include('landing.screens')
 
-{{-- ============ GUIDE ============ --}}
-<section id="guide" class="py-20 scroll-mt-20 bg-zinc-50 border-y border-zinc-200">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 grid md:grid-cols-5 gap-10 items-center">
-        <div class="md:col-span-2 flex justify-center">
-            <div class="relative w-44 h-60 bg-[#ffcc00] border border-zinc-200 shadow-xl shadow-zinc-900/10 p-4 -rotate-2 rounded-xl">
-                
-                <div class="mt-12 ind-h text-lg leading-none">{{ __("Guide d'utilisation") }}</div>
-                <div class="mt-2 ind-mono text-[10px]">{{ __('23 pages, pas à pas') }}</div>
-            </div>
+{{-- ============ GUIDE (2026-11-25: three booklets FR / AR / EN fanned out, download rows) ============ --}}
+@php
+    $guides = [
+        ['code' => 'FR', 'href' => '/docs/guide-stokito-fr.pdf', 'name' => 'Français', 'meta' => 'PDF · 36 pages', 'cover' => "Guide d'utilisation", 'dir' => 'ltr'],
+        ['code' => 'ع', 'href' => '/docs/guide-stokito-ar.pdf', 'name' => 'العربية', 'meta' => 'PDF · 38 صفحة', 'cover' => 'دليل الاستخدام', 'dir' => 'rtl'],
+        ['code' => 'EN', 'href' => '/docs/guide-stokito-en.pdf', 'name' => 'English', 'meta' => 'PDF · 36 pages', 'cover' => 'User guide', 'dir' => 'ltr'],
+    ];
+@endphp
+<section id="guide" class="py-20 sm:py-24 scroll-mt-20 bg-white border-y border-zinc-200 overflow-hidden">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 grid lg:grid-cols-2 gap-14 items-center">
+        {{-- booklets --}}
+        <div class="gd-stack group relative h-[300px] sm:h-[380px] flex items-center justify-center scale-[.78] sm:scale-100" aria-hidden="true">
+            <div class="absolute w-[300px] h-[300px] rounded-full bg-[#ffcc00]/25 blur-3xl"></div>
+            @foreach (array_reverse($guides, true) as $n => $g)
+                <div class="gd-book gd-b{{ $n }} absolute w-48 sm:w-52 h-64 sm:h-72 rounded-e-xl rounded-s-md bg-[#141414] text-white shadow-2xl shadow-black/30 overflow-hidden" dir="{{ $g['dir'] }}">
+                    <span class="absolute inset-y-0 start-0 w-3 bg-gradient-to-r from-black/60 to-transparent rtl:bg-gradient-to-l"></span>
+                    <svg class="absolute -bottom-10 -end-10 w-44 h-44 opacity-25" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width=".6" stroke-linejoin="round"><path d="M12 2.5 3.5 7v10L12 21.5 20.5 17V7z"/><path d="M3.5 7 12 11.5 20.5 7M12 11.5v10"/></svg>
+                    <div class="relative h-full flex flex-col p-5 ps-6">
+                        <span class="grid place-items-center w-9 h-9 rounded-lg bg-[#ffcc00] text-zinc-900"><x-sp-icon name="cube" class="w-5 h-5" /></span>
+                        <span class="mt-auto text-[11px] font-semibold text-[#ffcc00]">Stokito</span>
+                        <span class="mt-1 text-xl font-bold leading-tight" style="font-family: 'Poppins', 'Tajawal', sans-serif">{{ $g['cover'] }}</span>
+                        <span class="mt-4 inline-flex w-max items-center rounded-full border border-white/20 px-2 py-0.5 text-[11px] text-white/70">{{ $g['name'] }}</span>
+                    </div>
+                </div>
+            @endforeach
         </div>
-        <div class="md:col-span-3">
+
+        {{-- text + downloads --}}
+        <div>
             <p class="text-sm font-semibold text-amber-600">{{ __('Guide') }}</p>
-            <h2 class="mt-2 ind-h text-3xl leading-tight">{{ __("Guide d'utilisation gratuit") }}</h2>
-            <p class="mt-3 text-zinc-600">{{ __("Tout Stokito expliqué simplement, avec des captures d'écran : produits, devis, bons de livraison, factures, encaissements, inventaire. Idéal pour former votre équipe.") }}</p>
-            <div class="mt-6 flex flex-wrap gap-3">
-                <a href="/docs/guide-stokito-fr.pdf" target="_blank" rel="noopener" class="ind-btn bg-zinc-900 text-white"><x-sp-icon name="doc" class="w-5 h-5" /> {{ __('Guide en français (PDF)') }}</a>
-                <a href="/docs/guide-stokito-ar.pdf" target="_blank" rel="noopener" class="ind-btn bg-white text-zinc-900"><x-sp-icon name="doc" class="w-5 h-5" /> <span dir="rtl">الدليل بالعربية (PDF)</span></a>
-                <a href="/docs/guide-stokito-en.pdf" target="_blank" rel="noopener" class="ind-btn bg-white text-zinc-900"><x-sp-icon name="doc" class="w-5 h-5" /> English (PDF)</a>
+            <h2 class="mt-2 ind-h text-3xl sm:text-4xl leading-tight">{{ __("Guide d'utilisation gratuit") }}</h2>
+            <p class="mt-4 text-zinc-600 leading-relaxed">{{ __("Tout Stokito expliqué simplement, avec des captures d'écran : produits, devis, bons de livraison, factures, encaissements, inventaire. Idéal pour former votre équipe.") }}</p>
+            <div class="mt-8 space-y-3">
+                @foreach ($guides as $n => $g)
+                    <a href="{{ $g['href'] }}" target="_blank" rel="noopener" @mouseenter="$el.closest('section').querySelector('.gd-stack').dataset.on = '{{ $n }}'" @mouseleave="$el.closest('section').querySelector('.gd-stack').dataset.on = ''"
+                        class="gd-row group/row flex items-center gap-4 rounded-xl border border-zinc-200 bg-white px-4 py-3.5 transition hover:border-zinc-900 hover:shadow-lg hover:shadow-zinc-900/5 hover:-translate-y-0.5">
+                        <span class="grid place-items-center w-11 h-11 shrink-0 rounded-lg bg-zinc-900 text-[#ffcc00] font-bold">{{ $g['code'] }}</span>
+                        <span class="flex-1 min-w-0 text-start">
+                            <span class="block font-semibold text-zinc-900"><bdi>{{ $g['name'] }}</bdi></span>
+                            <span class="block text-sm text-zinc-500"><bdi>{{ $g['meta'] }}</bdi></span>
+                        </span>
+                        <span class="grid place-items-center w-9 h-9 shrink-0 rounded-full bg-zinc-100 text-zinc-700 transition group-hover/row:bg-[#ffcc00] group-hover/row:text-zinc-900">
+                            <svg class="w-4 h-4 transition-transform group-hover/row:translate-y-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12m0 0-5-5m5 5 5-5M5 20h14"/></svg>
+                        </span>
+                    </a>
+                @endforeach
             </div>
         </div>
     </div>
