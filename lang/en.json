@@ -1,4 +1,10 @@
 {
+    "Liste des devis": "Quote list",
+    "Liste des bons de livraison": "Delivery note list",
+    "Liste des factures": "Invoice list",
+    "Liste des bons de commande": "Purchase order list",
+    "Liste des avoirs": "Credit note list",
+    "Ajouter un avoir": "Add a credit note",
     "Ajouter": "Add",
     "Ajouter un devis": "Add a quote",
     "Ajouter un bon de livraison": "Add a delivery note",

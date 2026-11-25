@@ -1,4 +1,10 @@
 {
+    "Liste des devis": "لائحة عروض الأسعار",
+    "Liste des bons de livraison": "لائحة وصولات التسليم",
+    "Liste des factures": "لائحة الفواتير",
+    "Liste des bons de commande": "لائحة طلبات الشراء",
+    "Liste des avoirs": "لائحة الإشعارات الدائنة",
+    "Ajouter un avoir": "إضافة إشعار دائن",
     "Ajouter": "إضافة",
     "Ajouter un devis": "إضافة عرض سعر",
     "Ajouter un bon de livraison": "إضافة وصل تسليم",

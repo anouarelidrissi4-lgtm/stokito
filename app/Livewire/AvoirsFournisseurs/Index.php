@@ -36,6 +36,9 @@ class Index extends Component
     public function mount()
     {
         $this->requirePermission('gestion_avoirs_fournisseurs');
+        if (request()->routeIs('avoirs-fournisseurs.create')) {
+            $this->create();
+        }
         $this->date = now()->format('Y-m-d');
     }
 

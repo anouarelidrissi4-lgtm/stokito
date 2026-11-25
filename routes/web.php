@@ -428,11 +428,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('reglements-clients/create/{factureId?}', \App\Livewire\ReglementsClients\Index::class)->name('reglements-clients.create');
 
     Route::get('avoirs-clients', \App\Livewire\AvoirsClients\Index::class)->name('avoirs-clients.index');
+    Route::get('avoirs-clients/ajouter', \App\Livewire\AvoirsClients\Index::class)->name('avoirs-clients.create');
 
     Route::get('reglements-fournisseurs', \App\Livewire\ReglementsFournisseurs\Index::class)->name('reglements-fournisseurs.index');
     Route::get('reglements-fournisseurs/create/{commandeId?}', \App\Livewire\ReglementsFournisseurs\Index::class)->name('reglements-fournisseurs.create');
 
     Route::get('avoirs-fournisseurs', \App\Livewire\AvoirsFournisseurs\Index::class)->name('avoirs-fournisseurs.index');
+    Route::get('avoirs-fournisseurs/ajouter', \App\Livewire\AvoirsFournisseurs\Index::class)->name('avoirs-fournisseurs.create');
 
     Route::get('cheques-fournisseurs', \App\Livewire\ChequesFournisseurs\Index::class)->name('cheques-fournisseurs.index');
 
