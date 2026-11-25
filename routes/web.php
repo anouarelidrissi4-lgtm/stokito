@@ -257,6 +257,26 @@ Route::middleware(['auth'])->group(function () {
         return \Illuminate\Support\Facades\Storage::disk('local')->response($d->justificatif_path);
     })->whereNumber('depense')->name('depenses.justificatif');
     Route::get('products', \App\Livewire\Products\Index::class)->name('products.index');
+    // printable product list (2026-11-25): all filtered products, chosen columns, A4
+    Route::get('products/imprimer', function (\Illuminate\Http\Request $request) {
+        abort_unless(auth()->user()->hasPermission('produits_consulter'), 403);
+        $search = trim((string) $request->query('q', ''));
+        $cat = $request->query('categorie');
+        $cols = array_intersect(explode(',', (string) $request->query('cols', 'categorie,marque,fournisseur,achat,gros')), ['categorie', 'marque', 'fournisseur', 'achat', 'gros']);
+        if (! auth()->user()->hasPermission('produits_prix_achat')) {
+            $cols = array_diff($cols, ['achat']);
+        }
+        $products = \App\Models\Product::with(['category', 'brand', 'fournisseur'])
+            ->when($search !== '', fn ($q) => $q->where(fn ($w) => $w->where('name', 'like', "%{$search}%")->orWhere('reference', 'like', "%{$search}%")->orWhere('barcode', $search)))
+            ->when($cat, fn ($q) => $q->where('category_id', $cat))
+            ->orderBy('name')->get();
+
+        return view('products.print', [
+            'products' => $products, 'cols' => array_values($cols), 'search' => $search,
+            'category' => $cat ? \App\Models\Category::find($cat)?->name : null,
+            'societe' => \App\Models\Societe::current(),
+        ]);
+    })->name('products.print');
     Route::get('copilot', \App\Livewire\Copilot\Chat::class)->name('copilot');
     // the supplier-invoice scanner has its own menu entry; same page as "Nouveau bon de commande"
     Route::get('scanner-ia', \App\Livewire\CommandeFournisseurs\Form::class)->name('scanner.facture');

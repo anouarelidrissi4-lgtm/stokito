@@ -7,6 +7,7 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Fournisseur;
 use App\Models\Product;
+use App\Support\ProductSheet;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -66,6 +67,8 @@ class Index extends Component
     public $stock_alert_threshold = null;
 
     public $importFile = null;
+
+    public ?array $importReport = null;
 
     public function create(): void
     {
@@ -204,85 +207,106 @@ class Index extends Component
             ->orderBy('name');
     }
 
-    public function exportCsv()
+    /** Real .xlsx export of the filtered list (2026-11-25, the old comma CSV opened in one column in Excel FR). */
+    public function exportExcel()
     {
-        $products = $this->filteredQuery()->get();
+        $path = ProductSheet::export($this->filteredQuery()->get(), auth()->user()->hasPermission('produits_prix_achat'));
 
-        return response()->streamDownload(function () use ($products) {
-            $out = fopen('php://output', 'w');
-            fputcsv($out, ['Reference', 'Code-barres', 'Designation', 'Categorie', 'Marque', 'Fournisseur', 'Unite', 'Prix Achat', 'Prix Vente TTC', 'Prix Vente Gros', 'Stock', 'Seuil Alerte'], ',', '"', '\\');
-            foreach ($products as $p) {
-                fputcsv($out, [
-                    $p->reference,
-                    $p->barcode,
-                    $p->name,
-                    $p->category?->name,
-                    $p->brand?->name,
-                    $p->fournisseur?->name,
-                    $p->unit,
-                    auth()->user()->hasPermission('produits_prix_achat') ? $p->purchase_price : '',
-                    $p->sale_price,
-                    $p->wholesale_price,
-                    $p->stock_qty,
-                    $p->stock_alert_threshold,
-                ], ',', '"', '\\');
-            }
-            fclose($out);
-        }, 'produits-'.now()->format('Y-m-d').'.csv');
+        return response()->download($path, 'produits-'.now()->format('Y-m-d').'.xlsx', [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ])->deleteFileAfterSend();
     }
 
     public function openImport(): void
     {
         $this->requirePermission('produits_creer');
         $this->importFile = null;
+        $this->importReport = null;
         $this->showImportModal = true;
     }
 
-    public function importCsv(): void
+    /**
+     * Import .xlsx / .ods / .csv. Columns are found by their header name; a product is
+     * matched by its reference (created when new). On an existing product an empty cell
+     * keeps the current value, so a re-imported export never wipes data.
+     */
+    public function importExcel(): void
     {
         $this->requirePermission('produits_creer');
-        $this->validate(['importFile' => 'required|file|mimes:csv,txt|max:5120']);
+        $this->validate(['importFile' => 'required|file|max:5120|mimes:xlsx,ods,csv,txt'], [], ['importFile' => 'fichier']);
 
-        $handle = fopen($this->importFile->getRealPath(), 'r');
-        $header = fgetcsv($handle);
-        $imported = 0;
-        $skipped = 0;
+        $ext = strtolower($this->importFile->getClientOriginalExtension() ?: $this->importFile->extension());
+        try {
+            $sheet = ProductSheet::read($this->importFile->getRealPath(), $ext);
+        } catch (\Throwable $e) {
+            report($e);
+            $this->addError('importFile', __('Fichier illisible. Enregistrez-le au format Excel (.xlsx) puis réessayez.'));
 
-        while (($row = fgetcsv($handle)) !== false) {
-            if (count($row) < 2 || empty($row[0])) {
-                $skipped++;
+            return;
+        }
+
+        $canBuy = auth()->user()->hasPermission('produits_prix_achat');
+        $created = $updated = 0;
+        $errors = [];
+        $cats = $brands = $fourns = [];
+        $str = fn ($v) => $v === null ? '' : trim(is_float($v) && floor($v) == $v ? (string) (int) $v : (string) $v);
+
+        foreach ($sheet['rows'] as $r) {
+            $ref = $str($r['reference'] ?? null);
+            $name = $str($r['name'] ?? null);
+            if ($ref === '') {
+                $errors[] = __('Ligne :n : référence manquante', ['n' => $r['_line']]);
 
                 continue;
             }
+            $data = [];
+            if ($name !== '') {
+                $data['name'] = mb_substr($name, 0, 255);
+            }
+            if (($v = $str($r['barcode'] ?? null)) !== '') {
+                $data['barcode'] = $v;
+            }
+            if (($v = $str($r['unit'] ?? null)) !== '') {
+                $data['unit'] = mb_substr($v, 0, 50);
+            }
+            if (($v = $str($r['category'] ?? null)) !== '') {
+                $data['category_id'] = $cats[mb_strtolower($v)] ??= Category::firstOrCreate(['name' => $v])->id;
+            }
+            if (($v = $str($r['brand'] ?? null)) !== '') {
+                $data['brand_id'] = $brands[mb_strtolower($v)] ??= Brand::firstOrCreate(['name' => $v])->id;
+            }
+            if (($v = $str($r['fournisseur'] ?? null)) !== '') {
+                $data['fournisseur_id'] = $fourns[mb_strtolower($v)] ??= Fournisseur::firstOrCreate(['name' => $v])->id;
+            }
+            foreach (['sale_price', 'wholesale_price', 'stock_qty', 'stock_alert_threshold'] + ($canBuy ? [4 => 'purchase_price'] : []) as $f) {
+                if (array_key_exists($f, $r) && ($n = ProductSheet::num($r[$f])) !== null) {
+                    $data[$f] = $f === 'stock_qty' || $f === 'stock_alert_threshold' ? (int) round($n) : max(0, $n);
+                }
+            }
 
-            [$reference, $barcode, $name, $categoryName, $brandName, $fournisseurName, $unit, $purchasePrice, $salePrice, $wholesalePrice, $stockQty, $threshold] = array_pad($row, 12, null);
-
-            $categoryId = $categoryName ? Category::firstOrCreate(['name' => trim($categoryName)])->id : null;
-            $brandId = $brandName ? Brand::firstOrCreate(['name' => trim($brandName)])->id : null;
-            $fournisseurId = $fournisseurName ? Fournisseur::firstOrCreate(['name' => trim($fournisseurName)])->id : null;
-
-            Product::updateOrCreate(
-                ['reference' => trim($reference)],
-                [
-                    'barcode' => $barcode ? trim($barcode) : null,
-                    'name' => trim($name) ?: trim($reference),
-                    'category_id' => $categoryId,
-                    'brand_id' => $brandId,
-                    'fournisseur_id' => $fournisseurId,
-                    'unit' => $unit ?: 'piece',
-                    'purchase_price' => is_numeric($purchasePrice) ? $purchasePrice : 0,
-                    'sale_price' => is_numeric($salePrice) ? $salePrice : 0,
-                    'wholesale_price' => is_numeric($wholesalePrice) ? $wholesalePrice : null,
-                    'stock_qty' => is_numeric($stockQty) ? (int) $stockQty : 0,
-                    'stock_alert_threshold' => is_numeric($threshold) ? (int) $threshold : null,
-                ]
-            );
-            $imported++;
+            try {
+                $product = Product::where('reference', $ref)->first();
+                if ($product) {
+                    $product->update($data);
+                    $updated++;
+                } else {
+                    Product::create($data + ['reference' => $ref, 'name' => $name !== '' ? mb_substr($name, 0, 255) : $ref,
+                        'unit' => $data['unit'] ?? 'piece', 'purchase_price' => $data['purchase_price'] ?? 0, 'sale_price' => $data['sale_price'] ?? 0,
+                        'stock_qty' => $data['stock_qty'] ?? 0]);
+                    $created++;
+                }
+            } catch (\Illuminate\Database\QueryException $e) {
+                $errors[] = str_contains($e->getMessage(), 'barcode')
+                    ? __('Ligne :n : ce code-barres est déjà utilisé par un autre produit', ['n' => $r['_line']])
+                    : __('Ligne :n : non enregistrée', ['n' => $r['_line']]);
+            }
         }
-        fclose($handle);
 
-        $this->showImportModal = false;
-        session()->flash('success', "{$imported} produit(s) importe(s), {$skipped} ligne(s) ignoree(s).");
+        $this->importReport = ['created' => $created, 'updated' => $updated, 'errors' => $errors, 'unknown' => $sheet['unknown'], 'empty' => ! $sheet['rows']];
+        $this->importFile = null;
+        if ($created || $updated) {
+            session()->flash('success', __(':c produit(s) créé(s), :u mis à jour.', ['c' => $created, 'u' => $updated]));
+        }
     }
 
     public function render()

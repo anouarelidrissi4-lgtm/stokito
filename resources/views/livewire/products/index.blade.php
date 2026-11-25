@@ -1,6 +1,7 @@
 <div class="py-6 px-4 sm:px-6 lg:px-8" x-data="{
-        cols: JSON.parse(localStorage.getItem('products_cols') || '{\"marque\":true,\"fournisseur\":true,\"gros\":true}'),
-        toggle(key) { this.cols[key] = !this.cols[key]; localStorage.setItem('products_cols', JSON.stringify(this.cols)); }
+        cols: (() => { const d = { categorie: true, marque: true, fournisseur: true, achat: true, gros: true }; try { return Object.assign(d, JSON.parse(localStorage.getItem('products_cols') || '{}')) } catch (e) { return d } })(),
+        toggle(key) { this.cols[key] = !this.cols[key]; try { localStorage.setItem('products_cols', JSON.stringify(this.cols)) } catch (e) {} },
+        printUrl() { return '{{ route('products.print') }}?' + new URLSearchParams({ q: this.$wire.search || '', categorie: this.$wire.categoryFilter || '', cols: Object.keys(this.cols).filter(k => this.cols[k]).join(',') }) }
     }">
     <h1 class="text-2xl font-bold text-gray-900 mb-6">{{ __('Produits') }}</h1>
 
@@ -36,7 +37,7 @@
             <button wire:click="create" class="flex items-center gap-1.5 bg-indigo-600 text-white px-3 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-700">
                 <span>+</span> Nouveau produit
             </button>
-            <button wire:click="exportCsv" class="flex items-center gap-1.5 bg-white text-zinc-900 border border-zinc-200 px-3 py-2 text-sm font-semibold hover:bg-zinc-100 rounded-lg">
+            <button wire:click="exportExcel" class="flex items-center gap-1.5 bg-white text-zinc-900 border border-zinc-200 px-3 py-2 text-sm font-semibold hover:bg-zinc-100 rounded-lg">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
                 Exporter Excel
             </button>
@@ -44,10 +45,10 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm6.293 4.293a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 10.414V18a1 1 0 11-2 0v-7.586l-1.293 1.293a1 1 0 01-1.414-1.414l3-3z" clip-rule="evenodd" /></svg>
                 Importer Excel
             </button>
-            <button onclick="window.print()" type="button" class="flex items-center gap-1.5 bg-white text-zinc-900 border border-zinc-200 px-3 py-2 text-sm font-semibold hover:bg-zinc-100 rounded-lg">
+            <a :href="printUrl()" target="_blank" rel="noopener" class="flex items-center gap-1.5 bg-white text-zinc-900 border border-zinc-200 px-3 py-2 text-sm font-semibold hover:bg-zinc-100 rounded-lg">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a1 1 0 001 1h8a1 1 0 001-1v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a1 1 0 00-1-1H6a1 1 0 00-1 1zm2 0h6v3H7V4zm6 10v3H7v-5h6v2z" /></svg>
                 Imprimer
-            </button>
+            </a>
 
             <div class="relative ms-auto" x-data="{ open: false }">
                 <button @click="open = ! open" type="button" class="flex items-center gap-1.5 border border-gray-300 text-gray-700 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-gray-50">
@@ -56,13 +57,21 @@
                 </button>
                 <div x-show="open" @click.outside="open = false" x-cloak class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border z-20 text-sm p-2 space-y-1">
                     <label class="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer">
-                        <input type="checkbox" x-model="cols.marque" @change="toggle('marque')" class="rounded border-gray-300"> Marque
+                        <input type="checkbox" :checked="cols.categorie" @change="toggle('categorie')" class="rounded border-gray-300"> Catégorie
                     </label>
                     <label class="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer">
-                        <input type="checkbox" x-model="cols.fournisseur" @change="toggle('fournisseur')" class="rounded border-gray-300"> Fournisseurs
+                        <input type="checkbox" :checked="cols.marque" @change="toggle('marque')" class="rounded border-gray-300"> Marque
                     </label>
                     <label class="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer">
-                        <input type="checkbox" x-model="cols.gros" @change="toggle('gros')" class="rounded border-gray-300"> Prix Vente Gros
+                        <input type="checkbox" :checked="cols.fournisseur" @change="toggle('fournisseur')" class="rounded border-gray-300"> Fournisseurs
+                    </label>
+                    @if (auth()->user()->hasPermission('produits_prix_achat'))
+                    <label class="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer">
+                        <input type="checkbox" :checked="cols.achat" @change="toggle('achat')" class="rounded border-gray-300"> Prix Achat
+                    </label>
+                    @endif
+                    <label class="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer">
+                        <input type="checkbox" :checked="cols.gros" @change="toggle('gros')" class="rounded border-gray-300"> Prix Vente Gros
                     </label>
                 </div>
             </div>
@@ -74,11 +83,11 @@
                 <tr>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ref</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Désignation</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Catégorie</th>
+                    <th x-show="cols.categorie" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Catégorie</th>
                     <th x-show="cols.marque" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Marque</th>
                     <th x-show="cols.fournisseur" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fournisseurs</th>
                     @if (auth()->user()->hasPermission('produits_prix_achat'))
-                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Prix Achat</th>
+                    <th x-show="cols.achat" class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Prix Achat</th>
                     @endif
                     <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Prix Vente TTC</th>
                     <th x-show="cols.gros" class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Prix Vente Gros</th>
@@ -91,11 +100,11 @@
                     <tr wire:key="prod-{{ $product->id }}">
                         <td class="px-4 py-3 text-sm font-medium text-gray-900">{{ $product->reference }}</td>
                         <td class="px-4 py-3 text-sm text-gray-900">{{ $product->name }}</td>
-                        <td class="px-4 py-3 text-sm text-gray-500">{{ $product->category?->name ?? '-' }}</td>
+                        <td x-show="cols.categorie" class="px-4 py-3 text-sm text-gray-500">{{ $product->category?->name ?? '-' }}</td>
                         <td x-show="cols.marque" class="px-4 py-3 text-sm text-gray-500">{{ $product->brand?->name ?? 'Sans marque' }}</td>
                         <td x-show="cols.fournisseur" class="px-4 py-3 text-sm text-gray-500">{{ $product->fournisseur?->name ?? '-' }}</td>
                         @if (auth()->user()->hasPermission('produits_prix_achat'))
-                        <td class="px-4 py-3 text-sm text-right text-gray-700 whitespace-nowrap">{{ \App\Support\Fmt::money($product->purchase_price) }}</td>
+                        <td x-show="cols.achat" class="px-4 py-3 text-sm text-right text-gray-700 whitespace-nowrap">{{ \App\Support\Fmt::money($product->purchase_price) }}</td>
                         @endif
                         <td class="px-4 py-3 text-sm text-right text-gray-700 whitespace-nowrap">{{ \App\Support\Fmt::money($product->sale_price) }}</td>
                         <td x-show="cols.gros" class="px-4 py-3 text-sm text-right text-gray-700">{{ $product->wholesale_price !== null ? \App\Support\Fmt::money($product->wholesale_price) : '-' }}</td>
@@ -235,14 +244,33 @@
     @if ($showImportModal)
         <div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" wire:click.self="$set('showImportModal', false)">
             <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
-                <h2 class="text-lg font-semibold mb-2 text-gray-900">Importer des produits (CSV)</h2>
-                <p class="text-xs text-gray-400 mb-3">Colonnes attendues : Référence, Désignation, Catégorie, Marque, Fournisseur, Unité, Prix Achat, Prix Vente TTC, Prix Vente Gros, Stock, Seuil Alerte. Exportez d'abord pour voir le format exact.</p>
-                <input wire:model="importFile" type="file" accept=".csv,text/csv" class="w-full rounded-md border-gray-300 text-sm mb-1">
+                <h2 class="text-lg font-semibold mb-2 text-gray-900">Importer des produits (Excel)</h2>
+                <p class="text-sm text-gray-500 mb-3">Fichier Excel (.xlsx), LibreOffice (.ods) ou CSV. Le plus simple : cliquez sur <button type="button" wire:click="exportExcel" class="underline font-semibold text-gray-800">Exporter Excel</button>, complétez le fichier puis importez-le. Un produit est retrouvé par sa <b>référence</b> ; s'il n'existe pas, il est créé. Une case vide ne change rien.</p>
+                <input wire:model="importFile" type="file" accept=".xlsx,.ods,.csv" class="w-full rounded-md border-gray-300 text-sm mb-1">
                 @error('importFile') <p class="text-red-600 text-xs mb-2">{{ $message }}</p> @enderror
-                <div wire:loading wire:target="importFile" class="text-xs text-gray-400">Televersement...</div>
+                <div wire:loading wire:target="importFile" class="text-xs text-gray-400">Téléversement...</div>
+                <div wire:loading wire:target="importExcel" class="text-xs text-gray-500">Import en cours...</div>
+                @if ($importReport)
+                    <div class="mt-3 rounded-lg border px-3 py-2 text-sm {{ $importReport['created'] || $importReport['updated'] ? 'border-green-200 bg-green-50 text-green-800' : 'border-amber-200 bg-amber-50 text-amber-800' }}">
+                        @if ($importReport['empty'])
+                            Aucune ligne trouvée dans le fichier.
+                        @else
+                            <b>{{ $importReport['created'] }}</b> créé(s), <b>{{ $importReport['updated'] }}</b> mis à jour{{ $importReport['errors'] ? ', '.count($importReport['errors']).' ignoré(s)' : '' }}.
+                        @endif
+                        @if ($importReport['errors'])
+                            <ul class="mt-1 list-disc ps-5 text-xs">
+                                @foreach (array_slice($importReport['errors'], 0, 6) as $err)<li>{{ $err }}</li>@endforeach
+                                @if (count($importReport['errors']) > 6)<li>…</li>@endif
+                            </ul>
+                        @endif
+                        @if ($importReport['unknown'])
+                            <p class="mt-1 text-xs">Colonnes non reconnues (ignorées) : {{ implode(', ', array_slice($importReport['unknown'], 0, 6)) }}</p>
+                        @endif
+                    </div>
+                @endif
                 <div class="flex justify-end gap-2 mt-4">
-                    <button wire:click="$set('showImportModal', false)" class="px-4 py-2 text-sm text-gray-600">Annuler</button>
-                    <button wire:click="importCsv" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-700">Importer</button>
+                    <button wire:click="$set('showImportModal', false)" class="px-4 py-2 text-sm text-gray-600">{{ $importReport ? 'Fermer' : 'Annuler' }}</button>
+                    <button wire:click="importExcel" wire:loading.attr="disabled" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-700">Importer</button>
                 </div>
             </div>
         </div>

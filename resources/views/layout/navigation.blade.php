@@ -10,7 +10,7 @@
 @php
     $rtl = app()->getLocale() === 'ar';
     $user = auth()->user();
-    $sectionIcons = ['tableau_de_bord' => 'home', 'catalogue' => 'cube', 'ventes' => 'cart', 'achats' => 'truck', 'tresorerie' => 'wallet', 'administration' => 'cog'];
+    $sectionIcons = ['tableau_de_bord' => 'home', 'catalogue' => 'cube', 'caisse' => 'receipt', 'ventes' => 'cart', 'achats' => 'truck', 'tresorerie' => 'wallet', 'administration' => 'cog'];
     $quickKeys = ['devis.create', 'bon-livraisons.create', 'commande-fournisseurs.create'];
     $isActive = fn ($item) => $item['active'] && request()->routeIs($item['active']);
     // industrial style (2026-11-23): active = yellow label with ink border

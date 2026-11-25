@@ -21,6 +21,7 @@ class MenuItems
     public const DEFAULT_SECTIONS = [
         'tableau_de_bord' => ['label' => 'Tableau de bord', 'icon' => '🏠', 'order' => 10],
         'catalogue' => ['label' => 'Catalogue', 'icon' => '📦', 'order' => 20],
+        'caisse' => ['label' => 'Caisse', 'icon' => '🧾', 'order' => 25],
         'ventes' => ['label' => 'Ventes', 'icon' => '👥', 'order' => 30],
         'achats' => ['label' => 'Achats', 'icon' => '🚚', 'order' => 40],
         'tresorerie' => ['label' => 'Tresorerie', 'icon' => '💰', 'order' => 50],
@@ -45,7 +46,10 @@ class MenuItems
 
         'inventaire.index' => ['label' => 'Inventaire', 'route' => 'inventaire.index', 'active' => 'inventaire.*', 'permission' => 'inventaire', 'module' => null, 'admin_override' => false, 'section' => 'catalogue', 'order' => 40],
 
-        'caisse.pos' => ['label' => 'Caisse', 'route' => 'caisse.pos', 'active' => 'caisse.*', 'permission' => 'caisse', 'module' => 'caisse_enabled', 'admin_override' => false, 'section' => 'ventes', 'order' => 5],
+        // Caisse has its own section since 2026-11-25 (was the first row of Ventes)
+        'caisse.pos' => ['label' => 'Vente au comptoir', 'route' => 'caisse.pos', 'active' => 'caisse.pos', 'permission' => 'caisse', 'module' => 'caisse_enabled', 'admin_override' => false, 'section' => 'caisse', 'order' => 10],
+        'caisse.tickets' => ['label' => 'Tickets', 'route' => 'caisse.tickets', 'active' => 'caisse.tickets', 'permission' => 'caisse', 'module' => 'caisse_enabled', 'admin_override' => false, 'section' => 'caisse', 'order' => 20],
+        'caisse.clotures' => ['label' => 'Clôtures (Z)', 'route' => 'caisse.clotures', 'active' => 'caisse.clotures', 'permission' => 'caisse_cloturer', 'module' => 'caisse_enabled', 'admin_override' => false, 'section' => 'caisse', 'order' => 30],
         'clients.index' => ['label' => 'Clients', 'route' => 'clients.index', 'active' => 'clients.index', 'permission' => 'gestion_clients', 'module' => null, 'admin_override' => false, 'section' => 'ventes', 'order' => 10],
         'devis.index' => ['label' => 'Devis Clients', 'route' => 'devis.index', 'active' => ['devis.index', 'devis.edit'], 'permission' => 'devis_consulter', 'module' => null, 'admin_override' => false, 'section' => 'ventes', 'order' => 20],
         'devis.create' => ['label' => 'Nouveau Devis', 'route' => 'devis.create', 'active' => 'devis.create', 'permission' => 'devis_creer', 'module' => null, 'admin_override' => false, 'section' => 'ventes', 'order' => 30],
