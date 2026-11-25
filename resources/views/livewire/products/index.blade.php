@@ -83,6 +83,31 @@
             </div>
         </div>
 
+        @php
+            $canBuy = auth()->user()->hasPermission('produits_prix_achat');
+            $canMarge = $canBuy && auth()->user()->hasPermission('marges');
+            $fmtTot = fn ($v) => \App\Support\Fmt::money($v);
+        @endphp
+        <div class="px-4 py-3 border-b border-zinc-200 bg-zinc-50/60 grid gap-3 {{ $canMarge ? 'sm:grid-cols-3' : ($canBuy ? 'sm:grid-cols-2' : 'sm:grid-cols-1') }}">
+            @if ($canBuy)
+            <div class="rounded-xl border border-zinc-200 bg-white px-4 py-3">
+                <div class="text-xs font-medium text-zinc-500">Total d'achat</div>
+                <div class="mt-1 text-xl font-bold text-zinc-900 tabular-nums">{{ $fmtTot($totals['achat']) }} <span class="text-sm font-medium text-zinc-400">{{ $currency }}</span></div>
+            </div>
+            @endif
+            <div class="rounded-xl border border-zinc-200 bg-white px-4 py-3">
+                <div class="text-xs font-medium text-zinc-500">Total prix de vente TTC</div>
+                <div class="mt-1 text-xl font-bold text-zinc-900 tabular-nums">{{ $fmtTot($totals['vente']) }} <span class="text-sm font-medium text-zinc-400">{{ $currency }}</span></div>
+            </div>
+            @if ($canMarge)
+            <div class="rounded-xl border border-zinc-200 bg-white px-4 py-3">
+                <div class="text-xs font-medium text-zinc-500">Total marge <span class="text-zinc-400">(HT)</span></div>
+                <div class="mt-1 text-xl font-bold tabular-nums {{ $totals['marge'] < 0 ? 'text-red-600' : 'text-emerald-700' }}">{{ $fmtTot($totals['marge']) }} <span class="text-sm font-medium text-zinc-400">{{ $currency }}</span></div>
+            </div>
+            @endif
+            <p class="sm:col-span-full text-[11px] text-zinc-400">Sur le stock actuel ({{ $totals['n'] }} produit(s){{ $search !== '' || $categoryFilter !== '' ? ', selon la recherche' : '' }}) : quantité × prix. Marge = vente HT − achat.</p>
+        </div>
+
         <div class="overflow-x-auto">
 <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">

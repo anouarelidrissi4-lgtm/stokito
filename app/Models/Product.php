@@ -23,6 +23,22 @@ class Product extends Model
         'prix_achat_kg' => 'decimal:3',
     ];
 
+    /** one product per name in a company, case and spaces ignored (2026-11-25) */
+    public static function nameTaken(string $name, ?int $ignoreId = null): bool
+    {
+        return static::query()->whereRaw('LOWER(TRIM(name)) = ?', [mb_strtolower(trim($name))])
+            ->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))->exists();
+    }
+
+    public static function uniqueNameRule(?int $ignoreId = null): \Closure
+    {
+        return function (string $attribute, mixed $value, \Closure $fail) use ($ignoreId) {
+            if (is_string($value) && trim($value) !== '' && static::nameTaken($value, $ignoreId)) {
+                $fail('Un produit porte déjà ce nom.');
+            }
+        };
+    }
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);

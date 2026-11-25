@@ -145,11 +145,17 @@ class Index extends Component
     public function save(): void
     {
         $this->requirePermission($this->editingId ? 'produits_edition' : 'produits_creer');
+        $this->name = trim($this->name);
+        $this->reference = trim($this->reference);
+        // one product per name: checked on creation and when the name changes (old duplicates can still be edited)
+        $oldName = $this->editingId ? (string) Product::find($this->editingId)?->name : null;
+        $nameRule = $oldName !== null && mb_strtolower(trim($oldName)) === mb_strtolower($this->name)
+            ? [] : [Product::uniqueNameRule($this->editingId)];
 
         $this->validate([
             'reference' => ['required', 'string', 'max:255', \App\Support\Tenant::unique('products', 'reference', $this->editingId)],
             'barcode' => ['nullable', 'string', 'max:255', \App\Support\Tenant::unique('products', 'barcode', $this->editingId)],
-            'name' => 'required|string|max:255',
+            'name' => array_merge(['required', 'string', 'max:255'], $nameRule),
             'unit' => 'required|string|max:50',
             'purchase_price' => 'required|numeric|min:0',
             'sale_price' => 'required|numeric|min:0',
@@ -162,7 +168,7 @@ class Index extends Component
             'poids' => 'nullable|numeric|min:0',
             'prix_achat_kg' => 'nullable|numeric|min:0',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:8192',
-        ]);
+        ], ['reference.unique' => 'Cette référence existe déjà.', 'name.unique' => 'Un produit porte déjà ce nom.', 'barcode.unique' => 'Ce code-barres est déjà utilisé par un autre produit.']);
 
         $old = $this->editingId ? Product::find($this->editingId)?->image_path : null;
         $newPath = $old;
@@ -348,6 +354,13 @@ class Index extends Component
 
             try {
                 $product = Product::where('reference', $ref)->first();
+                $newName = $data['name'] ?? ($product ? null : $ref);
+                if ($newName !== null && Product::nameTaken($newName, $product?->id)
+                    && ! ($product && mb_strtolower(trim($product->name)) === mb_strtolower($newName))) {
+                    $errors[] = __('Ligne :n : un autre produit porte déjà ce nom', ['n' => $r['_line']]);
+
+                    continue;
+                }
                 if ($product) {
                     $product->update($data);
                     $updated++;
@@ -371,6 +384,26 @@ class Index extends Component
         }
     }
 
+    /**
+     * Stock totals of the filtered list (all pages), 2026-11-25:
+     * purchase = qty x purchase price, sale = qty x sale price TTC, margin = sale HT - purchase.
+     * Negative stock counts as 0.
+     */
+    protected function totals(): array
+    {
+        $tva = (float) (\App\Models\Societe::current()?->tva_rate_default ?? 0);
+        $qty = 'CASE WHEN products.stock_qty > 0 THEN products.stock_qty ELSE 0 END';
+        $row = $this->filteredQuery()->reorder()->toBase()->selectRaw(
+            "COUNT(*) AS n, SUM($qty * products.purchase_price) AS achat, SUM($qty * products.sale_price) AS vente, "
+            ."SUM($qty * products.sale_price / (1 + COALESCE(products.tva_rate, ?) / 100.0)) AS vente_ht",
+            [$tva]
+        )->first();
+        $achat = round((float) ($row->achat ?? 0), 2);
+        $venteHt = round((float) ($row->vente_ht ?? 0), 2);
+
+        return ['n' => (int) ($row->n ?? 0), 'achat' => $achat, 'vente' => round((float) ($row->vente ?? 0), 2), 'marge' => round($venteHt - $achat, 2)];
+    }
+
     public function render()
     {
         return view('livewire.products.index', [
@@ -379,6 +412,8 @@ class Index extends Component
             'brands' => Brand::orderBy('name')->get(),
             'fournisseurs' => Fournisseur::orderBy('name')->get(),
             'types' => Product::whereNotNull('type')->distinct()->orderBy('type')->limit(50)->pluck('type'),
+            'totals' => $this->totals(),
+            'currency' => \App\Models\Societe::current()?->currency,
             'tvaDefault' => \App\Models\Societe::current()?->tva_rate_default,
         ])->layout('layouts.app');
     }

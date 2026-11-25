@@ -141,6 +141,34 @@ class ProductsSheetTest extends TestCase
             ->assertOk()->assertSee('Poids KG/ML')->assertSee('21,6')->assertSee('1,15');
     }
 
+    public function test_one_product_per_name_and_reference(): void
+    {
+        $this->companyUser('FR');
+        $this->product('REF-1')->update(['name' => 'Cornière 25']);
+
+        Livewire::test(Index::class)->call('create')->set('reference', 'REF-1')->set('name', 'Autre')->call('save')->assertHasErrors('reference');
+        Livewire::test(Index::class)->call('create')->set('reference', 'REF-2')->set('name', ' cornière 25 ')->call('save')->assertHasErrors('name');
+        $this->assertSame(1, Product::count());
+
+        // the product itself can still be saved with its own name
+        $id = Product::sole()->id;
+        Livewire::test(Index::class)->call('edit', $id)->set('sale_price', 15)->call('save')->assertHasNoErrors();
+        $this->assertEquals(15, Product::sole()->sale_price);
+    }
+
+    public function test_stock_totals_on_the_list(): void
+    {
+        $this->companyUser('FR');                              // TVA 20 %
+        $this->product('A', 10, 5, 12);                        // achat 50, vente TTC 120, HT 100
+        $this->product('B', 2, 30, 60)->update(['tva_rate' => 10]);  // achat 60, vente 120, HT 109,09
+        $this->product('C', -3, 7, 9);                         // negative stock counts as 0
+
+        Livewire::test(Index::class)
+            ->assertViewHas('totals', fn ($t) => $t['achat'] == 110 && $t['vente'] == 240 && abs($t['marge'] - 99.09) < 0.01 && $t['n'] === 3)
+            ->assertSee("Total d'achat", false)->assertSee('Total prix de vente TTC')->assertSee('Total marge')
+            ->set('search', 'A')->assertViewHas('totals', fn ($t) => $t['achat'] == 50);
+    }
+
     public function test_caisse_has_its_own_menu_section(): void
     {
         $menu = MenuItems::resolve(null);

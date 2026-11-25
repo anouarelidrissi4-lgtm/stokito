@@ -297,17 +297,18 @@ class Form extends Component
 
     public function saveProduct()
     {
+        $this->new_product_name = trim((string) $this->new_product_name);
         $this->validate([
             'new_product_reference' => ['required', 'string', 'max:255', \App\Support\Tenant::unique('products', 'reference')],
             'new_product_barcode' => ['nullable', 'string', 'max:255', \App\Support\Tenant::unique('products', 'barcode')],
-            'new_product_name' => 'required|string|max:255',
+            'new_product_name' => ['required', 'string', 'max:255', \App\Models\Product::uniqueNameRule()],
             'new_product_unit' => 'required|string|max:50',
             'new_product_purchase_price' => 'required|numeric|min:0',
             'new_product_sale_price' => 'required|numeric|min:0',
             'new_product_wholesale_price' => 'nullable|numeric|min:0',
             'new_product_stock_qty' => 'required|integer|min:0',
             'new_product_stock_alert_threshold' => 'nullable|integer|min:0',
-        ]);
+        ], ['new_product_reference.unique' => 'Cette référence existe déjà.', 'new_product_name.unique' => 'Un produit porte déjà ce nom.', 'new_product_barcode.unique' => 'Ce code-barres est déjà utilisé par un autre produit.']);
 
         $product = Product::create([
             'reference' => $this->new_product_reference,
