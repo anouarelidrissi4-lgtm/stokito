@@ -17,6 +17,7 @@ Route::view('confidentialite', 'legal.privacy')->name('legal.privacy');
 Route::view('logiciel-gestion-de-stock-gratuit', 'seo.logiciel-gratuit')->name('seo.logiciel-gratuit');
 Route::view('logiciel-devis-facture-gratuit', 'seo.logiciel-devis-facture')->name('seo.logiciel-devis-facture');
 Route::view('scanner-facture-fournisseur', 'seo.scanner-facture')->name('seo.scanner-facture');
+Route::view('logiciel-de-caisse-gratuit', 'seo.caisse')->name('seo.caisse');
 
 // old guide file names (before the Stokito rebrand, 2026-11-24) -> new ones
 Route::get('docs/guide-stockpilot-{lang}.pdf', fn (string $lang) => redirect('/docs/guide-stokito-'.$lang.'.pdf', 301))->where('lang', 'fr|ar|en');
@@ -27,6 +28,7 @@ Route::get('sitemap.xml', function () {
         ['loc' => route('seo.logiciel-gratuit'), 'lastmod' => '2026-11-23', 'changefreq' => 'monthly', 'priority' => '0.9'],
         ['loc' => route('seo.logiciel-devis-facture'), 'lastmod' => '2026-11-23', 'changefreq' => 'monthly', 'priority' => '0.9'],
         ['loc' => route('seo.scanner-facture'), 'lastmod' => '2026-11-24', 'changefreq' => 'monthly', 'priority' => '0.9'],
+        ['loc' => route('seo.caisse'), 'lastmod' => '2026-11-25', 'changefreq' => 'monthly', 'priority' => '0.9'],
         ['loc' => route('blog.index'), 'lastmod' => now()->format('Y-m-d'), 'changefreq' => 'daily', 'priority' => '0.8'],
     ]);
 

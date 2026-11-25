@@ -573,6 +573,7 @@
             <div class="mt-8 flex flex-wrap items-center gap-3">
                 <a href="{{ route('register') }}" class="ind-btn bg-[#ffcc00] text-[#111] !shadow-[4px_4px_0_#fff]">{{ __('Créer un compte gratuit') }} <span aria-hidden="true">{{ $rtl ? '←' : '→' }}</span></a>
                 <a href="{{ route('demo.login') }}" class="ind-btn bg-white text-[#111] !shadow-[4px_4px_0_#ffcc00]">{{ __('Essayer la caisse') }}</a>
+                <a href="{{ route('seo.caisse') }}" class="text-sm font-semibold underline decoration-[#ffcc00] decoration-2 underline-offset-4">{{ __('En savoir plus') }}</a>
             </div>
             <p class="mt-4 ind-mono text-[11px] text-[#9a9a9a]">{{ __('En France : conçue pour les quatre conditions de la loi anti-fraude à la TVA (inaltérabilité, sécurisation, conservation, archivage). À activer dans Ma Société.') }}</p>
         </div>

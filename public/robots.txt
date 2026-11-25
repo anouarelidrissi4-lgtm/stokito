@@ -4,6 +4,7 @@ Allow: /blog
 Allow: /logiciel-gestion-de-stock-gratuit
 Allow: /logiciel-devis-facture-gratuit
 Allow: /scanner-facture-fournisseur
+Allow: /logiciel-de-caisse-gratuit
 Allow: /build/
 Allow: /livewire/livewire.min.js
 Allow: /images/
