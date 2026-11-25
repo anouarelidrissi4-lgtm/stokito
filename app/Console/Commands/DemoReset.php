@@ -302,6 +302,8 @@ class DemoReset extends Command
             [0, '09:15', [['ELEC-25', 1], ['DILU-1', 1]], 'especes'],
         ];
         try {
+            \Illuminate\Support\Carbon::setTestNow($base->copy()->subDays(3)->setTime(8, 0));
+            \App\Support\Caisse::journal('ACTIVATION', 'Activation de la caisse (Stokito Caisse v'.\App\Support\Caisse::VERSION.')');
             foreach ($sales as [$ago, $time, $lines, $mode]) {
                 \Illuminate\Support\Carbon::setTestNow($base->copy()->subDays($ago)->setTimeFromTimeString($time));
                 $cart = collect($lines)->map(fn ($l) => \App\Support\Caisse::lineFor($products[$l[0]], $l[1]))->all();

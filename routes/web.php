@@ -150,29 +150,37 @@ Route::get('dashboard', function () {
     // unpaid invoices, low stock and a 6-month sales chart (factures TTC).
     $monthStart = now()->startOfMonth();
     $prevStart = now()->subMonthNoOverflow()->startOfMonth();
-    $caMois = (float) \App\Models\Facture::where('date', '>=', $monthStart)->sum('total_ttc');
-    $caPrev = (float) \App\Models\Facture::whereBetween('date', [$prevStart, $monthStart->copy()->subDay()])->sum('total_ttc');
+    // counter sales (caisse tickets, cancellations negative) count with the invoices (2026-11-25)
+    $tk = fn ($from, $to = null) => \App\Models\CaisseTicket::where('created_at', '>=', $from)->when($to, fn ($q) => $q->where('created_at', '<', $to));
+    $caMois = (float) \App\Models\Facture::where('date', '>=', $monthStart)->sum('total_ttc') + (float) $tk($monthStart)->sum('total_ttc');
+    $caPrev = (float) \App\Models\Facture::whereBetween('date', [$prevStart, $monthStart->copy()->subDay()])->sum('total_ttc')
+        + (float) $tk($prevStart, $monthStart)->sum('total_ttc');
     $impayes = \App\Models\Facture::with('client')
         ->where('status', '!=', 'payee')
         ->whereRaw('total_ttc - montant_paye > 0.009')
         ->orderByRaw('COALESCE(due_date, date)')
         ->get();
-    $months = collect(range(5, 0))->map(function ($i) {
+    $months = collect(range(5, 0))->map(function ($i) use ($tk) {
         $start = now()->subMonthsNoOverflow($i)->startOfMonth();
 
         return [
             'label' => ucfirst($start->locale(app()->getLocale())->isoFormat('MMM')),
-            'total' => (float) \App\Models\Facture::whereBetween('date', [$start, $start->copy()->endOfMonth()])->sum('total_ttc'),
+            'total' => (float) \App\Models\Facture::whereBetween('date', [$start, $start->copy()->endOfMonth()])->sum('total_ttc')
+                + (float) $tk($start, $start->copy()->addMonthNoOverflow())->sum('total_ttc'),
         ];
     });
 
     // widgets (2026-11-24): margin, stock value, quotes, VAT, cash-in within 30 days, top products / clients
     $facIds = fn ($from) => \App\Models\Facture::where('date', '>=', $from)->select('id'); // tenant-scoped subquery
-    $htMois = (float) \App\Models\Facture::where('date', '>=', $monthStart)->sum('total_ht');
+    $htMois = (float) \App\Models\Facture::where('date', '>=', $monthStart)->sum('total_ht') + (float) $tk($monthStart)->sum('total_ht');
     $coutMois = (float) \App\Models\FactureItem::query()
         ->join('products', 'products.id', '=', 'facture_items.product_id')
         ->whereIn('facture_items.facture_id', $facIds($monthStart))
-        ->sum(\Illuminate\Support\Facades\DB::raw('facture_items.quantity * products.purchase_price'));
+        ->sum(\Illuminate\Support\Facades\DB::raw('facture_items.quantity * products.purchase_price'))
+        + (float) \App\Models\CaisseTicketLigne::query()
+            ->join('products', 'products.id', '=', 'caisse_ticket_lignes.product_id')
+            ->whereIn('caisse_ticket_lignes.ticket_id', $tk($monthStart)->select('id'))
+            ->sum(\Illuminate\Support\Facades\DB::raw('caisse_ticket_lignes.quantity * products.purchase_price'));
     $from90 = now()->subDays(90)->startOfDay();
     $devisAttente = \App\Models\Devis::whereIn('status', ['draft', 'sent']);
     $devis90 = \App\Models\Devis::where('date', '>=', $from90)->whereIn('status', ['sent', 'accepted', 'rejected']);
@@ -180,7 +188,12 @@ Route::get('dashboard', function () {
     $topProduits = \App\Models\FactureItem::query()
         ->selectRaw('product_id, SUM(total) as ca, SUM(quantity) as qty')
         ->whereIn('facture_id', $facIds($from90))
-        ->groupBy('product_id')->orderByDesc('ca')->limit(5)->get();
+        ->groupBy('product_id')->orderByDesc('ca')->get();
+    $caisseTop = \App\Models\CaisseTicketLigne::query()->selectRaw('product_id, SUM(total_ht) as ca, SUM(quantity) as qty')
+        ->whereNotNull('product_id')->whereIn('ticket_id', $tk($from90)->select('id'))->groupBy('product_id')->get();
+    $topProduits = $topProduits->concat($caisseTop)->groupBy('product_id')
+        ->map(fn ($g, $pid) => (object) ['product_id' => $pid, 'ca' => $g->sum(fn ($r) => (float) $r->ca), 'qty' => $g->sum(fn ($r) => (float) $r->qty)])
+        ->sortByDesc('ca')->take(5)->values();
     $topNoms = Product::whereIn('id', $topProduits->pluck('product_id'))->pluck('name', 'id');
     $today = now()->startOfDay();
 
@@ -200,7 +213,8 @@ Route::get('dashboard', function () {
             ->map(fn ($r) => ['name' => $r->client->name ?? '-', 'ca' => (float) $r->ca, 'nb' => (int) $r->nb]),
         'caMois' => $caMois,
         'caEvolution' => $caPrev > 0 ? round(($caMois - $caPrev) / $caPrev * 100) : null,
-        'encaisseMois' => (float) \App\Models\ReglementClient::where('date', '>=', $monthStart)->sum('montant'),
+        'encaisseMois' => (float) \App\Models\ReglementClient::where('date', '>=', $monthStart)->sum('montant')
+            + (float) \App\Models\CaissePaiement::whereIn('ticket_id', $tk($monthStart)->select('id'))->sum('montant'),
         'impayes' => $impayes,
         'totalImpayes' => $impayes->sum(fn ($f) => $f->total_ttc - $f->montant_paye),
         'aEncaisser30' => $impayes->filter(fn ($f) => $f->due_date && $f->due_date->between($today, $today->copy()->addDays(30)))->sum(fn ($f) => $f->total_ttc - $f->montant_paye),
@@ -245,6 +259,13 @@ Route::middleware(['auth'])->group(function () {
 
         return view('caisse.cloture-print', ['c' => $c, 's' => \App\Models\Societe::current()]);
     })->whereNumber('id')->name('caisse.clotures.print');
+    Route::get('caisse/clotures/{id}/archive', function (int $id) {
+        \App\Livewire\Caisse\Pos::guard('caisse_cloturer');
+        $c = \App\Models\CaisseCloture::findOrFail($id);
+        $path = \App\Support\Caisse::archive($c);
+
+        return response()->download($path, 'caisse-'.$c->type.'-'.$c->periode.'-Z'.$c->sequence.'.zip')->deleteFileAfterSend();
+    })->whereNumber('id')->name('caisse.clotures.archive');
     Route::get('brands', \App\Livewire\Brands\Index::class)->name('brands.index');
     Route::get('clients', \App\Livewire\Clients\Index::class)->name('clients.index');
     Route::get('fournisseurs', \App\Livewire\Fournisseurs\Index::class)->name('fournisseurs.index');

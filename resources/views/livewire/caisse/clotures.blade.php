@@ -50,7 +50,10 @@
                         <td class="px-3 py-2.5 ind-mono text-xs">{{ $c->nb_tickets }} vente(s) · {{ $c->nb_annulations }} annul.<span class="block text-[#888]">T-{{ str_pad($c->first_seq, 6, '0', STR_PAD_LEFT) }} → T-{{ str_pad($c->last_seq, 6, '0', STR_PAD_LEFT) }}</span></td>
                         <td class="px-3 py-2.5 text-end ind-mono font-semibold">{{ $money($c->total_ttc) }}</td>
                         <td class="px-3 py-2.5 text-end ind-mono">{{ $money($c->cumul_ttc) }}</td>
-                        <td class="px-3 py-2.5 text-end"><a href="{{ route('caisse.clotures.print', $c->id) }}" target="_blank" class="border-2 border-[#111] bg-white px-2 py-1 text-xs font-semibold hover:bg-[#ffcc00]">Imprimer</a></td>
+                        <td class="px-3 py-2.5 text-end whitespace-nowrap"><div class="inline-flex gap-2">
+                            <a href="{{ route('caisse.clotures.print', $c->id) }}" target="_blank" class="border-2 border-[#111] bg-white px-2 py-1 text-xs font-semibold hover:bg-[#ffcc00]">Imprimer</a>
+                            <a href="{{ route('caisse.clotures.archive', $c->id) }}" class="border-2 border-[#111] bg-[#111] text-[#ffcc00] px-2 py-1 text-xs font-semibold" title="Archive signée (ZIP) : tickets, lignes, paiements, clôtures et journal de la période">Archive</a>
+                        </div></td>
                     </tr>
                 @empty
                     <tr><td colspan="6" class="px-3 py-8 text-center text-[#888]">Aucune clôture.</td></tr>
@@ -59,4 +62,35 @@
         </table>
     </div>
     <div class="mt-3">{{ $clotures->links() }}</div>
+
+    <div class="mt-8 grid md:grid-cols-2 gap-4">
+        <div class="border-2 border-[#111] bg-white p-4">
+            <div class="ind-mono text-[11px] text-[#666]">ARCHIVES</div>
+            <p class="mt-1 text-sm text-[#444]">Le bouton <b>Archive</b> d’une clôture télécharge un ZIP signé : tickets, lignes, paiements, clôtures et journal de la période, en CSV, avec l’empreinte de chaque fichier. Gardez les archives mensuelles et annuelles (au moins 6 ans).</p>
+            <label class="mt-3 block text-sm font-semibold">Vérifier une archive
+                <input type="file" wire:model="archiveFile" accept=".zip" class="mt-1 block w-full text-sm file:me-3 file:border-2 file:border-[#111] file:bg-white file:px-3 file:py-1.5 file:text-sm file:font-semibold"></label>
+            <div wire:loading wire:target="archiveFile" class="mt-2 text-sm">Vérification…</div>
+            @error('archiveFile') <p class="mt-2 text-sm text-[#b42318] font-semibold">{{ $message }}</p> @enderror
+            @if ($archiveCheck)
+                <div class="mt-2 text-sm font-semibold {{ $archiveCheck['ok'] ? 'text-[#0a6b37]' : 'text-[#b42318]' }}">
+                    {{ $archiveCheck['ok'] ? '✓ Archive intacte' : '✗ Archive non conforme' }}@if (! empty($archiveCheck['manifest']['cloture'])) — clôture {{ $archiveCheck['manifest']['cloture']['type'] }} {{ $archiveCheck['manifest']['cloture']['periode'] }}@endif
+                </div>
+                @foreach ($archiveCheck['errors'] as $e)<div class="text-xs text-[#b42318]">{{ $e }}</div>@endforeach
+            @endif
+        </div>
+        <div class="border-2 border-[#111] bg-white p-4">
+            <div class="ind-mono text-[11px] text-[#666]">LOGICIEL DE CAISSE</div>
+            <dl class="mt-2 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
+                <dt class="text-[#666]">Logiciel</dt><dd class="font-semibold">Stokito Caisse</dd>
+                <dt class="text-[#666]">Version</dt><dd class="font-semibold">{{ \App\Support\Caisse::VERSION }}</dd>
+                <dt class="text-[#666]">Mise sur le marché</dt><dd>{{ \Illuminate\Support\Carbon::parse(\App\Support\Caisse::RELEASED)->format('d/m/Y') }}</dd>
+                <dt class="text-[#666]">Activée le</dt><dd>{{ $activation ? \Illuminate\Support\Carbon::parse($activation)->format('d/m/Y') : '—' }}</dd>
+                <dt class="text-[#666]">Premier ticket</dt><dd>{{ $firstTicket ? \Illuminate\Support\Carbon::parse($firstTicket)->format('d/m/Y') : '—' }}</dd>
+            </dl>
+            <p class="mt-3 text-xs text-[#555]">Fonctions : tickets numérotés sans rupture et signés, annulation par ticket négatif, clôtures journalières, mensuelles et annuelles avec grand total perpétuel, journal des événements, duplicatas, archives signées, contrôle d’intégrité.</p>
+            @if ($france)
+                <p class="mt-2 text-xs text-[#555]">En France, une entreprise assujettie à la TVA qui encaisse des particuliers doit pouvoir présenter un certificat ou une attestation individuelle de l’éditeur, établie selon le <a href="https://bofip.impots.gouv.fr/bofip/10692-PGP.html/identifiant=BOI-LETTRE-000242-20260325" target="_blank" rel="noopener" class="underline decoration-[#ffcc00] decoration-2 font-semibold">modèle officiel (BOI-LETTRE-000242)</a>. Les informations ci-dessus servent à la remplir.</p>
+            @endif
+        </div>
+    </div>
 </div>

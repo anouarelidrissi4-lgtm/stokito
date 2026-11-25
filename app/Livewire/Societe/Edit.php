@@ -213,7 +213,11 @@ class Edit extends Component
             $data['logo_path'] = $this->logo->store('logos', 'public');
         }
 
+        $wasCaisse = (bool) $this->societe->caisse_enabled;
         $this->societe->update($data);
+        if (! $wasCaisse && $this->caisse_enabled) {
+            \App\Support\Caisse::journal('ACTIVATION', 'Activation de la caisse (Stokito Caisse v'.\App\Support\Caisse::VERSION.')');
+        }
         $this->logo = null;
 
         session()->flash('success', 'Informations société mises à jour.');

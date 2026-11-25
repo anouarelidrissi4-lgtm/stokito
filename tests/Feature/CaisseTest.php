@@ -205,6 +205,55 @@ class CaisseTest extends TestCase
         $this->get(route('caisse.pos'))->assertForbidden();
     }
 
+    public function test_signed_archive_of_a_closure_can_be_checked_and_detects_changes(): void
+    {
+        $this->shop();
+        $p = $this->product('ARC-1', 50);
+        Caisse::encaisser([Caisse::lineFor($p, 2)], ['especes' => 30]);
+        $t = Caisse::encaisser([Caisse::lineFor($p, 1)], ['carte' => 12]);
+        Caisse::annuler($t, 'test');
+        $z = Caisse::cloturerJour();
+
+        $this->get(route('caisse.clotures.archive', $z->id))->assertOk()->assertDownload();
+        $path = Caisse::archive($z);
+        $zip = new \ZipArchive();
+        $zip->open($path);
+        $this->assertSame(['tickets.csv', 'lignes.csv', 'paiements.csv', 'clotures.csv', 'journal.csv', 'LISEZMOI.txt', 'manifest.json'],
+            collect(range(0, $zip->numFiles - 1))->map(fn ($i) => $zip->getNameIndex($i))->all());
+        $this->assertSame(3, substr_count(trim($zip->getFromName('tickets.csv')), "\n"));   // header + 3 tickets
+        $zip->close();
+        $this->assertTrue(Caisse::verifierArchive($path)['ok']);
+
+        $zip->open($path);
+        $zip->addFromString('tickets.csv', str_replace('30.00', '3.00', $zip->getFromName('tickets.csv')));
+        $zip->close();
+        $check = Caisse::verifierArchive($path);
+        $this->assertFalse($check['ok']);
+        $this->assertStringContainsString('tickets.csv', implode(' ', $check['errors']));
+        $this->assertSame(2, CaisseJournal::where('code', 'EXPORT_ARCHIVE')->count());
+        @unlink($path);
+    }
+
+    public function test_switching_the_caisse_on_is_journaled(): void
+    {
+        $this->companyUser('FR');
+        Livewire::test(\App\Livewire\Societe\Edit::class)->set('caisse_enabled', true)->call('save')->assertHasNoErrors();
+        $this->assertTrue((bool) Societe::current()->fresh()->caisse_enabled);
+        $this->assertSame('ACTIVATION', CaisseJournal::sole()->code);
+    }
+
+    public function test_counter_sales_count_in_the_dashboard(): void
+    {
+        $this->shop();
+        $p = $this->product('DASH-1', 10, 5, 120);   // 120 € TTC = 100 HT, cost 5
+        Caisse::encaisser([Caisse::lineFor($p, 2)], ['carte' => 240]);
+
+        $html = $this->get(route('dashboard'))->assertOk()->getContent();
+        $this->assertStringContainsString(\App\Support\Fmt::money(240), $html);   // CA du mois + encaissé
+        $this->assertStringContainsString(\App\Support\Fmt::money(190), $html);   // marge HT: 200 - 2 x 5
+        $this->assertStringContainsString('Produit DASH-1', $html);              // top produits
+    }
+
     public function test_companies_have_their_own_numbering_and_cannot_see_each_other(): void
     {
         $this->shop();

@@ -3,19 +3,26 @@
 namespace App\Livewire\Caisse;
 
 use App\Models\CaisseCloture;
+use App\Models\CaisseJournal;
+use App\Models\CaisseTicket;
 use App\Support\Caisse;
 use App\Support\CaisseException;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 
-/** Z closures (2026-11-25): close the day, list day/month/year closures, integrity check. */
+/** Z closures (2026-11-25): close the day, list day/month/year closures, archives, integrity, compliance info. */
 class Clotures extends Component
 {
-    use WithPagination;
+    use WithFileUploads, WithPagination;
 
     public string $type = 'jour';
 
     public ?array $integrity = null;
+
+    public $archiveFile = null;
+
+    public ?array $archiveCheck = null;
 
     public function mount(): void
     {
@@ -48,14 +55,26 @@ class Clotures extends Component
             ['ok' => $this->integrity['ok'], 'erreurs' => count($this->integrity['errors'])]);
     }
 
+    /** Checks an archive ZIP given back by the user (signature + file fingerprints). */
+    public function updatedArchiveFile(): void
+    {
+        Pos::guard('caisse_cloturer');
+        $this->validate(['archiveFile' => 'required|file|mimes:zip|max:51200'], ['archiveFile.mimes' => 'Choisissez le fichier .zip téléchargé depuis Stokito.']);
+        $this->archiveCheck = Caisse::verifierArchive($this->archiveFile->getRealPath());
+        Caisse::journal('CONTROLE_ARCHIVE', 'Contrôle d’une archive : '.($this->archiveCheck['ok'] ? 'conforme' : 'non conforme'),
+            ['ok' => $this->archiveCheck['ok'], 'periode' => $this->archiveCheck['manifest']['cloture']['periode'] ?? null]);
+        $this->archiveFile = null;
+    }
+
     public function render()
     {
-        $open = Caisse::nonClotures();
-
         return view('livewire.caisse.clotures', [
             'clotures' => CaisseCloture::where('type', $this->type)->orderByDesc('sequence')->paginate(30),
-            'open' => $open,
+            'open' => Caisse::nonClotures(),
             'currency' => \App\Models\Societe::current()->currency ?: 'EUR',
+            'activation' => CaisseJournal::where('code', 'ACTIVATION')->orderBy('sequence')->value('created_at'),
+            'firstTicket' => CaisseTicket::orderBy('sequence')->value('created_at'),
+            'france' => (\App\Models\Societe::current()->country_code ?: 'MA') === 'FR',
         ])->layout('layouts.app');
     }
 }

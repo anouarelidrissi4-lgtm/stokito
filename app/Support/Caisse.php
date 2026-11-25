@@ -28,6 +28,9 @@ class Caisse
 {
     public const VERSION = '1.0';
 
+    /** Date the caisse was first released (field « date de mise sur le marché » of the attestation). */
+    public const RELEASED = '2026-11-25';
+
     public const GENESIS = '0000000000000000000000000000000000000000000000000000000000000000';
 
     public const MODES = ['especes' => 'Espèces', 'carte' => 'Carte bancaire', 'cheque' => 'Chèque', 'autre' => 'Autre'];
@@ -448,5 +451,101 @@ class Caisse
         }
 
         return ['ok' => ! $errors, 'errors' => $errors, 'tickets' => $n, 'clotures' => $nc, 'journal' => $nj];
+    }
+
+    // ------------------------------------------------------------------ archives
+
+    /**
+     * Signed archive of a closed period (2026-11-25, "archivage"): a ZIP with the tickets, lines, payments,
+     * closures and journal events of the period as CSV, plus manifest.json holding the SHA-256 of every file,
+     * the first and last chain hashes and an HMAC of the manifest. Returns the temp file path.
+     */
+    public static function archive(CaisseCloture $z): string
+    {
+        $s = \App\Models\Societe::current();
+        $tickets = CaisseTicket::whereBetween('sequence', [(int) $z->first_seq, (int) $z->last_seq])->orderBy('sequence')->with(['lignes', 'paiements'])->get();
+        $from = $tickets->first()?->created_at ?? $z->created_at;
+        $clotures = CaisseCloture::where('first_seq', '>=', (int) $z->first_seq)->where('last_seq', '<=', (int) $z->last_seq)
+            ->where('created_at', '<=', $z->created_at)->orderBy('type')->orderBy('sequence')->get();
+        $journal = CaisseJournal::whereBetween('created_at', [$from, $z->created_at])->orderBy('sequence')->get();
+
+        $csv = function (array $head, iterable $rows): string {
+            $out = fopen('php://temp', 'w+');
+            fwrite($out, "\xEF\xBB\xBF");
+            fputcsv($out, $head, ';', '"', '');
+            foreach ($rows as $r) {
+                fputcsv($out, $r, ';', '"', '');
+            }
+            rewind($out);
+
+            return stream_get_contents($out);
+        };
+        $d = fn ($v) => Carbon::parse($v)->format('Y-m-d H:i:s');
+        $files = [
+            'tickets.csv' => $csv(['sequence', 'numero', 'type', 'ticket_annule', 'date', 'caissier', 'client', 'total_ht', 'total_tva', 'total_ttc', 'montant_recu', 'rendu', 'prev_hash', 'hash'],
+                $tickets->map(fn ($t) => [$t->sequence, $t->numero, $t->type, $t->annule?->numero ?? '', $d($t->created_at), $t->user_name, $t->client_name ?? '',
+                    self::m($t->total_ht), self::m($t->total_tva), self::m($t->total_ttc), self::m($t->montant_recu), self::m($t->rendu), $t->prev_hash, $t->hash])),
+            'lignes.csv' => $csv(['ticket', 'reference', 'designation', 'quantite', 'prix_unitaire_ttc', 'remise_pct', 'taux_tva', 'total_ht', 'total_ttc'],
+                $tickets->flatMap(fn ($t) => $t->lignes->map(fn ($l) => [$t->numero, $l->reference, $l->designation, self::q($l->quantity), self::m($l->prix_unitaire_ttc),
+                    self::m($l->remise_pct), self::m($l->tva_rate), self::m($l->total_ht), self::m($l->total_ttc)]))),
+            'paiements.csv' => $csv(['ticket', 'mode', 'montant'], $tickets->flatMap(fn ($t) => $t->paiements->map(fn ($p) => [$t->numero, $p->mode, self::m($p->montant)]))),
+            'clotures.csv' => $csv(['type', 'numero', 'periode', 'date', 'premier_ticket', 'dernier_ticket', 'ventes', 'annulations', 'total_ht', 'total_tva', 'total_ttc',
+                'grand_total_perpetuel', 'grand_total_perpetuel_abs', 'prev_hash', 'hash'],
+                $clotures->map(fn ($c) => [$c->type, $c->sequence, $c->periode, $d($c->created_at), $c->first_seq, $c->last_seq, $c->nb_tickets, $c->nb_annulations,
+                    self::m($c->total_ht), self::m($c->total_tva), self::m($c->total_ttc), self::m($c->cumul_ttc), self::m($c->cumul_abs_ttc), $c->prev_hash, $c->hash])),
+            'journal.csv' => $csv(['sequence', 'date', 'code', 'libelle', 'utilisateur', 'donnees', 'prev_hash', 'hash'],
+                $journal->map(fn ($j) => [$j->sequence, $d($j->created_at), $j->code, $j->libelle, $j->user_name ?? '', json_encode(self::canon($j->data ?? []), JSON_UNESCAPED_UNICODE), $j->prev_hash, $j->hash])),
+        ];
+        $files['LISEZMOI.txt'] = "Archive de caisse Stokito — {$s->name}\r\n"
+            ."Période : clôture {$z->type} {$z->periode} (Z n° {$z->sequence}), tickets {$tickets->first()?->numero} à {$tickets->last()?->numero}.\r\n\r\n"
+            ."Chaque ligne de tickets.csv, clotures.csv et journal.csv porte l'empreinte (hash) de l'enregistrement et celle du précédent (prev_hash) :\r\n"
+            ."toute modification ou suppression casse la chaîne. manifest.json contient l'empreinte SHA-256 de chaque fichier de cette archive\r\n"
+            ."et une signature HMAC-SHA256 du manifeste, contrôlable par Stokito. Montants en {$s->currency}, séparateur ;, encodage UTF-8.\r\n";
+
+        $manifest = [
+            'logiciel' => 'Stokito Caisse', 'version' => self::VERSION, 'societe' => $s->name, 'identifiants' => Countries::legalParts($s),
+            'cloture' => ['type' => $z->type, 'numero' => $z->sequence, 'periode' => $z->periode, 'hash' => $z->hash],
+            'tickets' => ['premier' => $tickets->first()?->numero, 'dernier' => $tickets->last()?->numero, 'prev_hash_initial' => $tickets->first()?->prev_hash, 'hash_final' => $tickets->last()?->hash],
+            'genere_le' => now()->format('Y-m-d H:i:s'), 'genere_par' => auth()->user()?->name,
+            'fichiers' => collect($files)->map(fn ($c) => hash('sha256', $c))->all(),
+        ];
+        $manifest['signature'] = self::sign(self::canon($manifest));
+        $files['manifest.json'] = json_encode($manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+        $path = tempnam(sys_get_temp_dir(), 'caisse_').'.zip';
+        $zip = new \ZipArchive();
+        $zip->open($path, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+        foreach ($files as $name => $content) {
+            $zip->addFromString($name, $content);
+        }
+        $zip->close();
+        self::journal('EXPORT_ARCHIVE', "Archive de la clôture {$z->type} {$z->periode} (Z n° {$z->sequence})", ['cloture_id' => $z->id, 'signature' => $manifest['signature']]);
+
+        return $path;
+    }
+
+    /** True when the manifest of an archive was signed by this server and its files are untouched. */
+    public static function verifierArchive(string $zipPath): array
+    {
+        $zip = new \ZipArchive();
+        if ($zip->open($zipPath) !== true || ($raw = $zip->getFromName('manifest.json')) === false) {
+            return ['ok' => false, 'errors' => ['Fichier non reconnu : ce n’est pas une archive de caisse Stokito.']];
+        }
+        $m = json_decode($raw, true) ?: [];
+        $sig = $m['signature'] ?? '';
+        unset($m['signature']);
+        $errors = [];
+        if (! hash_equals(self::sign(self::canon($m)), (string) $sig)) {
+            $errors[] = 'La signature du manifeste ne correspond pas.';
+        }
+        foreach ($m['fichiers'] ?? [] as $name => $sha) {
+            $c = $zip->getFromName($name);
+            if ($c === false || ! hash_equals($sha, hash('sha256', $c))) {
+                $errors[] = "Le fichier {$name} a été modifié ou retiré.";
+            }
+        }
+        $zip->close();
+
+        return ['ok' => ! $errors, 'errors' => $errors, 'manifest' => $m];
     }
 }
