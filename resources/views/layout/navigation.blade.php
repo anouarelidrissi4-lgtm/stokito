@@ -13,6 +13,16 @@
     $sectionIcons = ['tableau_de_bord' => 'home', 'catalogue' => 'cube', 'caisse' => 'receipt', 'ventes' => 'cart', 'achats' => 'truck', 'tresorerie' => 'wallet', 'administration' => 'cog'];
     $quickKeys = ['devis.create', 'bon-livraisons.create', 'commande-fournisseurs.create'];
     $isActive = fn ($item) => $item['active'] && request()->routeIs($item['active']);
+    // every row gets an icon so it reads as a page link, not a heading (2026-11-25)
+    $itemIcons = [
+        'dashboard' => 'home', 'copilot' => 'chart', 'scanner.facture' => 'doc',
+        'products.index' => 'cube', 'categories.index' => 'folder', 'brands.index' => 'folder', 'inventaire.index' => 'clock',
+        'clients.index' => 'user', 'bons-de-chargement.index' => 'truck', 'reglements-clients.index' => 'coins', 'soldes-clients.index' => 'wallet', 'plafonds-clients.index' => 'alert',
+        'fournisseurs.index' => 'user', 'reglements-fournisseurs.index' => 'coins', 'soldes-fournisseurs.index' => 'wallet',
+        'caisse.pos' => 'receipt', 'caisse.tickets' => 'doc', 'caisse.clotures' => 'clock',
+        'depenses.index' => 'wallet', 'tresorerie.comptes-bancaires' => 'wallet', 'tresorerie.porte-feuilles' => 'coins', 'cheques-fournisseurs.index' => 'doc', 'tresorerie.mouvements-bancaires' => 'chart',
+        'statistiques.index' => 'chart', 'documents-externes.index' => 'folder', 'rappels.index' => 'clock', 'utilisateurs.index' => 'user', 'societe.edit' => 'cog',
+    ];
     // document sub-groups (2026-11-25): an "Ajouter" row and a "Liste" row folded under the document name
     $docGroups = [
         'devis' => ['Devis', 'doc'], 'bon-livraisons' => ['Bons de livraison', 'truck'], 'factures' => ['Factures', 'doc'],
@@ -112,7 +122,7 @@
                                     $gActive = collect($entry['items'])->contains(fn ($i) => $isActive($i));
                                 @endphp
                                 <div x-data="{ sub: {{ $gActive ? 'true' : 'false' }} }">
-                                    <button type="button" @click="sub = !sub" class="sp-subgroup w-full flex items-center gap-2 px-3 py-1.5 text-[14px] font-semibold rounded-lg {{ $gActive ? 'text-zinc-900' : 'text-zinc-700' }} hover:bg-zinc-100">
+                                    <button type="button" @click="sub = !sub" class="sp-subgroup w-full flex items-center gap-2.5 px-3 py-1.5 text-[14px] font-semibold rounded-lg {{ $gActive ? 'text-zinc-900' : 'text-zinc-700' }} hover:bg-zinc-100">
                                         <x-sp-icon :name="$gIcon" class="w-4 h-4 shrink-0 text-zinc-500" />
                                         <span class="flex-1 text-start">{{ __($gLabel) }}</span>
                                         <x-sp-icon name="chevron" class="w-3.5 h-3.5 text-zinc-400 transition-transform {{ $rtl ? 'rotate-180' : '' }}" x-bind:class="sub && '{{ $rtl ? '!-rotate-90' : 'rotate-90' }}'" />
@@ -125,7 +135,7 @@
                                 </div>
                             @else
                                 @foreach ($entry['items'] as $item)
-                                    <a href="{{ route($item['route']) }}" wire:navigate class="{{ $linkClass($isActive($item)) }} !py-1.5">@if (str_ends_with($item['key'], '.create'))<x-sp-icon name="plus" class="w-3.5 h-3.5 -ms-0.5 shrink-0" />@endif{{ __($item['label']) }}</a>
+                                    <a href="{{ route($item['route']) }}" wire:navigate class="{{ $linkClass($isActive($item)) }} !py-1.5 font-semibold"><x-sp-icon :name="str_ends_with($item['key'], '.create') ? 'plus' : ($itemIcons[$item['key']] ?? 'dot')" class="w-4 h-4 shrink-0 text-zinc-500" />{{ __($item['label']) }}</a>
                                 @endforeach
                             @endif
                         @endforeach
