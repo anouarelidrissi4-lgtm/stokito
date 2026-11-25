@@ -412,5 +412,14 @@
     "Stokito a-t-il une caisse pour vendre au comptoir ?": "Does Stokito have a till for counter sales?",
     "Oui. Activez la caisse dans « Ma Société » : vous scannez ou touchez les produits, encaissez en espèces, carte ou chèque, et le ticket s’imprime. Chaque ticket est numéroté, signé et ne peut plus être modifié ; une erreur se corrige par un ticket d’annulation. Les clôtures Z journalières, mensuelles et annuelles sont automatiques.": "Yes. Switch the till on in “Ma Société”: scan or tap the products, take cash, card or cheque, and the receipt prints. Every receipt is numbered, signed and can no longer be changed; a mistake is corrected with a cancellation receipt. Daily, monthly and yearly Z closures are automatic.",
     "Logiciel de caisse gratuit": "Free till software",
-    "Copilot IA": "AI Copilot"
+    "Copilot IA": "AI Copilot",
+    "Copilot": "Copilot",
+    "Demandez. Le Copilot prépare, vous validez.": "Ask. The Copilot prepares, you approve.",
+    "Écrivez en français, en arabe ou en darija. Le Copilot répond avec vos propres chiffres et prépare vos documents à partir de vos clients et de votre catalogue.": "Write in French, Arabic or Darija. The Copilot answers with your own figures and prepares your documents from your customers and your catalogue.",
+    "Devis, factures, bons de livraison et bons de commande préparés en une phrase": "Quotes, invoices, delivery notes and purchase orders prepared in one sentence",
+    "Vos ventes du jour ou du mois, les factures impayées, le stock bas": "Your sales of the day or month, unpaid invoices, low stock",
+    "Rien n’est enregistré sans vous : le formulaire s’ouvre rempli, vous vérifiez": "Nothing is saved without you: the form opens filled in, you check it",
+    "150 messages par mois inclus gratuitement": "150 messages a month included for free",
+    "Qu’est-ce que le Copilot IA ?": "What is the AI Copilot?",
+    "Un assistant dans Stokito : écrivez en français, en arabe ou en darija. Il répond avec vos chiffres (ventes, factures impayées, stock) et prépare vos devis, factures, bons de livraison et bons de commande. Il ne les enregistre jamais tout seul : le formulaire s’ouvre rempli, vous vérifiez puis vous enregistrez. 150 messages par mois sont inclus gratuitement.": "An assistant inside Stokito: write in French, Arabic or Darija. It answers with your figures (sales, unpaid invoices, stock) and prepares your quotes, invoices, delivery notes and purchase orders. It never saves them by itself: the form opens filled in, you check it and save. 150 messages a month are included for free."
 }

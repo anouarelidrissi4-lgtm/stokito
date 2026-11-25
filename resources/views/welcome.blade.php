@@ -8,6 +8,7 @@
         ['Mes factures affichent-elles les identifiants de mon entreprise ?', 'Oui, selon votre pays : SIRET, N° TVA et RCS en France ; ICE, IF, RC, Taxe professionnelle et CNSS au Maroc. Les identifiants du client, la TVA détaillée et le montant en lettres sont aussi imprimés. Faites valider vos mentions par votre comptable.'],
         ['Comment le stock se met-il à jour ?', 'Le stock baisse quand un bon de livraison passe en « Livré » ou quand vous faites une facture directe. Il augmente quand vous marquez une commande fournisseur comme reçue. L’inventaire corrige les écarts.'],
         ['Puis-je saisir une facture fournisseur en la prenant en photo ?', 'Oui. Dans « Nouveau bon de commande », touchez « Photo ou PDF » : Stokito lit le fournisseur, la date, le numéro et les lignes de la facture, puis retrouve vos produits. Vous vérifiez avant d’enregistrer. 30 factures par mois sont incluses gratuitement.'],
+        ['Qu’est-ce que le Copilot IA ?', 'Un assistant dans Stokito : écrivez en français, en arabe ou en darija. Il répond avec vos chiffres (ventes, factures impayées, stock) et prépare vos devis, factures, bons de livraison et bons de commande. Il ne les enregistre jamais tout seul : le formulaire s’ouvre rempli, vous vérifiez puis vous enregistrez. 150 messages par mois sont inclus gratuitement.'],
         ['Stokito a-t-il une caisse pour vendre au comptoir ?', 'Oui. Activez la caisse dans « Ma Société » : vous scannez ou touchez les produits, encaissez en espèces, carte ou chèque, et le ticket s’imprime. Chaque ticket est numéroté, signé et ne peut plus être modifié ; une erreur se corrige par un ticket d’annulation. Les clôtures Z journalières, mensuelles et annuelles sont automatiques.'],
         ['Plusieurs employés peuvent-ils travailler en même temps ?', 'Oui. Chaque employé a son compte et vous choisissez ce qu’il peut voir : par exemple cacher les prix d’achat et les marges aux vendeurs.'],
         ['Puis-je importer mes produits depuis Excel ?', 'Oui. Exportez la liste pour obtenir le modèle, remplissez-le dans Excel puis importez-le : les catégories manquantes sont créées automatiquement.'],
@@ -164,6 +165,7 @@
             <a href="#parcours" class="hidden 2xl:inline hover:text-[#ffcc00]">{{ __('Comment ça marche') }}</a>
             <a href="#fonctionnalites" class="hover:text-[#ffcc00]">{{ __('Fonctionnalités') }}</a>
             <a href="#scanner" class="hover:text-[#ffcc00]">{{ __('Scanner IA') }}</a>
+            <a href="#copilot" class="hover:text-[#ffcc00]">{{ __('Copilot') }}</a>
             <a href="#caisse" class="hover:text-[#ffcc00]">{{ __('Caisse') }}</a>
             <a href="#ecrans" class="hover:text-[#ffcc00]">{{ __('Écrans') }}</a>
             <a href="#guide" class="hover:text-[#ffcc00]">{{ __('Guide') }}</a>
@@ -191,6 +193,7 @@
         <a href="#parcours" class="block py-2.5 border-b border-[#2a2a2a]">{{ __('Comment ça marche') }}</a>
         <a href="#fonctionnalites" class="block py-2.5 border-b border-[#2a2a2a]">{{ __('Fonctionnalités') }}</a>
         <a href="#scanner" class="block py-2.5 border-b border-[#2a2a2a]">{{ __('Scanner IA') }}</a>
+        <a href="#copilot" class="block py-2.5 border-b border-[#2a2a2a]">{{ __('Copilot') }}</a>
         <a href="#caisse" class="block py-2.5 border-b border-[#2a2a2a]">{{ __('Caisse') }}</a>
         <a href="#ecrans" class="block py-2.5 border-b border-[#2a2a2a]">{{ __('Écrans') }}</a>
         <a href="#guide" class="block py-2.5 border-b border-[#2a2a2a]">{{ __('Guide') }}</a>
@@ -547,6 +550,59 @@
                 <div class="px-3 py-2.5 flex items-center justify-between">
                     <b class="ind-mono">182,00 € HT</b>
                     <span class="bg-[#111] text-[#ffcc00] ind-h uppercase tracking-wider text-sm px-3 py-1">{{ __('Enregistrer') }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{{-- ============ COPILOT IA (2026-11-25) ============ --}}
+<section id="copilot" class="py-20 sm:py-24 scroll-mt-20 ind-concrete border-y-2 border-[#111]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 grid lg:grid-cols-12 gap-12 items-center">
+        <div class="lg:col-span-5">
+            <p class="ind-mono text-xs text-[#666]"><span class="bg-[#111] text-[#ffcc00] px-1.5 py-0.5 me-1">{{ __('NOUVEAU') }}</span> MOD-09 · {{ __('Copilot IA') }}</p>
+            <h2 class="mt-3 ind-h text-4xl sm:text-5xl uppercase leading-[0.95]">{{ __('Demandez. Le Copilot prépare, vous validez.') }}</h2>
+            <p class="mt-5 text-[#333]">{{ __('Écrivez en français, en arabe ou en darija. Le Copilot répond avec vos propres chiffres et prépare vos documents à partir de vos clients et de votre catalogue.') }}</p>
+            <ul class="mt-6 space-y-2.5 text-sm">
+                @foreach ([
+                    __('Devis, factures, bons de livraison et bons de commande préparés en une phrase'),
+                    __('Vos ventes du jour ou du mois, les factures impayées, le stock bas'),
+                    __('Rien n’est enregistré sans vous : le formulaire s’ouvre rempli, vous vérifiez'),
+                    __('150 messages par mois inclus gratuitement'),
+                ] as $pt)
+                    <li class="flex gap-3"><span class="mt-0.5 grid place-items-center w-5 h-5 shrink-0 bg-[#ffcc00] border-2 border-[#111] text-[11px] font-bold">✓</span><span>{{ $pt }}</span></li>
+                @endforeach
+            </ul>
+            <div class="mt-8"><a href="{{ route('register') }}" class="ind-btn bg-[#111] text-[#ffcc00]">{{ __('Créer un compte gratuit') }} <span aria-hidden="true">{{ $rtl ? '←' : '→' }}</span></a></div>
+        </div>
+
+        {{-- coded chat (fictional demo data) --}}
+        <div class="lg:col-span-7" aria-hidden="true">
+            <div class="max-w-xl ms-auto border-2 border-[#111] bg-white shadow-[10px_10px_0_#111]">
+                <div class="flex items-center gap-3 px-4 py-3 border-b-2 border-[#111] bg-[#111] text-white">
+                    <span class="grid place-items-center w-9 h-9 bg-[#ffcc00] text-[#111]"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9z"/></svg></span>
+                    <div><div class="ind-h text-lg uppercase leading-none">Copilot Stokito</div><div class="ind-mono text-[10px] text-[#9a9a9a]">FR · العربية · darija</div></div>
+                </div>
+                <div class="p-4 space-y-3 text-[13.5px]" dir="ltr">
+                    <div class="sc-row flex justify-end" style="--i: 0"><div class="max-w-[85%] bg-[#111] text-white px-3 py-2">Devis pour Bâti Plus : 50 fer rond Ø10</div></div>
+                    <div class="sc-row" style="--i: 2">
+                        <div class="max-w-[90%] border-2 border-[#111] bg-[#f4f2ec] px-3 py-2.5">
+                            <div class="font-semibold">Devis préparé pour Bâti Plus SARL</div>
+                            <div class="ind-mono text-[12px] text-[#444] mt-0.5">50 × Fer rond à béton Ø10 · 6,83 € HT</div>
+                            <div class="ind-mono text-[12px] mt-0.5"><b>341,50 € HT</b> · 409,80 € TTC</div>
+                            <span class="mt-2 inline-block border-2 border-[#111] bg-[#ffcc00] px-2.5 py-1 text-[12px] font-bold shadow-[2px_2px_0_#111]">Ouvrir le devis pré-rempli →</span>
+                        </div>
+                    </div>
+                    <div class="sc-row flex justify-end" style="--i: 4"><div class="max-w-[85%] bg-[#111] text-white px-3 py-2">chhal bi3t had chhar?</div></div>
+                    <div class="sc-row" style="--i: 6">
+                        <div class="max-w-[90%] border-2 border-[#111] bg-[#f4f2ec] px-3 py-2.5">
+                            Had chhar bi3ti <b>18 420,60 € TTC</b>: 15 210,00 b les factures o 3 210,60 f la caisse. Top produit: Fer rond Ø10.
+                        </div>
+                    </div>
+                </div>
+                <div class="border-t-2 border-[#111] p-2.5 flex gap-2">
+                    <div class="flex-1 border-2 border-[#111] px-3 py-2 text-[13px] text-[#999]">Ex. : Facture pour Café Central, 20 chaises à 175 DH HT</div>
+                    <span class="ind-h uppercase tracking-wider border-2 border-[#111] bg-[#ffcc00] px-3 py-2 text-sm">Envoyer</span>
                 </div>
             </div>
         </div>

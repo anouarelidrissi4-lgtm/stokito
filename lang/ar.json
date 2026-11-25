@@ -431,5 +431,14 @@
     "Stokito a-t-il une caisse pour vendre au comptoir ?": "هل يتوفر Stokito على صندوق للبيع في المحل؟",
     "Oui. Activez la caisse dans « Ma Société » : vous scannez ou touchez les produits, encaissez en espèces, carte ou chèque, et le ticket s’imprime. Chaque ticket est numéroté, signé et ne peut plus être modifié ; une erreur se corrige par un ticket d’annulation. Les clôtures Z journalières, mensuelles et annuelles sont automatiques.": "نعم. فعّل الصندوق في «Ma Société»: امسح المنتجات أو اضغط عليها، استخلص نقدا أو بالبطاقة أو بالشيك، وتُطبع التذكرة. كل تذكرة مرقمة وموقعة ولا يمكن تعديلها؛ ويُصحَّح الخطأ بتذكرة إلغاء. والإغلاقات Z اليومية والشهرية والسنوية تلقائية.",
     "Logiciel de caisse gratuit": "برنامج صندوق مجاني",
-    "Copilot IA": "المساعد الذكي"
+    "Copilot IA": "المساعد الذكي",
+    "Copilot": "المساعد",
+    "Demandez. Le Copilot prépare, vous validez.": "اطلب. المساعد يُحضّر وأنت تؤكد.",
+    "Écrivez en français, en arabe ou en darija. Le Copilot répond avec vos propres chiffres et prépare vos documents à partir de vos clients et de votre catalogue.": "اكتب بالفرنسية أو العربية أو الدارجة. يجيبك المساعد بأرقامك ويحضّر وثائقك انطلاقا من زبنائك ومنتجاتك.",
+    "Devis, factures, bons de livraison et bons de commande préparés en une phrase": "عروض الأسعار والفواتير ووصولات التسليم وطلبيات الشراء تُحضَّر بجملة واحدة",
+    "Vos ventes du jour ou du mois, les factures impayées, le stock bas": "مبيعات اليوم أو الشهر، الفواتير غير المؤداة، المخزون المنخفض",
+    "Rien n’est enregistré sans vous : le formulaire s’ouvre rempli, vous vérifiez": "لا شيء يُحفظ بدونك: يُفتح النموذج معبّأ وأنت تتحقق",
+    "150 messages par mois inclus gratuitement": "150 رسالة شهريا مجانا",
+    "Qu’est-ce que le Copilot IA ?": "ما هو المساعد الذكي؟",
+    "Un assistant dans Stokito : écrivez en français, en arabe ou en darija. Il répond avec vos chiffres (ventes, factures impayées, stock) et prépare vos devis, factures, bons de livraison et bons de commande. Il ne les enregistre jamais tout seul : le formulaire s’ouvre rempli, vous vérifiez puis vous enregistrez. 150 messages par mois sont inclus gratuitement.": "مساعد داخل Stokito: اكتب بالفرنسية أو العربية أو الدارجة. يجيبك بأرقامك (المبيعات، الفواتير غير المؤداة، المخزون) ويحضّر عروض الأسعار والفواتير ووصولات التسليم وطلبيات الشراء. لا يحفظها أبدا وحده: يُفتح النموذج معبّأ، فتتحقق ثم تحفظ. 150 رسالة شهريا مجانا."
 }
