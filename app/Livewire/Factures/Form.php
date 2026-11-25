@@ -42,6 +42,8 @@ class Form extends Component
 
     public $notes = '';
 
+    public $objet = '';
+
     public $adresse_livraison = '';
 
     public $nature_operation = '';
@@ -112,6 +114,7 @@ class Form extends Component
             $this->tva_rate = $this->facture->tva_rate;
             $this->status = $this->facture->status;
             $this->notes = $this->facture->notes ?? '';
+            $this->objet = $this->facture->objet ?? '';
             $this->adresse_livraison = $this->facture->adresse_livraison ?? '';
             $this->nature_operation = $this->facture->nature_operation ?? '';
             $this->remise_type = $this->facture->remise_type ?? 'percent';
@@ -162,6 +165,7 @@ class Form extends Component
             $devis = \App\Models\Devis::findOrFail($devisId);
             $this->devis_id = $devis->id;
             $this->devis_numero = $devis->numero;
+            $this->objet = (string) ($devis->objet ?? '');
             $this->client_id = $devis->client_id;
             $this->tva_rate = (float) $devis->tva_rate;
             $this->remise_type = $devis->remise_type ?? 'percent';
@@ -456,6 +460,7 @@ class Form extends Component
             'tva_rate' => $this->tva_rate,
             'status' => $this->status,
             'notes' => $this->notes,
+            'objet' => mb_substr(trim((string) $this->objet), 0, 255) ?: null,
             'adresse_livraison' => trim((string) $this->adresse_livraison) ?: null,
             'nature_operation' => in_array($this->nature_operation, ['biens', 'services', 'mixte'], true) ? $this->nature_operation : null,
             'remise_type' => $this->remise_type,

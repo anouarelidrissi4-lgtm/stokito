@@ -12,7 +12,7 @@ class Societe extends Model
     protected $table = 'societe';
 
     protected $fillable = [
-        'name', 'country', 'country_code', 'city', 'address', 'phone', 'phone2', 'fax', 'email', 'ice',
+        'name', 'activite', 'rib', 'country', 'country_code', 'city', 'address', 'phone', 'phone2', 'fax', 'email', 'ice',
         'identifiant_fiscal', 'registre_commerce', 'patente', 'cnss', 'conditions_paiement', 'logo_path',
         'currency', 'tva_rate_default', 'qty_decimals', 'price_decimals',
         'tva_franchise', 'penalites_taux', 'indemnite_40', 'escompte_neant', 'tva_debits', 'nature_operation_default', 'devis_validite_jours', 'relances_auto',

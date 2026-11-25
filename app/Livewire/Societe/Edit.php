@@ -28,6 +28,10 @@ class Edit extends Component
 
     public $phone2 = '';
 
+    public $activite = '';
+
+    public $rib = '';
+
     public $fax = '';
 
     public $email = '';
@@ -98,6 +102,8 @@ class Edit extends Component
         $this->address = $this->societe->address;
         $this->phone = $this->societe->phone;
         $this->phone2 = $this->societe->phone2;
+        $this->activite = $this->societe->activite ?? '';
+        $this->rib = $this->societe->rib ?? '';
         $this->fax = $this->societe->fax;
         $this->email = $this->societe->email;
         $this->ice = $this->societe->ice;
@@ -155,6 +161,8 @@ class Edit extends Component
             'address' => 'nullable|string|max:255',
             'phone' => 'nullable|string|max:50',
             'phone2' => 'nullable|string|max:50',
+            'activite' => 'nullable|string|max:255',
+            'rib' => 'nullable|string|max:255',
             'fax' => 'nullable|string|max:50',
             'email' => 'nullable|email|max:255',
             'tva_rate_default' => 'required|numeric|min:0|max:100',
@@ -176,6 +184,8 @@ class Edit extends Component
             'address' => $this->address,
             'phone' => $this->phone,
             'phone2' => $this->phone2,
+            'activite' => trim((string) $this->activite) ?: null,
+            'rib' => trim((string) $this->rib) ?: null,
             'fax' => $this->fax,
             'email' => $this->email,
             'ice' => $this->ice,

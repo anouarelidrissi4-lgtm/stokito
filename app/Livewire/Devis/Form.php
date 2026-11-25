@@ -30,6 +30,8 @@ class Form extends Component
 
     public $notes = '';
 
+    public $objet = '';
+
     #[Validate('required|in:percent,fixed')]
     public $remise_type = 'percent';
 
@@ -102,6 +104,7 @@ class Form extends Component
             $this->tva_rate = $this->devis->tva_rate;
             $this->status = $this->devis->status;
             $this->notes = $this->devis->notes ?? '';
+            $this->objet = $this->devis->objet ?? '';
             $this->remise_type = $this->devis->remise_type ?? 'percent';
             $this->remise_value = $this->devis->remise_value ?? 0;
             $this->items = $this->devis->items->map(fn ($i) => [
@@ -492,6 +495,7 @@ class Form extends Component
             'tva_rate' => $this->tva_rate,
             'status' => $this->status,
             'notes' => $this->notes,
+            'objet' => mb_substr(trim((string) $this->objet), 0, 255) ?: null,
             'remise_type' => $this->remise_type,
             'remise_value' => $this->remise_value ?: 0,
         ];

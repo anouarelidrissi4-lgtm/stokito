@@ -298,6 +298,8 @@
 
         <div class="flex flex-col sm:flex-row justify-between gap-6">
             <div class="w-full sm:w-72">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Objet <span class="text-gray-400 font-normal">(facultatif)</span></label>
+                <input wire:model="objet" type="text" maxlength="255" placeholder="Ex. Fourniture d’une échelle métallique" class="w-full rounded-md border-gray-300 text-sm mb-4">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
                 <textarea wire:model="notes" rows="2" class="w-full rounded-md border-gray-300 text-sm"></textarea>
             </div>

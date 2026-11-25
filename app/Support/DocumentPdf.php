@@ -41,6 +41,7 @@ class DocumentPdf
                     'ttc' => $devis->total_ttc,
                 ],
                 'notes' => $devis->notes,
+                'objet' => $devis->objet,
             ]);
 
         return $pdf;
@@ -79,6 +80,7 @@ class DocumentPdf
                     'ttc' => $facture->total_ttc,
                 ],
                 'notes' => $facture->notes,
+                'objet' => $facture->objet,
                 'facture' => $facture,
                 'devisRef' => $facture->devis?->numero,
             ]);

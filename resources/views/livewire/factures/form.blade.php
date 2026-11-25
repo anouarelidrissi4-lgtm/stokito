@@ -243,6 +243,9 @@
                 </div>
                 @error('remise_value') <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
 
+                <label class="block text-sm font-medium text-gray-700 mb-1 mt-4">Objet <span class="text-gray-400 font-normal">(facultatif, imprimé sous le titre)</span></label>
+                <input wire:model="objet" type="text" maxlength="255" placeholder="Ex. Fourniture d’une échelle métallique" class="w-full rounded-md border-gray-300 text-sm">
+
                 <label class="block text-sm font-medium text-gray-700 mb-1 mt-4">Notes</label>
                 <textarea wire:model="notes" rows="2" class="w-full rounded-md border-gray-300 text-sm"></textarea>
                 @if ($devis_numero)

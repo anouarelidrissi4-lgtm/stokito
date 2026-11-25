@@ -19,7 +19,7 @@ class Facture extends Model
 
     protected $fillable = [
         'client_id', 'bon_livraison_id', 'devis_id', 'caisse_ticket_id', 'numero', 'date', 'due_date',
-        'total_ht', 'tva_rate', 'total_ttc', 'montant_paye', 'status', 'sent_at', 'relance_niveau', 'relance_at', 'notes', 'adresse_livraison', 'nature_operation',
+        'total_ht', 'tva_rate', 'total_ttc', 'montant_paye', 'status', 'sent_at', 'relance_niveau', 'relance_at', 'notes', 'objet', 'adresse_livraison', 'nature_operation',
         'remise_type', 'remise_value',
     ];
 

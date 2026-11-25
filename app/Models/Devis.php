@@ -15,7 +15,7 @@ class Devis extends Model
 
     protected $fillable = [
         'client_id', 'numero', 'date', 'valid_until', 'status', 'sent_at',
-        'total_ht', 'tva_rate', 'total_ttc', 'notes',
+        'total_ht', 'tva_rate', 'total_ttc', 'notes', 'objet',
         'remise_type', 'remise_value',
     ];
 

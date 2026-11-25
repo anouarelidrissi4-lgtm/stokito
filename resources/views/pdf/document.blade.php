@@ -3,53 +3,53 @@
 <head>
 <meta charset="utf-8">
 <style>
-    /* Stokito industrial style (2026-11-23): ink #111, safety yellow #ffcc00, paper #f4f2ec. Print-friendly: few dark fills. */
-    @page { margin: 26px 34px 40px; }
-    body { font-family: Helvetica, Arial, sans-serif; font-size: 11.5px; color: #111; }
-    .mono { font-family: Courier, monospace; }
-    .topbar { height: 6px; background: #ffcc00; border-bottom: 2px solid #111; margin-bottom: 16px; }
-    .header { width: 100%; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 2px solid #111; }
-    .header .logobox { text-align: left; margin-bottom: 10px; }
-    .header .logobox img { max-height: 70px; max-width: 240px; }
-    .header table.headrow { width: 100%; border-collapse: collapse; }
-    .header table.headrow td { vertical-align: top; padding: 0; }
-    .header td.societe { width: 58%; text-align: left; }
-    .header td.docmeta { width: 42%; text-align: right; }
-    .societe h1 { margin: 0 0 5px; font-size: 17px; text-transform: uppercase; letter-spacing: .5px; }
-    .societe p { margin: 1px 0; font-size: 10px; color: #444; }
-    .doctitle { display: inline-block; background: #111; color: #fff; font-size: 17px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; padding: 5px 12px; margin-bottom: 8px; }
-    .docmeta p { margin: 2px 0; font-size: 10.5px; }
-    .docmeta .k { font-family: Courier, monospace; font-size: 9.5px; color: #555; text-transform: uppercase; }
-    .clientbox { width: 100%; margin-bottom: 18px; }
-    .clientbox .inner { border: 2px solid #111; padding: 9px 13px; width: 46%; }
-    .clientbox .label { font-family: Courier, monospace; font-size: 9px; color: #555; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
-    .clientbox .name { font-size: 13px; font-weight: bold; margin-bottom: 2px; }
-    .clientbox p { margin: 1px 0; font-size: 10px; color: #444; }
-    table.items { width: 100%; border-collapse: collapse; margin-bottom: 16px; border: 2px solid #111; }
-    table.items th { background: #111; color: #fff; font-size: 9px; text-transform: uppercase; letter-spacing: 1px; padding: 7px 8px; text-align: left; }
-    table.items th.num { text-align: right; }
-    table.items td { padding: 7px 8px; font-size: 10.5px; border-bottom: 1px solid #d6d3cc; }
-    table.items td.num { text-align: right; font-family: Courier, monospace; font-size: 10.5px; }
-    table.items tr:nth-child(even) td { background: #f4f2ec; }
-    .totalsbox td { padding: 5px 9px; font-size: 10.5px; border-bottom: 1px solid #d6d3cc; }
-    .totalsbox td.lbl { color: #444; }
-    .totalsbox td.val { text-align: right; font-weight: bold; white-space: nowrap; font-family: Courier, monospace; }
-    .totalsbox tr.grand td { background: #ffcc00; border-top: 2px solid #111; border-bottom: 2px solid #111; font-size: 13px; color: #111; padding: 8px 9px; font-weight: bold; }
-    .notes { margin-top: 12px; font-size: 10px; color: #444; }
-    .words { margin-top: 4px; font-size: 10.5px; border-left: 4px solid #ffcc00; padding: 4px 0 4px 9px; }
-    .conditions { margin-top: 10px; font-size: 9.5px; color: #444; }
-    .stamp { width: 220px; height: 100px; border: 2px dashed #111; text-align: center; vertical-align: top; font-family: Courier, monospace; font-size: 9px; color: #555; text-transform: uppercase; letter-spacing: 1px; padding-top: 6px; }
-    .legal { font-size: 8.5px; color: #555; margin-bottom: 2px; }
-    .footer { position: fixed; bottom: -22px; left: 0; right: 0; text-align: center; font-family: Courier, monospace; font-size: 8.5px; color: #777; border-top: 1px solid #d6d3cc; padding-top: 4px; }
+    /* Classic Moroccan invoice layout in Stokito colours (2026-11-26): company left, logo centre, client right,
+       yellow #ffcc00 table header, totals attached under the table, amount in words, legal footer. dompdf: tables only. */
+    @page { margin: 26px 32px 96px; }
+    body { font-family: Helvetica, Arial, sans-serif; font-size: 11px; color: #111; }
+    table { border-collapse: collapse; }
+    .topbar { height: 5px; background: #ffcc00; margin-bottom: 14px; }
+    table.head { width: 100%; }
+    table.head td { vertical-align: top; padding: 0; }
+    .co-name { margin: 0 0 3px; font-size: 15px; font-weight: bold; text-transform: uppercase; letter-spacing: .3px; }
+    .co-act { margin: 0 0 4px; font-size: 10.5px; font-weight: bold; }
+    .co p { margin: 1px 0; font-size: 10px; }
+    .logo { text-align: center; }
+    .logo img { max-height: 105px; max-width: 175px; }
+    .place { text-align: right; font-size: 10.5px; margin-bottom: 12px; }
+    table.meta { width: 100%; }
+    table.meta td { padding: 2px 0; font-size: 10.5px; vertical-align: top; }
+    table.meta td.k { width: 72px; padding-right: 6px; color: #555; white-space: nowrap; }
+    table.meta td.v { font-weight: bold; }
+    .title { text-align: center; margin: 20px 0 14px; }
+    .title span { font-size: 19px; font-weight: bold; letter-spacing: 3px; text-transform: uppercase; border-bottom: 4px solid #ffcc00; padding: 0 8px 3px; }
+    .objet { margin-bottom: 8px; font-size: 10.5px; }
+    .objet p { margin: 1px 0; }
+    table.items { width: 100%; }
+    table.items th { background: #ffcc00; color: #111; font-size: 10px; font-weight: bold; padding: 6px 5px; border: 1px solid #111; text-align: center; }
+    table.items td { border: 1px solid #111; padding: 5px 6px; font-size: 10.5px; }
+    table.items td.c { text-align: center; }
+    table.items td.r { text-align: right; white-space: nowrap; }
+    table.items td.blank { border: 0; }
+    table.items tr.t td.l { background: #fff4c2; font-size: 10px; font-weight: bold; text-align: center; text-transform: uppercase; }
+    table.items tr.t td.r { font-weight: bold; }
+    table.items tr.g td.l, table.items tr.g td.r { background: #ffcc00; font-size: 11.5px; }
+    .words { margin-top: 14px; font-size: 11px; }
+    .words b { font-weight: bold; }
+    .small { margin-top: 8px; font-size: 9.5px; color: #333; }
+    .sign { width: 230px; height: 105px; border: 1px dashed #a1a1aa; vertical-align: top; text-align: center; padding-top: 6px; font-size: 9px; color: #555; }
+    .footer { position: fixed; bottom: -76px; left: 0; right: 0; text-align: center; font-size: 8.5px; color: #111; border-top: 2px solid #ffcc00; padding-top: 5px; }
+    .footer p { margin: 1px 0; }
+    .footer .l1 { font-weight: bold; font-size: 9px; }
+    .footer .gen { margin-top: 3px; color: #a1a1aa; font-size: 7px; }
 </style>
 </head>
 <body>
-
     @php
-        // "sans entête": the paper already carries the letterhead -> no logo / company block
+        // "sans entête": the paper already carries the letterhead -> no logo / company block / legal footer
         $withHeader = $showHeader ?? true;
-        $legal = implode(' · ', \App\Support\Countries::legalParts($societe));
         $cty = \App\Support\Countries::for($societe);
+        $legalParts = \App\Support\Countries::legalParts($societe);
         $isFr = ($societe->country_code ?? '') === 'FR';
         $groups = $totals['groups'] ?? null;
         $multiVat = $showPrices && is_array($groups) && count($groups) > 1;
@@ -74,149 +74,155 @@
             $dh = (int) floor($ttc);
             $cts = (int) round(($ttc - $dh) * 100);
             [$one, $many, $sub] = \App\Support\Countries::words($societe->currency ?: 'MAD');
-            $subs = strtoupper($societe->currency) === 'TND' ? (int) round(($ttc - $dh) * 1000) : $cts;
+            $subs = strtoupper((string) $societe->currency) === 'TND' ? (int) round(($ttc - $dh) * 1000) : $cts;
             $words = ucfirst($nf->format($dh)).' '.($dh > 1 ? $many : $one).($sub && $subs ? ' et '.$nf->format($subs).' '.$sub : '').' TTC';
         }
+        $partyName = trim(($party->full_name ?? null) ?: ($party->name ?? ''));
+        $phones = implode(' / ', array_filter([$societe->phone, $societe->phone2]));
+        // city printed separately only when the address does not already contain it
+        $cityExtra = ($societe->city && ! str_contains(mb_strtolower((string) $societe->address), mb_strtolower($societe->city))) ? $societe->city : null;
+        $cur = $societe->currency;
+        $hasHt = isset($totals['ht']);
+        $cols = 4 + ($showPrices ? 2 + ($multiVat ? 1 : 0) : 0);   // N°, désignation, unité, quantité [, PU, TVA, total]
+        $money = fn ($v) => \App\Support\Fmt::money($v);
     @endphp
-    @if ($withHeader)<div class="topbar"></div>@endif
-    <div class="header" @if (! $withHeader) style="border-bottom:0; padding-top:90px;" @endif>
-        @if ($withHeader && $societe->logoDataUri())
-            <div class="logobox">
-                <img src="{{ $societe->logoDataUri() }}">
-            </div>
-        @endif
-        <table class="headrow">
-            <tr>
-                <td class="societe">
-                    @if ($withHeader)
-                    <h1>{{ $societe->name }}</h1>
-                    @if ($societe->address)<p>{{ $societe->address }}</p>@endif
-                    <p>
-                        @if ($societe->phone) Tél. {{ $societe->phone }} @endif
-                        @if ($societe->email) &middot; {{ $societe->email }} @endif
-                    </p>
-                    <p>{{ implode(' · ', \App\Support\Countries::legalParts($societe)) }}</p>
-                    @endif
-                </td>
-                <td class="docmeta">
-                    <div class="doctitle">{{ $title }}</div>
-                    <p><span class="k">N&deg;</span> <strong class="mono" style="font-size:12px;">{{ $numero }}</strong></p>
-                    <p><span class="k">Date</span> {{ $date }}</p>
-                    @if (!empty($dueDate))<p><span class="k">Échéance</span> {{ $dueDate }}</p>@endif
-                    @if (!empty($validUntil))<p><span class="k">Valable jusqu’au</span> {{ $validUntil }}</p>@endif
-                    @if (!empty($devisRef))<p><span class="k">Devis</span> {{ $devisRef }}</p>@endif
-                    @if (!empty($status))<p><span class="k">Statut</span> {{ \App\Support\Fmt::status(str_replace(' ', '_', $status)) }}</p>@endif
-                </td>
-            </tr>
-        </table>
-    </div>
 
-    <div class="clientbox">
-        <div class="inner">
-            <div class="label">{{ $partyLabel }}</div>
-            <div class="name">{{ $party->name }}</div>
-            @if ($party->address ?? false)<p>{{ $party->address }}</p>@endif
-            @if ($party->phone ?? false)<p>Tél. {{ $party->phone }}</p>@endif
-            @if ($party->ice ?? false)<p>{{ $cty['client'] }} : {{ $party->ice }}</p>@endif
+    @if ($withHeader)<div class="topbar"></div>@endif
+    <table class="head" @if (! $withHeader) style="margin-top:90px;" @endif>
+        <tr>
+            <td style="width:38%;" class="co">
+                @if ($withHeader)
+                    <p class="co-name">{{ $societe->name }}</p>
+                    @if ($societe->activite)<p class="co-act">{{ $societe->activite }}</p>@endif
+                    @if ($societe->address)<p>{{ $societe->address }}</p>@endif
+                    @if ($cityExtra)<p>{{ $cityExtra }}</p>@endif
+                    @if ($phones)<p>Tél. : {{ $phones }}</p>@endif
+                    @if ($societe->email)<p>{{ $societe->email }}</p>@endif
+                @endif
+            </td>
+            <td style="width:24%;" class="logo">
+                @if ($withHeader && $societe->logoDataUri())<img src="{{ $societe->logoDataUri() }}">@endif
+            </td>
+            <td style="width:38%;">
+                <div class="place">{{ $societe->city ? $societe->city.', le' : 'Le' }} <strong>{{ $date }}</strong></div>
+                <table class="meta">
+                    <tr><td class="k">{{ $title }} N°</td><td class="v">{{ $numero }}</td></tr>
+                    <tr><td class="k">{{ $partyLabel }}</td><td class="v">{{ $partyName }}</td></tr>
+                    @if ($party->address ?? false)<tr><td class="k">Adresse</td><td>{{ $party->address }}</td></tr>@endif
+                    @if ($party->ice ?? false)<tr><td class="k">{{ $cty['client'] }}</td><td class="v">{{ $party->ice }}</td></tr>@endif
+                    @if ($party->phone ?? false)<tr><td class="k">Tél.</td><td>{{ $party->phone }}</td></tr>@endif
+                    @if (! empty($dueDate))<tr><td class="k">Échéance</td><td>{{ $dueDate }}</td></tr>@endif
+                    @if (! empty($validUntil))<tr><td class="k">Valable au</td><td>{{ $validUntil }}</td></tr>@endif
+                    @if (! empty($devisRef))<tr><td class="k">Devis</td><td>{{ $devisRef }}</td></tr>@endif
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <div class="title"><span>{{ $title }}</span></div>
+
+    @if (! empty($objet) || $deliveryAddress)
+        <div class="objet">
+            @if (! empty($objet))<p><strong>Objet :</strong> {{ $objet }}</p>@endif
+            @if ($deliveryAddress)<p><strong>Livraison :</strong> {{ preg_replace('/\s*\R\s*/', ', ', trim($deliveryAddress)) }}</p>@endif
         </div>
-        @if ($deliveryAddress)
-        <div class="inner" style="margin-top:8px;">
-            <div class="label">Adresse de livraison</div>
-            <p>{!! nl2br(e($deliveryAddress)) !!}</p>
-        </div>
-        @endif
-    </div>
+    @endif
 
     <table class="items">
         <thead>
             <tr>
-                <th>Produit</th>
-                <th class="num">Quantité</th>
+                <th style="width:5%;">N°</th>
+                <th>Désignation</th>
+                <th style="width:8%;">Unité</th>
+                <th style="width:10%;">Quantité</th>
                 @if ($showPrices)
-                    <th class="num">Prix unitaire{{ isset($totals['ht']) ? ' HT' : '' }}</th>
-                    @if ($multiVat)<th class="num">TVA</th>@endif
-                    <th class="num">Total{{ isset($totals['ht']) ? ' HT' : '' }}</th>
+                    <th style="width:13%;">Prix unitaire{{ $hasHt ? ' HT' : '' }}</th>
+                    @if ($multiVat)<th style="width:7%;">TVA</th>@endif
+                    <th style="width:15%;">Total{{ $hasHt ? ' HT' : '' }}</th>
                 @endif
             </tr>
         </thead>
         <tbody>
-            @foreach ($items as $item)
+            @foreach ($items as $i => $item)
                 <tr>
+                    <td class="c">{{ $loop->iteration }}</td>
                     <td>{{ $item['name'] }}</td>
-                    <td class="num">{{ \App\Support\Fmt::qty($item['quantity']) }} {{ $item['unit'] ?? '' }}</td>
+                    <td class="c">{{ $item['unit'] ?: '-' }}</td>
+                    <td class="c">{{ \App\Support\Fmt::qty($item['quantity']) }}</td>
                     @if ($showPrices)
-                        <td class="num">{{ \App\Support\Fmt::money($item['unit_price']) }}</td>
-                        @if ($multiVat)<td class="num">{{ \App\Support\DocTotals::label($item['tva_rate'] ?? 0) }} %</td>@endif
-                        <td class="num">{{ \App\Support\Fmt::money($item['total']) }}</td>
+                        <td class="r">{{ $item['unit_price'] !== null ? $money($item['unit_price']) : '' }}</td>
+                        @if ($multiVat)<td class="c">{{ \App\Support\DocTotals::label($item['tva_rate'] ?? 0) }} %</td>@endif
+                        <td class="r">{{ $item['total'] !== null ? $money($item['total']) : '' }}</td>
                     @endif
                 </tr>
             @endforeach
+
+            @if ($showPrices && $totals)
+                @php $lc = $cols - 3; @endphp
+                @if ($hasHt)
+                    @if (! empty($totals['remise']))
+                        <tr class="t"><td class="blank" colspan="2"></td><td class="l" colspan="{{ $lc }}">Total brut HT</td><td class="r">{{ $money($totals['brut']) }}</td></tr>
+                        <tr class="t"><td class="blank" colspan="2"></td><td class="l" colspan="{{ $lc }}">Remise</td><td class="r">- {{ $money($totals['remise']) }}</td></tr>
+                    @endif
+                    <tr class="t"><td class="blank" colspan="2"></td><td class="l" colspan="{{ $lc }}">Total HT</td><td class="r">{{ $money($totals['ht']) }}</td></tr>
+                    @if ($franchise && (float) $totals['ttc'] === (float) $totals['ht'])
+                        <tr class="t"><td class="blank" colspan="2"></td><td class="l" colspan="{{ $lc }}">TVA</td><td class="r">non applicable</td></tr>
+                    @elseif (is_array($groups) && count($groups))
+                        @foreach ($groups as $g)
+                            <tr class="t"><td class="blank" colspan="2"></td><td class="l" colspan="{{ $lc }}">TVA {{ \App\Support\DocTotals::label($g['rate']) }} %@if ($multiVat) <span style="font-weight:normal; text-transform:none;">sur {{ $money($g['base']) }}</span>@endif</td><td class="r">{{ $money($g['tva']) }}</td></tr>
+                        @endforeach
+                    @else
+                        <tr class="t"><td class="blank" colspan="2"></td><td class="l" colspan="{{ $lc }}">TVA {{ rtrim(rtrim(number_format($totals['tva_rate'], 2), '0'), '.') }} %</td><td class="r">{{ $money($totals['ttc'] - $totals['ht']) }}</td></tr>
+                    @endif
+                    <tr class="t g"><td class="blank" colspan="2"></td><td class="l" colspan="{{ $lc }}">Total TTC ({{ $cur }})</td><td class="r">{{ $money($totals['ttc']) }}</td></tr>
+                @else
+                    <tr class="t g"><td class="blank" colspan="2"></td><td class="l" colspan="{{ $lc }}">Total ({{ $cur }})</td><td class="r">{{ $money($totals['ttc']) }}</td></tr>
+                @endif
+            @endif
         </tbody>
     </table>
 
-    {{-- totals + amount in words + stamp, laid out with tables (dompdf drops floats inside overflow:hidden) --}}
-    <table style="width:100%; border-collapse:collapse; page-break-inside:avoid;">
-        <tr>
-            <td style="vertical-align:top; padding:0 18px 0 0;">
-                @if ($words)
-                    <div class="words" style="margin-top:4px;">Arrêté{{ $title === 'Facture' ? 'e la présente facture' : ' le présent devis' }} à la somme de :<br><strong>{{ $words }}</strong>.</div>
-                @endif
-                @if ($title === 'Facture' && $societe->conditions_paiement)
-                    <div class="conditions"><strong>Conditions de paiement :</strong> {{ $societe->conditions_paiement }}</div>
-                @endif
-                @if (!empty($notes))
-                    <div class="notes"><strong>Notes :</strong> {{ $notes }}</div>
-                @endif
-                @if ($mentions)
-                    <div class="conditions">@foreach ($mentions as $m){{ $m }}@if (! $loop->last)<br>@endif @endforeach</div>
-                @endif
-            </td>
-            @if ($showPrices && $totals)
-            <td style="vertical-align:top; width:270px; padding:0;">
-                <table class="totalsbox" style="width:100%; border-collapse:collapse;">
-                    @if (isset($totals['ht']))
-                        @if (! empty($totals['remise']))
-                            <tr><td class="lbl">Total brut HT</td><td class="val">{{ \App\Support\Fmt::money($totals['brut']) }} {{ $societe->currency }}</td></tr>
-                            <tr><td class="lbl">Remise</td><td class="val">- {{ \App\Support\Fmt::money($totals['remise']) }} {{ $societe->currency }}</td></tr>
-                        @endif
-                        <tr><td class="lbl">Total HT</td><td class="val">{{ \App\Support\Fmt::money($totals['ht']) }} {{ $societe->currency }}</td></tr>
-                        @if ($franchise && (float) $totals['ttc'] === (float) $totals['ht'])
-                            <tr><td class="lbl">TVA</td><td class="val">non applicable</td></tr>
-                        @elseif (is_array($groups) && count($groups))
-                            @foreach ($groups as $g)
-                                <tr><td class="lbl">TVA {{ \App\Support\DocTotals::label($g['rate']) }} %@if ($multiVat)<br><span style="font-size:9px;">sur {{ \App\Support\Fmt::money($g['base']) }}</span>@endif</td><td class="val">{{ \App\Support\Fmt::money($g['tva']) }} {{ $societe->currency }}</td></tr>
-                            @endforeach
-                        @else
-                            <tr><td class="lbl">TVA ({{ rtrim(rtrim(number_format($totals['tva_rate'], 2), '0'), '.') }} %)</td><td class="val">{{ \App\Support\Fmt::money($totals['ttc'] - $totals['ht']) }} {{ $societe->currency }}</td></tr>
-                        @endif
-                        <tr class="grand"><td class="lbl">Total TTC</td><td class="val">{{ \App\Support\Fmt::money($totals['ttc']) }} {{ $societe->currency }}</td></tr>
-                    @else
-                        <tr class="grand"><td class="lbl">Total</td><td class="val">{{ \App\Support\Fmt::money($totals['ttc']) }} {{ $societe->currency }}</td></tr>
-                    @endif
-                </table>
-            </td>
-            @endif
-        </tr>
-    </table>
+    @if ($words)
+        <div class="words"><b>Arrêté{{ $title === 'Facture' ? 'e la présente facture' : ' le présent devis' }} à la somme de :</b> {{ $words }}.</div>
+    @endif
+    @if ($title === 'Facture' && $societe->conditions_paiement)
+        <div class="small"><strong>Conditions de paiement :</strong> {{ $societe->conditions_paiement }}</div>
+    @endif
+    @if (! empty($notes))
+        <div class="small"><strong>Notes :</strong> {{ $notes }}</div>
+    @endif
+    @if ($mentions)
+        <div class="small">@foreach ($mentions as $m){{ $m }}@if (! $loop->last)<br>@endif @endforeach</div>
+    @endif
 
-    <table style="width:100%; border-collapse:collapse; margin-top:40px; page-break-inside:avoid;">
+    <table style="width:100%; margin-top:26px; page-break-inside:avoid;">
         <tr>
             @if ($title === 'Devis')
-            <td></td>
-            <td class="stamp">Cachet de l’entreprise</td>
-            <td style="width:20px;"></td>
-            <td class="stamp">Bon pour accord<br><span style="text-transform:none; letter-spacing:0;">date et signature du client</span></td>
+                <td></td>
+                <td class="sign">Cachet de l’entreprise</td>
+                <td style="width:18px;"></td>
+                <td class="sign">Bon pour accord<br>date et signature du client</td>
+            @elseif ($title === 'Bon de Livraison')
+                <td></td>
+                <td class="sign">Cachet de l’entreprise</td>
+                <td style="width:18px;"></td>
+                <td class="sign">Reçu par le client<br>date et signature</td>
             @else
-            <td></td>
-            <td class="stamp">Cachet et signature</td>
+                <td></td>
+                <td class="sign">Cachet et signature</td>
             @endif
         </tr>
     </table>
 
     <div class="footer">
-        @if ($withHeader && $legal)<div class="legal">{{ $societe->name }} &middot; {{ $legal }}</div>@endif
-        Document généré par Stokito le {{ now()->format('d/m/Y H:i') }}
+        @if ($withHeader)
+            @php $l1 = array_filter([$phones ? 'Tél. : '.$phones : null, ...$legalParts]); @endphp
+            @if ($l1)<p class="l1">{{ implode(' - ', $l1) }}</p>@endif
+            @php $l2 = array_filter([trim(($societe->address ?? '').' '.($cityExtra ?? '')), $societe->rib]); @endphp
+            @if ($l2)<p>{{ implode(' · ', $l2) }}</p>@endif
+            @if ($societe->email)<p>{{ $societe->email }}</p>@endif
+        @endif
+        <p class="gen">Document généré par Stokito le {{ now()->format('d/m/Y H:i') }}</p>
     </div>
-
 </body>
 </html>

@@ -46,6 +46,10 @@
                     @error('name') <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
                 <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Activité <span class="text-gray-400 font-normal">(sous le nom, sur les factures)</span></label>
+                    <input wire:model="activite" type="text" maxlength="255" placeholder="Ex. Négoce de matériaux et travaux divers" class="w-full rounded-md border-gray-300 text-sm">
+                </div>
+                <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Pays</label>
                     <select wire:model.live="country_code" class="w-full rounded-md border-gray-300 text-sm">
                         @foreach (\App\Support\Countries::options() as $code => $label)
@@ -192,7 +196,11 @@
             </div>
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Conditions de paiement (imprimées sous les factures)</label>
-                <textarea wire:model="conditions_paiement" rows="2" class="w-full rounded-md border-gray-300 text-sm" placeholder="Ex. Paiement à 30 jours par virement ou chèque. RIB : ..."></textarea>
+                <textarea wire:model="conditions_paiement" rows="2" class="w-full rounded-md border-gray-300 text-sm" placeholder="Ex. Paiement à 30 jours par virement ou chèque."></textarea>
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Banque et RIB <span class="text-gray-400 font-normal">(imprimés en bas des factures)</span></label>
+                <input wire:model="rib" type="text" maxlength="255" placeholder="Ex. RIB : 000 000 0000000000000000 00 · Banque, agence" class="w-full rounded-md border-gray-300 text-sm">
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
