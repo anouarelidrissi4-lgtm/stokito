@@ -20,7 +20,7 @@
                 <li><a href="{{ $home }}#parcours" class="hover:text-zinc-900">{{ __('Comment ça marche') }}</a></li>
                 <li><a href="{{ $home }}#fonctionnalites" class="hover:text-zinc-900">{{ __('Fonctionnalités') }}</a></li>
                 <li><a href="{{ $home }}#ecrans" class="hover:text-zinc-900">{{ __('Écrans') }}</a></li>
-                <li><a href="{{ route('register') }}" class="hover:text-zinc-900">{{ __('Créer un compte gratuit') }}</a></li>
+                <li><a href="{{ route('register') }}" class="hover:text-zinc-900">{{ __('Ajouter un compte gratuit') }}</a></li>
                 <li><a href="{{ route('demo.login') }}" class="hover:text-zinc-900">{{ __('Tester la démo') }}</a></li>
             </ul>
         </div>

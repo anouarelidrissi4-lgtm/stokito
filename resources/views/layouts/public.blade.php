@@ -61,7 +61,7 @@
                         <a href="{{ route('dashboard') }}" class="flex h-9 px-3 sm:px-4 items-center whitespace-nowrap bg-zinc-900 text-white text-sm font-medium hover:bg-zinc-700 rounded-lg"><span class="sm:hidden">{{ __('Mon espace') }}</span><span class="hidden sm:inline">{{ __('Tableau de bord') }}</span></a>
                     @else
                         <a href="{{ route('login') }}" class="flex h-9 px-2.5 sm:px-3 items-center whitespace-nowrap border border-zinc-200 text-sm font-medium hover:border-zinc-400 rounded-lg">{{ __('Se connecter') }}</a>
-                        <a href="{{ route('register') }}" class="hidden sm:flex h-9 px-4 items-center whitespace-nowrap bg-zinc-900 text-white text-sm font-medium hover:bg-zinc-700 rounded-lg">{{ __('Créer un compte gratuit') }}</a>
+                        <a href="{{ route('register') }}" class="hidden sm:flex h-9 px-4 items-center whitespace-nowrap bg-zinc-900 text-white text-sm font-medium hover:bg-zinc-700 rounded-lg">{{ __('Ajouter un compte gratuit') }}</a>
                     @endauth
                     <button type="button" @click="menu = !menu" class="xl:hidden p-2 border border-zinc-200 rounded-lg" aria-label="Menu">
                         <x-sp-icon name="menu" class="w-6 h-6" x-show="!menu" /><x-sp-icon name="x" class="w-6 h-6" x-show="menu" x-cloak />
@@ -75,7 +75,7 @@
                 <a href="{{ $home }}#faq" class="block py-2.5 border-b border-zinc-100">{{ __('Questions') }}</a>
                 <a href="{{ route('blog.index') }}" class="block py-2.5 border-b border-zinc-100">{{ __('Blog') }}</a>
                 @guest
-                    <a href="{{ route('register') }}" class="mt-3 flex h-12 items-center justify-center rounded-lg bg-zinc-900 text-white">{{ __('Créer un compte gratuit') }}</a>
+                    <a href="{{ route('register') }}" class="mt-3 flex h-12 items-center justify-center rounded-lg bg-zinc-900 text-white">{{ __('Ajouter un compte gratuit') }}</a>
                     <a href="{{ route('login') }}" class="mt-2 flex h-11 items-center justify-center border border-zinc-200 font-sans text-sm font-bold rounded-lg">{{ __('Se connecter') }}</a>
                 @endguest
             </div>

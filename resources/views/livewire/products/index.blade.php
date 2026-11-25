@@ -59,7 +59,7 @@
 
         <div class="p-4 border-b grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 print:hidden">
             <button wire:click="create" class="col-span-2 sm:col-span-1 justify-center flex items-center gap-1.5 bg-indigo-600 text-white px-3 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-700">
-                <span>+</span> Créer un produit
+                <span>+</span> Ajouter un produit
             </button>
             <button wire:click="exportExcel" class="justify-center flex items-center gap-1.5 bg-[#107c41] text-white border border-[#107c41] px-3 py-2 text-sm font-semibold hover:bg-[#0c6634] rounded-lg">
                 <svg class="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="3" width="20" height="18" rx="3" fill="currentColor" opacity=".25"/><path d="M8 8l8 8M16 8l-8 8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>

@@ -8,7 +8,7 @@
         <div class="flex items-center gap-2">
             <button type="button" wire:click="export" class="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">Exporter CSV</button>
             <button type="button" wire:click="create" class="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700">
-                <x-sp-icon name="plus" class="w-4 h-4" /> Créer une dépense
+                <x-sp-icon name="plus" class="w-4 h-4" /> Ajouter une dépense
             </button>
         </div>
     </div>

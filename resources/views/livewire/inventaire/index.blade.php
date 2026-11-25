@@ -5,7 +5,7 @@
             <p class="text-sm text-slate-500">Comptez votre stock réel et corrigez les écarts en un clic.</p>
         </div>
         <a href="{{ route('inventaire.create') }}" wire:navigate class="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700">
-            <x-sp-icon name="plus" class="w-4 h-4" /> Créer un inventaire
+            <x-sp-icon name="plus" class="w-4 h-4" /> Ajouter un inventaire
         </a>
     </div>
 

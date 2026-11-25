@@ -90,7 +90,7 @@ new #[Layout('layouts.guest')] class extends Component
 }; ?>
 
 <div>
-    <h2 class="ind-h text-3xl leading-none mb-2">{{ __('Créer un compte gratuit') }}</h2>
+    <h2 class="ind-h text-3xl leading-none mb-2">{{ __('Ajouter un compte gratuit') }}</h2>
     <p class="text-sm text-zinc-500 mb-6">{{ __('Votre espace est prêt en une minute. Pas de carte bancaire.') }}</p>
 
     <form wire:submit="register" class="space-y-4" x-data x-init="(() => { const z = { 'Africa/Casablanca': 'MA', 'Europe/Paris': 'FR', 'Europe/Brussels': 'BE', 'Europe/Zurich': 'CH', 'Europe/Luxembourg': 'LU', 'Africa/Dakar': 'SN', 'Africa/Abidjan': 'CI', 'Africa/Douala': 'CM', 'Africa/Tunis': 'TN', 'Africa/Algiers': 'DZ' }[Intl.DateTimeFormat().resolvedOptions().timeZone]; if (z) $wire.set('country', z) })()">

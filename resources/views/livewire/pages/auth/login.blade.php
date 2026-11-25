@@ -75,7 +75,7 @@ new #[Layout('layouts.guest')] class extends Component
     <div class="mt-7 pt-6 border-t border-dashed border-[#111]/30 text-center">
         <p class="text-sm text-zinc-500">{{ __('Pas encore de compte ?') }}</p>
         <div class="mt-3 flex flex-wrap justify-center gap-2">
-            <a href="{{ route('register') }}" wire:navigate class="inline-flex items-center gap-2 border border-zinc-200 bg-[#ffcc00] px-4 py-2 ind-h text-lg hover:bg-white rounded-lg">{{ __('Créer un compte gratuit') }}</a>
+            <a href="{{ route('register') }}" wire:navigate class="inline-flex items-center gap-2 border border-zinc-200 bg-[#ffcc00] px-4 py-2 ind-h text-lg hover:bg-white rounded-lg">{{ __('Ajouter un compte gratuit') }}</a>
             <a href="{{ route('demo.login') }}" class="inline-flex items-center gap-2 border border-zinc-200 bg-white px-4 py-2 ind-h text-lg hover:bg-zinc-100 rounded-lg">{{ __('Tester la démo') }}</a>
         </div>
     </div>

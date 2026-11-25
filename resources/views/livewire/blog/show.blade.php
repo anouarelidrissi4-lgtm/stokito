@@ -46,7 +46,7 @@
                 <h2 class="mt-2 ind-h text-xl sm:text-4xl leading-none">{{ __('Passez de la théorie à la pratique') }}</h2>
                 <p class="mt-3 text-zinc-300">{{ __('Stock, devis, bons de livraison et factures au même endroit. Créez votre espace en une minute, sans carte bancaire.') }}</p>
                 <div class="mt-6 flex flex-wrap gap-3">
-                    <a href="{{ route('register') }}" class="ind-btn bg-[#ffcc00] text-zinc-900">{{ __('Créer un compte gratuit') }}</a>
+                    <a href="{{ route('register') }}" class="ind-btn bg-[#ffcc00] text-zinc-900">{{ __('Ajouter un compte gratuit') }}</a>
                     <a href="{{ route('demo.login') }}" class="ind-btn bg-white text-zinc-900">{{ __('Tester la démo') }}</a>
                 </div>
             </div>

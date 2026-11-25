@@ -101,7 +101,7 @@ class DepensesTest extends TestCase
         $this->actingAs($emp)->get(route('depenses.index'))->assertForbidden();
 
         $emp->forceFill(['permissions' => ['dashboard', 'depenses']])->save();
-        $this->actingAs($emp->fresh())->get(route('depenses.index'))->assertOk()->assertSee('Créer une dépense');
+        $this->actingAs($emp->fresh())->get(route('depenses.index'))->assertOk()->assertSee('Ajouter une dépense');
     }
 
     public function test_dashboard_shows_month_expenses(): void
