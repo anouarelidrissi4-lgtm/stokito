@@ -27,7 +27,7 @@
         <div class="min-h-screen flex flex-col">
 
             <!-- Top bar -->
-            <header class="sticky top-0 h-16 bg-white/90 backdrop-blur border-b border-zinc-200 flex items-center justify-between gap-2 px-3 sm:px-6 shrink-0 z-30 print:hidden">
+            <header class="sp-topbar sticky top-0 h-16 backdrop-blur border-b border-zinc-200 flex items-center justify-between gap-2 px-3 sm:px-6 shrink-0 z-30 print:hidden">
                 <div class="flex items-center gap-2 text-zinc-900 min-w-0">
                     @if (auth()->user()->project_id)
                         <button type="button" @click="nav = true" class="sm:hidden p-2 -ms-1 rounded-lg text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900" aria-label="{{ __('Menu') }}"><x-sp-icon name="menu" class="w-6 h-6" /></button>
