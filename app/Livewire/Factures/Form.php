@@ -12,6 +12,7 @@ use Livewire\Component;
 class Form extends Component
 {
     use RequiresPermission;
+    use \App\Livewire\Concerns\CopilotPrefill;
     use \App\Livewire\Concerns\HasLineVat;
 
     public ?Facture $facture = null;
@@ -145,6 +146,7 @@ class Form extends Component
             $this->tva_rate = $this->defaultVatRate();
             $this->addItem();
         }
+        $this->applyCopilotPrefill();
     }
 
     public function addItem()

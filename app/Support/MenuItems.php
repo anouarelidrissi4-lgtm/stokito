@@ -36,6 +36,8 @@ class MenuItems
     public const ALL = [
         'dashboard' => ['label' => 'Dashboard', 'route' => 'dashboard', 'active' => 'dashboard', 'permission' => 'dashboard', 'module' => null, 'admin_override' => false, 'section' => 'tableau_de_bord', 'order' => 10],
 
+        'copilot' => ['label' => 'Copilot IA', 'route' => 'copilot', 'active' => 'copilot', 'permission' => 'copilot', 'module' => null, 'admin_override' => false, 'section' => 'tableau_de_bord', 'order' => 20],
+
         'products.index' => ['label' => 'Produits', 'route' => 'products.index', 'active' => 'products.index', 'permission' => 'produits_consulter', 'module' => null, 'admin_override' => false, 'section' => 'catalogue', 'order' => 10],
         'categories.index' => ['label' => 'Categories', 'route' => 'categories.index', 'active' => 'categories.index', 'permission' => 'gestion_categories', 'module' => null, 'admin_override' => false, 'section' => 'catalogue', 'order' => 20],
         'brands.index' => ['label' => 'Marques', 'route' => 'brands.index', 'active' => 'brands.index', 'permission' => 'gestion_marques', 'module' => null, 'admin_override' => false, 'section' => 'catalogue', 'order' => 30],

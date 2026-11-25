@@ -22,6 +22,7 @@
 <h2>4. Où sont stockées les données</h2>
 <p>Les données sont hébergées sur un serveur situé à Paris (France), dans l'Union européenne. Une sauvegarde automatique est faite chaque nuit ; une copie de cette sauvegarde est chiffrée sur notre serveur avant d’être envoyée sur Google Drive, où elle ne peut pas être lue sans notre clé.</p>
 <p><strong>Scanner de factures (IA)</strong> : quand vous scannez une facture fournisseur, la photo ou le PDF est transmis à Anthropic (États-Unis), qui fournit le modèle d’intelligence artificielle Claude, uniquement pour en lire le contenu. Stokito supprime le fichier juste après la lecture ; seules les informations que vous enregistrez dans le bon de commande restent dans votre espace. Si vous ne souhaitez pas cette transmission, n’utilisez pas le scanner : la saisie manuelle reste possible.</p>
+<p><strong>Copilot (IA)</strong> : les messages que vous écrivez au Copilot, et les informations de votre espace qu’il consulte pour vous répondre (produits, clients, chiffres), sont transmis à Anthropic uniquement pour produire la réponse. La conversation est gardée dans votre session de navigation et n’est pas réutilisée pour autre chose.</p>
 
 <h2>5. Combien de temps</h2>
 <p>Tant que votre compte est actif. Si vous demandez la suppression de votre compte, vos données sont effacées, sauf ce que la loi nous oblige à garder.</p>

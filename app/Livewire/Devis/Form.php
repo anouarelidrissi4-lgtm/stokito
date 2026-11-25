@@ -11,6 +11,7 @@ use Livewire\Component;
 class Form extends Component
 {
     use RequiresPermission;
+    use \App\Livewire\Concerns\CopilotPrefill;
     use \App\Livewire\Concerns\HasLineVat;
 
     public ?Devis $devis = null;
@@ -116,6 +117,7 @@ class Form extends Component
             $this->valid_until = now()->addDays((int) (\App\Models\Societe::current()->devis_validite_jours ?: 30))->format('Y-m-d');
             $this->addItem();
         }
+        $this->applyCopilotPrefill();
     }
 
     public function addItem()

@@ -32,6 +32,7 @@ return [
     'anthropic' => [
         'key' => env('ANTHROPIC_API_KEY'),
         'scans_per_month' => (int) env('AI_SCANS_PER_MONTH', 30),
+        'copilot_per_month' => (int) env('AI_COPILOT_PER_MONTH', 150),
     ],
 
     'slack' => [

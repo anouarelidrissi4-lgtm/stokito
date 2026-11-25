@@ -12,6 +12,7 @@ use Livewire\WithFileUploads;
 class Form extends Component
 {
     use RequiresPermission;
+    use \App\Livewire\Concerns\CopilotPrefill;
     use WithFileUploads;
 
     public ?CommandeFournisseur $commande = null;
@@ -107,6 +108,7 @@ class Form extends Component
             $this->tva_rate = \App\Models\Societe::current()->tva_rate_default;
             $this->addItem();
         }
+        $this->applyCopilotPrefill();
     }
 
     public function addItem()
