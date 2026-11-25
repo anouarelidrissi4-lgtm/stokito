@@ -6,6 +6,9 @@ Allow: /logiciel-gestion-de-stock-gratuit
 Allow: /logiciel-devis-facture-gratuit
 Allow: /scanner-facture-fournisseur
 Allow: /logiciel-de-caisse-gratuit
+Allow: /modele-bon-de-commande
+Allow: /generateur-code-barre
+Allow: /js/code-barre.js
 Allow: /build/
 Allow: /livewire/livewire.min.js
 Allow: /images/

@@ -20,6 +20,7 @@ Route::view('logiciel-devis-facture-gratuit', 'seo.logiciel-devis-facture')->nam
 Route::view('scanner-facture-fournisseur', 'seo.scanner-facture')->name('seo.scanner-facture');
 Route::view('logiciel-de-caisse-gratuit', 'seo.caisse')->name('seo.caisse');
 Route::view('modele-bon-de-commande', 'seo.bon-de-commande')->name('seo.bon-de-commande');
+Route::view('generateur-code-barre', 'seo.code-barre')->name('seo.code-barre');
 
 // old guide file names (before the Stokito rebrand, 2026-11-24) -> new ones
 Route::get('docs/guide-stockpilot-{lang}.pdf', fn (string $lang) => redirect('/docs/guide-stokito-'.$lang.'.pdf', 301))->where('lang', 'fr|ar|en');
@@ -32,6 +33,7 @@ $sitemapXml = function () {
         ['loc' => route('seo.scanner-facture'), 'lastmod' => '2026-11-24', 'changefreq' => 'monthly', 'priority' => '0.9'],
         ['loc' => route('seo.caisse'), 'lastmod' => '2026-11-25', 'changefreq' => 'monthly', 'priority' => '0.9'],
         ['loc' => route('seo.bon-de-commande'), 'lastmod' => '2026-11-25', 'changefreq' => 'monthly', 'priority' => '0.9'],
+        ['loc' => route('seo.code-barre'), 'lastmod' => '2026-11-25', 'changefreq' => 'monthly', 'priority' => '0.9'],
         ['loc' => route('blog.index'), 'lastmod' => now()->format('Y-m-d'), 'changefreq' => 'daily', 'priority' => '0.8'],
     ]);
 
