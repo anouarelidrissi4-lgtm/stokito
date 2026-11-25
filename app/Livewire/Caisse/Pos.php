@@ -152,7 +152,7 @@ class Pos extends Component
 
         return Product::query()
             ->when($q !== '', fn ($b) => $b->where(fn ($w) => $w->where('name', 'like', "%{$q}%")->orWhere('reference', 'like', "%{$q}%")->orWhere('barcode', $q)))
-            ->orderBy('name')->limit($q === '' ? 18 : 24)->get(['id', 'name', 'reference', 'sale_price', 'stock_qty', 'unit']);
+            ->orderBy('name')->limit($q === '' ? 18 : 24)->get(['id', 'name', 'image_path', 'reference', 'sale_price', 'stock_qty', 'unit']);
     }
 
     public function render()

@@ -23,6 +23,13 @@ class Index extends Component
     public bool $showImportModal = false;
     public ?int $editingId = null;
 
+    // product photo (2026-11-25)
+    public $image = null;
+
+    public ?string $imagePath = null;
+
+    public bool $removeImage = false;
+
     public function mount(): void
     {
         $this->requirePermission('produits_consulter');
@@ -64,6 +71,7 @@ class Index extends Component
     {
         $this->requirePermission('produits_creer');
         $this->resetForm();
+        $this->reset(['image', 'imagePath', 'removeImage']);
         $this->showModal = true;
     }
 
@@ -85,6 +93,8 @@ class Index extends Component
         $this->tva_rate = $p->tva_rate;
         $this->stock_qty = $p->stock_qty;
         $this->stock_alert_threshold = $p->stock_alert_threshold;
+        $this->reset(['image', 'removeImage']);
+        $this->imagePath = $p->image_path;
         $this->showModal = true;
     }
 
@@ -120,7 +130,19 @@ class Index extends Component
             'tva_rate' => 'nullable|numeric|min:0|max:100',
             'stock_qty' => 'required|integer|min:0',
             'stock_alert_threshold' => 'nullable|integer|min:0',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:8192',
         ]);
+
+        $old = $this->editingId ? Product::find($this->editingId)?->image_path : null;
+        $newPath = $old;
+        if ($this->image) {
+            $newPath = Product::storeImage($this->image->getRealPath(), auth()->user()->project_id) ?? $old;
+        } elseif ($this->removeImage) {
+            $newPath = null;
+        }
+        if ($old && $old !== $newPath) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($old);
+        }
 
         Product::updateOrCreate(['id' => $this->editingId], [
             'reference' => $this->reference,
@@ -136,7 +158,9 @@ class Index extends Component
             'tva_rate' => $this->tva_rate === '' || $this->tva_rate === null ? null : $this->tva_rate,
             'stock_qty' => $this->stock_qty,
             'stock_alert_threshold' => $this->stock_alert_threshold,
+            'image_path' => $newPath,
         ]);
+        $this->reset(['image', 'imagePath', 'removeImage']);
 
         $this->showModal = false;
         $this->resetForm();

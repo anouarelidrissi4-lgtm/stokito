@@ -41,6 +41,9 @@
                 @forelse ($products as $p)
                     <button type="button" wire:click="addProduct({{ $p->id }})" wire:key="p{{ $p->id }}"
                         class="text-start border-2 border-[#111] bg-white p-2.5 hover:bg-[#fff3c4] active:bg-[#ffcc00] min-h-[84px] flex flex-col">
+                        @if ($p->image_path)
+                            <img src="{{ $p->imageUrl() }}" alt="" loading="lazy" class="-mx-2.5 -mt-2.5 mb-2 w-[calc(100%+1.25rem)] aspect-[4/3] object-cover border-b-2 border-[#111]">
+                        @endif
                         <span class="text-sm font-semibold leading-snug line-clamp-2">{{ $p->name }}</span>
                         <span class="ind-mono text-[10px] text-[#777] mt-0.5">{{ $p->reference }}</span>
                         <span class="mt-auto pt-1 flex items-end justify-between gap-1">

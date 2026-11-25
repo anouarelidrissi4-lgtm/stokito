@@ -154,6 +154,23 @@
                     <div class="col-span-2">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Désignation</label>
                         <input wire:model="name" type="text" class="w-full rounded-md border-gray-300 text-sm">
+                        <div class="mt-3 flex items-center gap-3">
+                            @if ($image && method_exists($image, 'temporaryUrl'))
+                                <img src="{{ $image->temporaryUrl() }}" alt="" class="w-16 h-16 object-cover border-2 border-[#111]">
+                            @elseif ($imagePath && ! $removeImage)
+                                <img src="{{ asset('storage/'.$imagePath) }}" alt="" class="w-16 h-16 object-cover border-2 border-[#111]">
+                            @endif
+                            <label class="cursor-pointer inline-flex items-center gap-1.5 border-2 border-[#111] bg-white px-3 py-1.5 text-xs font-semibold hover:bg-[#fff3c4]">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.66-.9l.82-1.2A2 2 0 0 1 10.07 4h3.86a2 2 0 0 1 1.66.9l.82 1.2a2 2 0 0 0 1.66.9H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><circle cx="12" cy="13" r="3"/></svg>
+                                {{ ($imagePath && ! $removeImage) || $image ? 'Changer la photo' : 'Ajouter une photo' }}
+                                <input type="file" wire:model="image" accept="image/*" class="sr-only">
+                            </label>
+                            @if (($imagePath && ! $removeImage) || $image)
+                                <button type="button" wire:click="$set('image', null); $set('removeImage', true)" class="text-xs text-[#b42318] underline">Retirer</button>
+                            @endif
+                            <span wire:loading wire:target="image" class="text-xs text-gray-500">Envoi…</span>
+                        </div>
+                        @error('image') <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
                         @error('name') <p class="text-red-600 text-xs">{{ $message }}</p> @enderror
                     </div>
                     <div>
