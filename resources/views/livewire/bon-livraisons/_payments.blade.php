@@ -20,7 +20,7 @@
             <p class="text-xs text-gray-500">{{ $payments ? 'Chaque règlement est enregistré tout de suite.' : 'Ils seront enregistrés avec le bon de livraison.' }}</p>
         </div>
         <div class="flex flex-wrap gap-2">
-            <button type="button" wire:click="openPayment('cash')" class="inline-flex items-center gap-1.5 min-h-10 px-4 py-2 rounded-lg bg-zinc-900 text-white text-sm font-semibold hover:bg-zinc-700">
+            <button type="button" wire:click="openPayment('cash')" class="inline-flex items-center gap-1.5 min-h-10 px-4 py-2 rounded-lg bg-[#16a34a] text-white text-sm font-semibold hover:bg-[#15803d]">
                 <x-sp-icon name="plus" class="w-4 h-4" /> Espèces / Virement / Versement / Transfert cash
             </button>
             <button type="button" wire:click="openPayment('papier')" class="inline-flex items-center gap-1.5 min-h-10 px-4 py-2 rounded-lg bg-[#ffcc00] text-zinc-900 text-sm font-semibold hover:bg-[#ffd633]">
