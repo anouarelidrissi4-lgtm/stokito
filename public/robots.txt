@@ -12,6 +12,7 @@ Allow: /js/code-barre.js
 Allow: /build/
 Allow: /livewire/livewire.min.js
 Allow: /images/
+Allow: /videos/
 Allow: /docs/
 Allow: /favicon
 Allow: /apple-touch-icon.png

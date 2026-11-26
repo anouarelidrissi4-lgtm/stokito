@@ -290,6 +290,26 @@
 </section>
 
 {{-- ============ HOW IT WORKS: 4 stations ============ --}}
+{{-- Presentation video (2026-11-26): real screenshots + French voice-over, loads only on click --}}
+<section id="video" class="py-16 sm:py-20 scroll-mt-20 bg-white border-b border-zinc-200">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6">
+        <div class="text-center max-w-2xl mx-auto">
+            <p class="text-sm font-semibold text-zinc-500">{{ __('En vidéo') }}</p>
+            <h2 class="mt-2 text-3xl sm:text-4xl font-bold tracking-tight text-zinc-900">{{ __('Stokito en 50 secondes') }}</h2>
+            <p class="mt-3 text-zinc-600">{{ __('Produits, devis, factures, caisse, scanner de factures et Copilot : le tour complet, sur de vraies captures de l’application.') }}</p>
+        </div>
+        <div class="relative mt-8 rounded-2xl overflow-hidden shadow-2xl ring-1 ring-zinc-200 bg-zinc-900" x-data="{ on: false }">
+            <video x-ref="v" class="block w-full aspect-video" src="/videos/stokito-presentation.mp4?v=20261126" poster="/images/video/stokito-presentation.jpg" preload="none" playsinline :controls="on"></video>
+            <button type="button" x-show="!on" @click="on = true; $nextTick(() => $refs.v.play())" class="group absolute inset-0 grid place-items-center bg-black/10 hover:bg-black/0 transition" aria-label="{{ __('Lire la vidéo') }}">
+                <span class="grid place-items-center w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#ffcc00] text-zinc-900 shadow-2xl ring-8 ring-white/30 group-hover:scale-105 transition">
+                    <svg class="w-9 h-9 sm:w-10 sm:h-10 ms-1" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg>
+                </span>
+            </button>
+        </div>
+    </div>
+    <script type="application/ld+json">{"@@context":"https://schema.org","@type":"VideoObject","name":"Stokito en 50 secondes","description":"Présentation de Stokito : produits et stock, devis, factures, encaissements, caisse, scanner de factures fournisseurs et Copilot, sur de vraies captures de l’application.","thumbnailUrl":"https://stokito.com/images/video/stokito-presentation.jpg","uploadDate":"2026-11-26","duration":"PT49S","contentUrl":"https://stokito.com/videos/stokito-presentation.mp4","inLanguage":"fr"}</script>
+</section>
+
 <section id="parcours" class="py-20 sm:py-24 scroll-mt-20 bg-zinc-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6">
         <div class="flex flex-wrap items-end justify-between gap-6 border-b border-zinc-200 pb-6">
