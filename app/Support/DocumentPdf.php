@@ -87,4 +87,53 @@ class DocumentPdf
 
         return $pdf;
     }
+
+    /** view data of one delivery note (2026-11-27, was in the route) */
+    public static function bonLivraisonData(\App\Models\BonLivraison $bl): array
+    {
+        $bl->loadMissing(['client', 'items.product']);
+        $societe = \App\Models\Societe::current();
+
+        return [
+            'title' => 'Bon de Livraison',
+            'numero' => $bl->numero,
+            'date' => $bl->date->format('d/m/Y'),
+            'dueDate' => null,
+            'status' => $bl->status,
+            'partyLabel' => 'Client',
+            'party' => $bl->client,
+            'items' => $bl->items->map(fn ($i) => [
+                'name' => ($i->product->name ?? '-').($societe->show_ref_bl && ($i->product->reference ?? null) ? ' ('.$i->product->reference.')' : ''),
+                'unit' => $i->product->unit ?? '',
+                'quantity' => $i->quantity,
+                'unit_price' => $i->unit_price,
+                'tva_rate' => $i->tva_rate ?? $bl->tva_rate,
+                'total' => $i->unit_price !== null ? $i->quantity * $i->unit_price : null,
+            ]),
+            'showPrices' => $bl->show_prices,
+            'totals' => $bl->show_prices ? [
+                'brut' => $bl->montantBrutHt(),
+                'remise' => $bl->montantRemise(),
+                'ht' => $bl->total_ht,
+                'tva_rate' => $bl->tva_rate,
+                'groups' => $bl->vatTotals()['groups'],
+                'ttc' => $bl->total,
+            ] : null,
+            'notes' => null,
+        ];
+    }
+
+    public static function bonLivraison(\App\Models\BonLivraison $bl): \Barryvdh\DomPDF\PDF
+    {
+        return \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.document', ['societe' => \App\Models\Societe::current()] + self::bonLivraisonData($bl));
+    }
+
+    /** several delivery notes in one PDF, one per page */
+    public static function bonLivraisons($bls): \Barryvdh\DomPDF\PDF
+    {
+        return \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.documents', [
+            'societe' => \App\Models\Societe::current(),
+            'docs' => collect($bls)->map(fn ($bl) => self::bonLivraisonData($bl))->all(),
+        ]);
+    }
 }

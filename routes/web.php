@@ -380,39 +380,18 @@ Route::middleware(['auth'])->group(function () {
     Route::get('bon-livraisons/{bonLivraisonId}/pdf', function ($bonLivraisonId) {
         abort_unless(auth()->user()->hasPermission('bl_consulter'), 403);
         $bl = \App\Models\BonLivraison::with(['client', 'items.product'])->findOrFail($bonLivraisonId);
-        $societe = \App\Models\Societe::current();
 
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.document', [
-            'societe' => $societe,
-            'title' => 'Bon de Livraison',
-            'numero' => $bl->numero,
-            'date' => $bl->date->format('d/m/Y'),
-            'dueDate' => null,
-            'status' => $bl->status,
-            'partyLabel' => 'Client',
-            'party' => $bl->client,
-            'items' => $bl->items->map(fn ($i) => [
-                'name' => ($i->product->name ?? '-').($societe->show_ref_bl && ($i->product->reference ?? null) ? ' ('.$i->product->reference.')' : ''),
-                'unit' => $i->product->unit ?? '',
-                'quantity' => $i->quantity,
-                'unit_price' => $i->unit_price,
-                'tva_rate' => $i->tva_rate ?? $bl->tva_rate,
-                'total' => $i->unit_price !== null ? $i->quantity * $i->unit_price : null,
-            ]),
-            'showPrices' => $bl->show_prices,
-            'totals' => $bl->show_prices ? [
-                'brut' => $bl->montantBrutHt(),
-                'remise' => $bl->montantRemise(),
-                'ht' => $bl->total_ht,
-                'tva_rate' => $bl->tva_rate,
-                'groups' => $bl->vatTotals()['groups'],
-                'ttc' => $bl->total,
-            ] : null,
-            'notes' => null,
-        ]);
-
-        return $pdf->download($bl->numero.'.pdf');
+        return \App\Support\DocumentPdf::bonLivraison($bl)->download($bl->numero.'.pdf');
     })->name('bon-livraisons.pdf');
+    // delivery notes ticked in the list -> one PDF, one per page (2026-11-27)
+    Route::get('bon-livraisons/pdf-selection', function (\Illuminate\Http\Request $request) {
+        abort_unless(auth()->user()->hasPermission('bl_consulter'), 403);
+        $ids = collect(explode(',', (string) $request->query('ids')))->map(fn ($v) => (int) $v)->filter()->unique()->take(200);
+        $bls = \App\Models\BonLivraison::with(['client', 'items.product'])->whereIn('id', $ids)->orderBy('date')->orderBy('numero')->get();
+        abort_if($bls->isEmpty(), 404);
+
+        return \App\Support\DocumentPdf::bonLivraisons($bls)->stream('bons-de-livraison-'.now()->format('Y-m-d').'.pdf');
+    })->name('bon-livraisons.pdf-selection');
 
     Route::get('commande-fournisseurs', \App\Livewire\CommandeFournisseurs\Index::class)->name('commande-fournisseurs.index');
     Route::get('commande-fournisseurs/create', \App\Livewire\CommandeFournisseurs\Form::class)->name('commande-fournisseurs.create');
