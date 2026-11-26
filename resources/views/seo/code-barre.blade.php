@@ -298,5 +298,5 @@
         </div>
     </article>
 </div>
-<script src="/js/code-barre.js?v=20261125b" defer></script>
+<script src="/js/code-barre.js?v=20261126" defer></script>
 @endcomponent

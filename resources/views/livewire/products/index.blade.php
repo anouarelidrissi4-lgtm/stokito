@@ -73,8 +73,12 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a1 1 0 001 1h8a1 1 0 001-1v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a1 1 0 00-1-1H6a1 1 0 00-1 1zm2 0h6v3H7V4zm6 10v3H7v-5h6v2z" /></svg>
                 Imprimer
             </a>
+            <a href="{{ route('products.labels') }}" wire:navigate class="justify-center flex items-center gap-1.5 bg-white text-zinc-900 border border-zinc-200 px-3 py-2 text-sm font-semibold hover:bg-zinc-100 rounded-lg">
+                <x-sp-icon name="barcode" class="h-4 w-4" />
+                Étiquettes
+            </a>
 
-            <div class="relative sm:ms-auto" x-data="{ open: false, saving: false, draft: [],
+            <div class="relative col-span-2 sm:col-span-1 sm:ms-auto" x-data="{ open: false, saving: false, draft: [],
                     show() { this.draft = JSON.parse(JSON.stringify(this.$wire.columns)); this.open = !this.open },
                     move(i, d) { const j = i + d; if (j < 0 || j >= this.draft.length) return; const t = this.draft[i]; this.draft[i] = this.draft[j]; this.draft[j] = t },
                     async save() { this.saving = true; await this.$wire.saveColumns(this.draft); this.saving = false; this.open = false } }">

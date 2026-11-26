@@ -8,6 +8,7 @@
         'copy' => '<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>',
         'pencil' => '<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>',
         'trash' => '<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/>',
+        'barcode' => '<path d="M3 5v14M6.5 5v14M9.5 5v14M13 5v14M16 5v14M19 5v14M21 5v14"/>',
         'printer' => '<path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/>',
         'send' => '<path d="M21 3 10 14"/><path d="M21 3 14 21l-4-7-7-4z"/>',
         'check' => '<path d="m5 12 5 5 9-10"/>',

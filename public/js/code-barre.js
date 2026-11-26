@@ -247,24 +247,6 @@
         return b + checkDigit(b);
     }
 
-    var api = { TYPES: TYPES, checkDigit: checkDigit, prepare: prepare, encode: encode, toSVG: toSVG, toCanvas: toCanvas, country: country, verify: verify, randomInternal: randomInternal, GS1: GS1 };
-    if (typeof module !== 'undefined' && module.exports) module.exports = api;
-    root.StokitoBarcode = api;
-})(typeof window !== 'undefined' ? window : this);
-
-/* ---------- interface de la page /generateur-code-barre ---------- */
-(function () {
-    'use strict';
-    if (typeof document === 'undefined') return;
-    var B = window.StokitoBarcode;
-
-    var HELP = {
-        ean13: '13 chiffres : le code des produits vendus en magasin. Tapez 12 chiffres, la clé de contrôle est ajoutée.',
-        ean8: '8 chiffres : pour les petits emballages. Tapez 7 chiffres, la clé est ajoutée.',
-        upca: '12 chiffres : le code produit des États-Unis et du Canada. Tapez 11 chiffres, la clé est ajoutée.',
-        code128: 'Lettres et chiffres : références internes, cartons, colis, emplacements d’entrepôt.'
-    };
-    var EXAMPLE = { ean13: '2001234567893', ean8: '20012342', upca: '200123456788', code128: 'STK-REF-0042' };
     var FORMATS = {
         '3x8': { cols: 3, rows: 8, w: 70, h: 37, gx: 0, gy: 0 },
         '3x7': { cols: 3, rows: 7, w: 70, h: 42.3, gx: 0, gy: 0 },
@@ -283,6 +265,84 @@
         '.lbs-pr{font-size:3.6mm;font-weight:800;line-height:1.1}' +
         '.lbs-sm .lbs-pr{font-size:2.6mm}' +
         '.lbs-guide .lbs-lab{outline:.2mm dashed #d4d4d8;outline-offset:-.1mm}';
+
+    /* Type d'un code déjà existant (code barre d'un produit) : EAN/UPC si la clé est juste, sinon Code 128. */
+    function detect(raw) {
+        var v = String(raw || '').trim();
+        if (/^\d+$/.test(v) && (v.length === 13 || v.length === 8 || v.length === 12) && checkDigit(v.slice(0, -1)) === v.slice(-1)) {
+            return { 13: 'ean13', 8: 'ean8', 12: 'upca' }[v.length];
+        }
+        if (v && v.length <= 48 && /^[\x20-\x7e]+$/.test(v)) return 'code128';
+        return null;
+    }
+
+    /* Planche A4 : cells = [{type, code, name, price}], o = {format, start, guide, onlyFirst, text}. */
+    function sheet(cells, o) {
+        o = o || {};
+        var f = FORMATS[o.format] || FORMATS['3x8'], per = f.cols * f.rows;
+        var skip = Math.min(per - 1, Math.max(0, (parseInt(o.start, 10) || 1) - 1));
+        var ml = (210 - f.cols * f.w - (f.cols - 1) * f.gx) / 2, mt = (297 - f.rows * f.h - (f.rows - 1) * f.gy) / 2;
+        var cache = {}, html = [], all = [], i;
+        for (i = 0; i < skip; i++) all.push(null);
+        all = all.concat(cells);
+        var total = Math.ceil(all.length / per), sm = f.h < 25 ? ' lbs-sm' : '';
+        for (var pg = 0; pg < (o.onlyFirst ? Math.min(1, total) : total); pg++) {
+            var h = '<div class="lbs-page' + sm + (o.guide ? ' lbs-guide' : '') + '">';
+            for (i = 0; i < per; i++) {
+                var c = all[pg * per + i], col = i % f.cols, row = Math.floor(i / f.cols);
+                var pos = 'left:' + (ml + col * (f.w + f.gx)).toFixed(2) + 'mm;top:' + (mt + row * (f.h + f.gy)).toFixed(2) + 'mm;width:' + f.w + 'mm;height:' + f.h + 'mm';
+                if (!c) { h += o.guide ? '<div class="lbs-lab" style="' + pos + '"></div>' : ''; continue; }
+                var key = c.type + '|' + c.code;
+                if (!cache[key]) cache[key] = toSVG(encode(c.type, c.code), { fluid: true, height: 40, text: o.text !== false });
+                h += '<div class="lbs-lab" style="' + pos + '">' + (c.name ? '<div class="lbs-nm">' + esc(c.name) + '</div>' : '') +
+                    '<div class="lbs-bc">' + cache[key] + '</div>' + (c.price ? '<div class="lbs-pr">' + esc(c.price) + '</div>' : '') + '</div>';
+            }
+            html.push(h + '</div>');
+        }
+        return { html: html, pages: total, per: per };
+    }
+
+    /* Ouvre les pages dans une fenêtre et lance l'impression. false si la fenêtre est bloquée. */
+    function printSheet(pagesHtml, title) {
+        var w = window.open('', '_blank');
+        if (!w) return false;
+        w.document.write('<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><title>' + esc(title || 'Étiquettes code barre') + '</title><style>@page{size:A4;margin:0}html,body{margin:0;padding:0;background:#fff}' +
+            SHEET_CSS + '.lbs-page{page-break-after:always;break-after:page}.lbs-page:last-child{page-break-after:auto;break-after:auto}' +
+            '@media screen{body{background:#e4e4e7}.lbs-page{margin:16px auto;box-shadow:0 2px 12px rgba(0,0,0,.15)}}</style></head><body>' +
+            pagesHtml.join('') + '<script>window.onload=function(){setTimeout(function(){window.print()},250)}<\/script></body></html>');
+        w.document.close();
+        return true;
+    }
+
+    /* Aperçu réduit de la première page dans box (largeur du conteneur). */
+    function preview(box, pageHtml) {
+        if (!document.getElementById('lbs-style')) {
+            var st = document.createElement('style'); st.id = 'lbs-style'; st.textContent = SHEET_CSS; document.head.appendChild(st);
+        }
+        var w = box.clientWidth || 300, s = w / (210 * 96 / 25.4);
+        box.style.height = (297 * 96 / 25.4 * s) + 'px';
+        box.innerHTML = '<div style="position:absolute;left:0;top:0;transform:scale(' + s + ');transform-origin:0 0">' + (pageHtml || '<div class="lbs-page lbs-guide"></div>') + '</div>';
+    }
+
+    var api = { TYPES: TYPES, checkDigit: checkDigit, prepare: prepare, encode: encode, toSVG: toSVG, toCanvas: toCanvas, country: country, verify: verify, randomInternal: randomInternal, GS1: GS1, FORMATS: FORMATS, SHEET_CSS: SHEET_CSS, detect: detect, sheet: sheet, printSheet: printSheet, preview: preview };
+    if (typeof module !== 'undefined' && module.exports) module.exports = api;
+    root.StokitoBarcode = api;
+})(typeof window !== 'undefined' ? window : this);
+
+/* ---------- interface de la page /generateur-code-barre ---------- */
+(function () {
+    'use strict';
+    if (typeof document === 'undefined') return;
+    var B = window.StokitoBarcode;
+
+    var HELP = {
+        ean13: '13 chiffres : le code des produits vendus en magasin. Tapez 12 chiffres, la clé de contrôle est ajoutée.',
+        ean8: '8 chiffres : pour les petits emballages. Tapez 7 chiffres, la clé est ajoutée.',
+        upca: '12 chiffres : le code produit des États-Unis et du Canada. Tapez 11 chiffres, la clé est ajoutée.',
+        code128: 'Lettres et chiffres : références internes, cartons, colis, emplacements d’entrepôt.'
+    };
+    var EXAMPLE = { ean13: '2001234567893', ean8: '20012342', upca: '200123456788', code128: 'STK-REF-0042' };
+    var FORMATS = B.FORMATS, SHEET_CSS = B.SHEET_CSS;
 
     function $(id) { return document.getElementById(id); }
     function slug(s) { return String(s).replace(/[^A-Za-z0-9_-]+/g, '-').slice(0, 40) || 'code-barre'; }
@@ -355,7 +415,6 @@
         });
 
         /* ----- planche d'étiquettes ----- */
-        var style = document.createElement('style'); style.textContent = SHEET_CSS; document.head.appendChild(style);
 
         function items() {
             var lines = list.value.split(/\r?\n/).map(function (l) { return l.trim(); }).filter(Boolean);
@@ -376,33 +435,14 @@
         }
 
         function pages(guide, onlyFirst) {
-            var f = FORMATS[fmtSel.value], per = f.cols * f.rows, it = items();
-            var skip = Math.min(per - 1, Math.max(0, (parseInt(start.value, 10) || 1) - 1));
-            var ml = (210 - f.cols * f.w - (f.cols - 1) * f.gx) / 2, mt = (297 - f.rows * f.h - (f.rows - 1) * f.gy) / 2;
-            var cache = {}, html = [], cells = [], i;
-            for (i = 0; i < skip; i++) cells.push(null);
-            cells = cells.concat(it.list);
-            var total = Math.ceil(cells.length / per), sm = f.h < 25 ? ' lbs-sm' : '';
-            for (var pg = 0; pg < (onlyFirst ? Math.min(1, total) : total); pg++) {
-                var h = '<div class="lbs-page' + sm + (guide ? ' lbs-guide' : '') + '">';
-                for (i = 0; i < per; i++) {
-                    var c = cells[pg * per + i], col = i % f.cols, row = Math.floor(i / f.cols);
-                    var pos = 'left:' + (ml + col * (f.w + f.gx)).toFixed(2) + 'mm;top:' + (mt + row * (f.h + f.gy)).toFixed(2) + 'mm;width:' + f.w + 'mm;height:' + f.h + 'mm';
-                    if (!c) { h += guide ? '<div class="lbs-lab" style="' + pos + '"></div>' : ''; continue; }
-                    if (!cache[c.code]) cache[c.code] = B.toSVG(B.encode(state.type, c.code), { fluid: true, height: 40, text: showText.checked });
-                    h += '<div class="lbs-lab" style="' + pos + '">' + (c.name ? '<div class="lbs-nm">' + esc(c.name) + '</div>' : '') +
-                        '<div class="lbs-bc">' + cache[c.code] + '</div>' + (c.price ? '<div class="lbs-pr">' + esc(c.price) + '</div>' : '') + '</div>';
-                }
-                html.push(h + '</div>');
-            }
-            return { html: html, pages: total, count: it.list.length, errors: it.errors };
+            var it = items();
+            var r = B.sheet(it.list.map(function (c) { c.type = state.type; return c; }), { format: fmtSel.value, start: start.value, guide: guide, onlyFirst: onlyFirst, text: showText.checked });
+            return { html: r.html, pages: r.pages, count: it.list.length, errors: it.errors };
         }
 
         function renderSheet() {
             var p = pages(true, true);
-            var w = sheetBox.clientWidth || 300, s = w / (210 * 96 / 25.4);
-            sheetBox.style.height = (297 * 96 / 25.4 * s) + 'px';
-            sheetBox.innerHTML = '<div style="position:absolute;left:0;top:0;transform:scale(' + s + ');transform-origin:0 0">' + (p.html[0] || '<div class="lbs-page lbs-guide"></div>') + '</div>';
+            B.preview(sheetBox, p.html[0]);
             var t = p.count ? p.count + ' étiquette(s) sur ' + p.pages + ' page(s) A4' : 'Aucune étiquette.';
             if (p.errors.length) t += ' · ' + p.errors.length + ' ligne(s) ignorée(s), ' + p.errors.slice(0, 2).join(' ; ');
             lmsg.textContent = t;
@@ -421,13 +461,7 @@
         $('lb-print').addEventListener('click', function () {
             var p = pages(false, false);
             if (!p.count) { lmsg.textContent = 'Saisissez d’abord un code barre valide.'; lmsg.setAttribute('data-level', 'error'); return; }
-            var w = window.open('', '_blank');
-            if (!w) { lmsg.textContent = 'Autorisez les fenêtres pop-up pour imprimer la planche.'; lmsg.setAttribute('data-level', 'error'); return; }
-            w.document.write('<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><title>Étiquettes code barre · Stokito</title><style>@page{size:A4;margin:0}html,body{margin:0;padding:0;background:#fff}' +
-                SHEET_CSS + '.lbs-page{page-break-after:always;break-after:page}.lbs-page:last-child{page-break-after:auto;break-after:auto}' +
-                '@media screen{body{background:#e4e4e7}.lbs-page{margin:16px auto;box-shadow:0 2px 12px rgba(0,0,0,.15)}}</style></head><body>' +
-                p.html.join('') + '<script>window.onload=function(){setTimeout(function(){window.print()},250)}<\/script></body></html>');
-            w.document.close();
+            if (!B.printSheet(p.html, 'Étiquettes code barre · Stokito')) { lmsg.textContent = 'Autorisez les fenêtres pop-up pour imprimer la planche.'; lmsg.setAttribute('data-level', 'error'); return; }
         });
 
         /* ----- vérification ----- */

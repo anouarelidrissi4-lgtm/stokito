@@ -300,6 +300,25 @@ Route::middleware(['auth'])->group(function () {
             'societe' => \App\Models\Societe::current(),
         ]);
     })->name('products.print');
+    // A4 label sheets with barcodes (2026-11-26): the page only ships the data, /js/etiquettes.js draws and prints
+    Route::get('products/etiquettes', function () {
+        abort_unless(auth()->user()->hasPermission('produits_consulter'), 403);
+        $societe = \App\Models\Societe::current();
+        $products = \App\Models\Product::orderBy('name')->get(['id', 'reference', 'name', 'barcode', 'sale_price', 'tva_rate', 'stock_qty', 'category_id']);
+        $payload = [
+            'company' => $societe?->name,
+            'currency' => $societe?->currency,
+            'tvaDefault' => (float) ($societe?->tva_rate_default ?? 20),
+            'products' => $products->map(fn ($p) => [
+                'id' => $p->id, 'ref' => $p->reference, 'name' => $p->name, 'barcode' => $p->barcode,
+                'price' => $p->sale_price !== null ? (float) $p->sale_price : null,
+                'tva' => $p->tva_rate !== null ? (float) $p->tva_rate : null,
+                'stock' => (float) $p->stock_qty, 'stockLabel' => \App\Support\Fmt::qty($p->stock_qty), 'cat' => $p->category_id,
+            ])->values(),
+        ];
+
+        return view('products.labels', ['payload' => $payload, 'categories' => \App\Models\Category::orderBy('name')->get(['id', 'name'])]);
+    })->name('products.labels');
     Route::get('copilot', \App\Livewire\Copilot\Chat::class)->name('copilot');
     // the supplier-invoice scanner has its own menu entry; same page as "Nouveau bon de commande"
     Route::get('scanner-ia', \App\Livewire\CommandeFournisseurs\Form::class)->name('scanner.facture');

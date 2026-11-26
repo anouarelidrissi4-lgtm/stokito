@@ -16,7 +16,7 @@
     // every row gets an icon so it reads as a page link, not a heading (2026-11-25)
     $itemIcons = [
         'dashboard' => 'home', 'copilot' => 'chart', 'scanner.facture' => 'doc',
-        'products.index' => 'cube', 'categories.index' => 'folder', 'brands.index' => 'folder', 'inventaire.index' => 'clock',
+        'products.index' => 'cube', 'products.labels' => 'barcode', 'categories.index' => 'folder', 'brands.index' => 'folder', 'inventaire.index' => 'clock',
         'clients.index' => 'user', 'bons-de-chargement.index' => 'truck', 'reglements-clients.index' => 'coins', 'soldes-clients.index' => 'wallet', 'plafonds-clients.index' => 'alert',
         'fournisseurs.index' => 'user', 'reglements-fournisseurs.index' => 'coins', 'soldes-fournisseurs.index' => 'wallet',
         'caisse.pos' => 'receipt', 'caisse.tickets' => 'doc', 'caisse.clotures' => 'clock',
