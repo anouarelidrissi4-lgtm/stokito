@@ -44,12 +44,36 @@
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Client</label>
-                <select wire:model="client_id" class="w-full rounded-md border-gray-300 text-sm">
-                    <option value="">-- Choisir --</option>
-                    @foreach ($clients as $client)
-                        <option value="{{ $client->id }}">{{ $client->name }}</option>
-                    @endforeach
-                </select>
+                {{-- search by name, first name, code or phone (2026-11-27) --}}
+                @php $clientOptions = $clients->map(fn ($c) => ['id' => $c->id, 'label' => trim($c->name.' '.($c->prenom ?? '')), 'code' => $c->code, 'phone' => $c->phone])->values(); @endphp
+                <div class="relative" @click.outside="open = false"
+                     x-data="{ list: @js($clientOptions), sel: @entangle('client_id'), q: '', open: false, hi: 0,
+                        norm(s) { return (s || '').toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') },
+                        get results() {
+                            const q = this.norm(this.q).trim(), qd = q.replace(/[\s.\-+]/g, '');
+                            return this.list.filter(c => !q || this.norm(c.label + ' ' + (c.code || '')).includes(q)
+                                || (qd.length > 1 && /^\d+$/.test(qd) && (c.phone || '').replace(/[\s.\-+]/g, '').includes(qd))).slice(0, 30);
+                        },
+                        pick(c) { if (!c) return; this.sel = c.id; this.q = c.label; this.open = false },
+                        move(d) { this.open = true; this.hi = Math.max(0, Math.min(this.results.length - 1, this.hi + d)) },
+                        init() {
+                            const show = (v) => { const c = this.list.find(x => x.id == v); this.q = c ? c.label : '' };
+                            show(this.sel); this.$watch('sel', show);
+                        } }">
+                    <input type="text" x-model="q" @focus="open = true; hi = 0" @input="open = true; hi = 0"
+                           @keydown.arrow-down.prevent="move(1)" @keydown.arrow-up.prevent="move(-1)"
+                           @keydown.enter.prevent="pick(results[hi])" @keydown.escape="open = false"
+                           placeholder="Nom, prénom, code ou téléphone…" autocomplete="off" class="w-full rounded-md border-gray-300 text-sm">
+                    <div x-show="open" x-cloak class="absolute z-30 mt-1 w-full max-h-72 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg">
+                        <template x-for="(c, i) in results" :key="c.id">
+                            <button type="button" @click="pick(c)" @mouseenter="hi = i" :class="i === hi ? 'bg-zinc-100' : ''" class="block w-full px-3 py-2 text-start">
+                                <span class="block text-sm font-medium text-zinc-900" x-text="c.label"></span>
+                                <span class="block text-xs text-zinc-500" x-text="[c.code, c.phone].filter(Boolean).join(' · ')"></span>
+                            </button>
+                        </template>
+                        <p x-show="!results.length" class="px-3 py-2 text-sm text-zinc-500">Aucun client trouvé.</p>
+                    </div>
+                </div>
                 @error('client_id') <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
             <div>

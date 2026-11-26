@@ -13,7 +13,7 @@ class ReglementClient extends Model
 
     protected $fillable = [
         'client_id', 'facture_id', 'bon_livraison_id', 'tresorerie_compte_id',
-        'montant', 'date', 'mode', 'numero_cheque', 'banque', 'date_echeance', 'notes',
+        'montant', 'date', 'mode', 'numero_cheque', 'banque', 'tireur', 'date_echeance', 'notes',
     ];
 
     protected $casts = [
@@ -36,6 +36,14 @@ class ReglementClient extends Model
     public function removeEffects(): void
     {
         MouvementBancaire::where('reference_type', 'reglement_client')->where('reference_id', $this->id)->delete();
+    }
+
+    /** the observation typed by the user (the automatic "Règlement du bon de livraison …" text is not one) */
+    public function observation(): ?string
+    {
+        $n = trim((string) $this->notes);
+
+        return $n === '' || str_starts_with($n, 'Règlement du bon de livraison ') ? null : $n;
     }
 
     public function modeLabel(): string

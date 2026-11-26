@@ -1,13 +1,13 @@
 {{-- Règlements du bon de livraison (2026-11-26). Before the first save they are kept in $pendingPayments and saved with the BL. --}}
 @php
     $money = fn ($v) => \App\Support\Fmt::money($v);
-    $detail = fn ($banque, $num, $ech) => implode(' · ', array_filter([$banque, $num ? 'n° '.$num : null, $ech ? 'échéance '.$ech : null]));
+    $detail = fn ($banque, $num, $ech, $tireur = null) => implode(' · ', array_filter([$banque, $num ? 'n° '.$num : null, $tireur, $ech ? 'échéance '.$ech : null]));
     $rows = $payments
         ? $payments->map(fn ($r) => ['key' => $r->id, 'date' => $r->date?->format('d/m/Y'), 'mode' => $r->modeLabel(), 'compte' => $r->tresorerieCompte?->name,
-            'detail' => $detail($r->banque, $r->numero_cheque, $r->date_echeance?->format('d/m/Y')), 'montant' => (float) $r->montant])
+            'detail' => $detail($r->banque, $r->numero_cheque, $r->date_echeance?->format('d/m/Y'), $r->tireur), 'obs' => $r->observation(), 'montant' => (float) $r->montant])
         : collect($pendingPayments)->map(fn ($p, $i) => ['key' => $i, 'date' => \Illuminate\Support\Carbon::parse($p['date'])->format('d/m/Y'),
             'mode' => \App\Support\SalesLists::MODES[$p['mode']] ?? $p['mode'], 'compte' => null,
-            'detail' => $detail($p['banque'] ?? null, $p['numero_cheque'] ?? null, ! empty($p['date_echeance']) ? \Illuminate\Support\Carbon::parse($p['date_echeance'])->format('d/m/Y') : null), 'montant' => (float) $p['montant']]);
+            'detail' => $detail($p['banque'] ?? null, $p['numero_cheque'] ?? null, ! empty($p['date_echeance']) ? \Illuminate\Support\Carbon::parse($p['date_echeance'])->format('d/m/Y') : null, $p['tireur'] ?? null), 'obs' => $p['notes'] ?? null, 'montant' => (float) $p['montant']]);
     $regle = $rows->sum('montant');
     $reste = round((float) $this->totalTtc - $regle, 2);
     $field = 'w-full rounded-md border-gray-300 text-sm';
@@ -71,7 +71,15 @@
                         <label class="block text-xs font-medium text-gray-500 mb-1">Date d’échéance</label>
                         <input wire:model="payEcheance" type="date" class="{{ $field }}">
                     </div>
+                    <div class="col-span-2">
+                        <label class="block text-xs font-medium text-gray-500 mb-1">{{ $payMode === 'effet' ? 'Nom du tireur' : 'Nom sur le chèque' }}</label>
+                        <input wire:model="payTireur" type="text" maxlength="120" placeholder="Ex. Martin SARL" class="{{ $field }}">
+                    </div>
                 @endif
+                <div class="col-span-2 lg:col-span-4">
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Observation <span class="font-normal text-gray-400">(facultatif)</span></label>
+                    <input wire:model="payNotes" type="text" maxlength="500" placeholder="Ex. remis par le chauffeur, payé au dépôt…" class="{{ $field }}">
+                </div>
             </div>
             <datalist id="stk-banks">@foreach ($banks as $b)<option value="{{ $b }}"></option>@endforeach</datalist>
             <div class="mt-3 flex justify-end gap-2">
@@ -93,6 +101,7 @@
                         <td class="px-4 py-2.5">
                             <span class="font-medium text-gray-900">{{ $r['mode'] }}</span>
                             @if ($r['detail'] || $r['compte'])<span class="block text-xs text-gray-500">{{ implode(' · ', array_filter([$r['detail'], $r['compte']])) }}</span>@endif
+                            @if (! empty($r['obs']))<span class="block text-xs italic text-gray-500">{{ $r['obs'] }}</span>@endif
                         </td>
                         <td class="px-4 py-2.5 text-end font-semibold tabular-nums whitespace-nowrap">{{ $money($r['montant']) }}</td>
                         <td class="px-2 py-2.5 text-end">
@@ -107,7 +116,7 @@
                 <tr><td colspan="2" class="px-4 py-2 text-end font-semibold text-gray-700">Total des règlements</td><td class="px-4 py-2 text-end font-bold tabular-nums whitespace-nowrap">{{ $money($regle) }}</td><td></td></tr>
                 <tr>
                     <td colspan="2" class="px-4 py-2 text-end font-semibold text-gray-700">Reste à payer</td>
-                    <td class="px-4 py-2 text-end font-bold tabular-nums whitespace-nowrap {{ $reste > 0.01 ? 'text-red-600' : 'text-green-700' }}">{{ $reste > 0.01 ? $money($reste) : ($reste < -0.01 ? 'Trop-perçu '.$money(-$reste) : 'Payé') }}</td><td></td>
+                    <td class="px-4 py-2 text-end font-bold tabular-nums whitespace-nowrap {{ $reste > 0.01 ? 'text-red-600' : ((float) $this->totalTtc > 0 ? 'text-green-700' : 'text-gray-400') }}">{{ $reste > 0.01 ? $money($reste) : ($reste < -0.01 ? 'Trop-perçu '.$money(-$reste) : ((float) $this->totalTtc > 0 ? 'Payé' : '—')) }}</td><td></td>
                 </tr>
             </tfoot>
         </table>

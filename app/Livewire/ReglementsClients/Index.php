@@ -52,6 +52,7 @@ class Index extends Component
         $this->mode = $r->mode;
         $this->numero_cheque = (string) $r->numero_cheque;
         $this->banque = (string) $r->banque;
+        $this->tireur = (string) $r->tireur;
         $this->date_echeance = $r->date_echeance?->format('Y-m-d');
         $this->bon_livraison_id = $r->bon_livraison_id;
         $this->notes = (string) $r->notes;
@@ -80,6 +81,8 @@ class Index extends Component
 
     public $banque = '';
 
+    public $tireur = '';
+
     public $date_echeance = null;
 
     public $bon_livraison_id = null;
@@ -103,7 +106,7 @@ class Index extends Component
 
     public function create()
     {
-        $this->reset(['editId', 'client_id', 'facture_id', 'bon_livraison_id', 'tresorerie_compte_id', 'montant', 'mode', 'numero_cheque', 'banque', 'date_echeance', 'notes']);
+        $this->reset(['editId', 'client_id', 'facture_id', 'bon_livraison_id', 'tresorerie_compte_id', 'montant', 'mode', 'numero_cheque', 'banque', 'tireur', 'date_echeance', 'notes']);
         $this->date = now()->format('Y-m-d');
         $this->montant = 0;
         $this->mode = 'especes';
@@ -113,7 +116,7 @@ class Index extends Component
     public function save()
     {
         $this->validate();
-        $this->validate(['mode' => 'required|in:'.implode(',', array_keys(\App\Support\SalesLists::MODES)), 'banque' => 'nullable|string|max:100', 'date_echeance' => 'nullable|date']);
+        $this->validate(['mode' => 'required|in:'.implode(',', array_keys(\App\Support\SalesLists::MODES)), 'banque' => 'nullable|string|max:100', 'tireur' => 'nullable|string|max:120', 'notes' => 'nullable|string|max:500', 'date_echeance' => 'nullable|date']);
 
         // ids must belong to this company (global scope)
         if (! \App\Models\Client::find($this->client_id)) {
@@ -141,6 +144,7 @@ class Index extends Component
             'numero_cheque' => in_array($this->mode, ['cheque', 'effet', 'virement', 'versement', 'transfert'], true) ? (trim((string) $this->numero_cheque) ?: null) : null,
             'banque' => in_array($this->mode, ['cheque', 'effet', 'virement', 'versement'], true) ? (trim((string) $this->banque) ?: null) : null,
             'date_echeance' => in_array($this->mode, \App\Support\SalesLists::MODES_PAPIER, true) ? ($this->date_echeance ?: null) : null,
+            'tireur' => in_array($this->mode, \App\Support\SalesLists::MODES_PAPIER, true) ? (trim((string) $this->tireur) ?: null) : null,
             'bon_livraison_id' => $this->bon_livraison_id ?: null,
             'notes' => $this->notes,
         ];

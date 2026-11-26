@@ -31,11 +31,13 @@ class BlPaymentsTest extends TestCase
         $this->assertEquals(1200, $c->fresh()->solde());                 // un-invoiced delivery note is owed
 
         Livewire::test(\App\Livewire\BonLivraisons\Form::class, ['bonLivraisonId' => $bl->id])
-            ->call('openPayment', 'papier')->set('payMode', 'cheque')->set('payMontant', 500)->set('payBanque', 'CIH Bank')->set('payNumero', '123456')
+            ->call('openPayment', 'papier')->set('payMode', 'cheque')->set('payMontant', 500)->set('payBanque', 'CIH Bank')->set('payNumero', '123456')->set('payTireur', 'Martin SARL')->set('payNotes', 'Remis par le chauffeur')
             ->call('addPayment')->assertHasNoErrors();
         $r = ReglementClient::sole();
         $this->assertSame($bl->id, $r->bon_livraison_id);
         $this->assertSame('CIH Bank', $r->banque);
+        $this->assertSame('Martin SARL', $r->tireur);
+        $this->assertSame('Remis par le chauffeur', $r->observation());
         $this->assertEquals(700, $bl->fresh()->resteAPayer());
         $this->assertEquals(700, $c->fresh()->solde());
 
@@ -54,12 +56,13 @@ class BlPaymentsTest extends TestCase
         $p = $this->product('TUB-40');
         Livewire::test(\App\Livewire\BonLivraisons\Form::class)
             ->set('client_id', $c->id)->set('items.0.product_id', $p->id)->set('items.0.quantity', 2)->set('items.0.unit_price', 50)
-            ->call('openPayment', 'cash')->set('payMode', 'transfert')->set('payMontant', 60)->call('addPayment')->assertHasNoErrors()
-            ->assertSet('pendingPayments.0.mode', 'transfert')
+            ->call('openPayment', 'cash')->set('payMode', 'especes')->set('payMontant', 60)->set('payNotes', 'Payé au dépôt')->call('addPayment')->assertHasNoErrors()
+            ->assertSet('pendingPayments.0.mode', 'especes')
             ->call('save')->assertHasNoErrors();
         $r = ReglementClient::sole();
         $this->assertNotNull($r->bon_livraison_id);
-        $this->assertSame('transfert', $r->mode);
+        $this->assertSame('especes', $r->mode);
+        $this->assertSame('Payé au dépôt', $r->notes);
         $this->assertSame($c->id, $r->client_id);
     }
 

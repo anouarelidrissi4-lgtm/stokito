@@ -139,7 +139,7 @@ class SalesLists
             'factures' => ['Liste des factures', ['N°', 'BL', 'Client', 'Date', 'Échéance', 'Statut', ['Total TTC', 'r'], ['Reste', 'r']],
                 self::factures($f)->get()->map(fn ($x) => [$x->numero, $x->bonLivraison?->numero ?? '—', $client($x->client), $x->date?->format('d/m/Y'), $x->due_date?->format('d/m/Y') ?? '—', Fmt::status($x->status), $money($x->total_ttc), $money($x->resteAPayer())])->all()],
             'reglements' => ['Liste des règlements clients', ['Date', 'Client', 'Facture', 'Mode', 'N° chèque', ['Montant', 'r']],
-                self::reglements($f)->get()->map(fn ($r) => [$r->date?->format('d/m/Y'), $client($r->client), $r->facture?->numero ?? $r->bonLivraison?->numero ?? '—', self::MODES[$r->mode] ?? ucfirst((string) $r->mode), trim(($r->banque ? $r->banque.' ' : '').($r->numero_cheque ? 'n° '.$r->numero_cheque : '')) ?: '—', $money($r->montant)])->all()],
+                self::reglements($f)->get()->map(fn ($r) => [$r->date?->format('d/m/Y'), $client($r->client), $r->facture?->numero ?? $r->bonLivraison?->numero ?? '—', self::MODES[$r->mode] ?? ucfirst((string) $r->mode), implode(' · ', array_filter([$r->banque, $r->numero_cheque ? 'n° '.$r->numero_cheque : null, $r->tireur, $r->observation()])) ?: '—', $money($r->montant)])->all()],
             'soldes' => (function () use ($f, $client, $money) {
                 $s = trim((string) ($f['search'] ?? ''));
                 $rows = Client::query()->when($s !== '', fn ($q) => $q->where(fn ($w) => $w->where('name', 'like', "%{$s}%")->orWhere('prenom', 'like', "%{$s}%")->orWhere('code', 'like', "%{$s}%")))

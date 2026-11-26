@@ -33,7 +33,7 @@
                         <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">{{ $reglement->date->format('d/m/Y') }}</td>
                         <td class="px-6 py-4 text-sm text-gray-900">{{ \App\Support\SalesLists::clientLabel($reglement->client) }}@if ($reglement->client?->code)<span class="block text-xs text-gray-400">{{ $reglement->client->code }}</span>@endif</td>
                         <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">{{ $reglement->documentNumero() ?? '-' }}</td>
-                        <td class="px-6 py-4 text-sm text-gray-500">{{ $reglement->modeLabel() }}@if ($reglement->banque || $reglement->numero_cheque)<span class="block text-xs text-gray-400">{{ implode(' · ', array_filter([$reglement->banque, $reglement->numero_cheque ? 'N° '.$reglement->numero_cheque : null])) }}</span>@endif</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">{{ $reglement->modeLabel() }}@if ($reglement->banque || $reglement->numero_cheque)<span class="block text-xs text-gray-400">{{ implode(' · ', array_filter([$reglement->banque, $reglement->numero_cheque ? 'N° '.$reglement->numero_cheque : null, $reglement->tireur])) }}</span>@endif@if ($reglement->observation())<span class="block text-xs italic text-gray-400">{{ $reglement->observation() }}</span>@endif</td>
                         <td class="px-6 py-4 text-sm text-right font-semibold text-green-700 whitespace-nowrap">{{ \App\Support\Fmt::money($reglement->montant) }}</td>
                         <td class="px-6 py-4 text-right text-sm">@include('livewire.reglements-clients._actions')</td>
                     </tr>
@@ -111,7 +111,12 @@
                 @if (in_array($mode, ['cheque', 'effet'], true))
                     <label class="block text-sm font-medium text-gray-700 mb-1 mt-2">Date d’échéance</label>
                     <input wire:model="date_echeance" type="date" class="w-full rounded-md border-gray-300 text-sm mb-1">
+                    <label class="block text-sm font-medium text-gray-700 mb-1 mt-2">{{ $mode === 'effet' ? 'Nom du tireur' : 'Nom sur le chèque' }}</label>
+                    <input wire:model="tireur" type="text" maxlength="120" placeholder="Ex. Martin SARL" class="w-full rounded-md border-gray-300 text-sm mb-1">
                 @endif
+
+                <label class="block text-sm font-medium text-gray-700 mb-1 mt-2">Observation <span class="font-normal text-gray-400">(facultatif)</span></label>
+                <textarea wire:model="notes" rows="2" maxlength="500" placeholder="Ex. remis par le chauffeur, payé au dépôt…" class="w-full rounded-md border-gray-300 text-sm mb-1"></textarea>
 
                 <div class="flex justify-end gap-2 mt-4">
                     <button wire:click="$set('showModal', false)" class="px-4 py-2 text-sm text-gray-600">Annuler</button>

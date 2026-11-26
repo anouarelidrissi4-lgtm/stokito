@@ -51,6 +51,10 @@ class Form extends Component
 
     public $payEcheance = null;
 
+    public $payTireur = '';
+
+    public $payNotes = '';
+
     public array $pendingPayments = [];    // payments typed before the delivery note exists
 
     public array $items = [];
@@ -415,6 +419,8 @@ class Form extends Component
         $this->payEcheance = $group === 'papier' ? now()->format('Y-m-d') : null;
         $this->payBanque = '';
         $this->payNumero = '';
+        $this->payTireur = '';
+        $this->payNotes = '';
         $this->payCompte = null;
         $this->payMontant = max(0, round($this->resteAPayer(), 2)) ?: null;
     }
@@ -442,7 +448,9 @@ class Form extends Component
             'payEcheance' => 'nullable|date',
             'payBanque' => 'nullable|string|max:100',
             'payNumero' => 'nullable|string|max:60',
-        ], [], ['payMontant' => 'montant', 'payDate' => 'date']);
+            'payTireur' => 'nullable|string|max:120',
+            'payNotes' => 'nullable|string|max:500',
+        ], [], ['payMontant' => 'montant', 'payDate' => 'date', 'payTireur' => 'nom sur le chèque', 'payNotes' => 'observation']);
         if ($this->payCompte && ! \App\Models\TresorerieCompte::find($this->payCompte)) {
             $this->addError('payCompte', 'Compte introuvable.');
 
@@ -456,7 +464,11 @@ class Form extends Component
             'banque' => in_array($this->payMode, ['cheque', 'effet', 'virement', 'versement'], true) ? (trim($this->payBanque) ?: null) : null,
             'numero_cheque' => trim($this->payNumero) ?: null,
             'date_echeance' => $this->payGroup === 'papier' ? ($this->payEcheance ?: null) : null,
+            'tireur' => $this->payGroup === 'papier' ? (trim((string) $this->payTireur) ?: null) : null,
         ];
+        if (($obs = trim((string) $this->payNotes)) !== '') {
+            $data['notes'] = $obs;                         // otherwise the automatic "Règlement du bon de livraison …"
+        }
         if ($this->bonLivraison) {
             $this->createPayment($this->bonLivraison, $data);
             $this->bonLivraison->refresh();
