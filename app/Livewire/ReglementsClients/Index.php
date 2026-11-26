@@ -51,6 +51,9 @@ class Index extends Component
         $this->date = $r->date?->format('Y-m-d');
         $this->mode = $r->mode;
         $this->numero_cheque = (string) $r->numero_cheque;
+        $this->banque = (string) $r->banque;
+        $this->date_echeance = $r->date_echeance?->format('Y-m-d');
+        $this->bon_livraison_id = $r->bon_livraison_id;
         $this->notes = (string) $r->notes;
         $this->resetValidation();
         $this->showModal = true;
@@ -75,6 +78,12 @@ class Index extends Component
 
     public $numero_cheque = '';
 
+    public $banque = '';
+
+    public $date_echeance = null;
+
+    public $bon_livraison_id = null;
+
     public $notes = '';
 
     public function mount($factureId = null)
@@ -94,7 +103,7 @@ class Index extends Component
 
     public function create()
     {
-        $this->reset(['editId', 'client_id', 'facture_id', 'tresorerie_compte_id', 'montant', 'mode', 'numero_cheque', 'notes']);
+        $this->reset(['editId', 'client_id', 'facture_id', 'bon_livraison_id', 'tresorerie_compte_id', 'montant', 'mode', 'numero_cheque', 'banque', 'date_echeance', 'notes']);
         $this->date = now()->format('Y-m-d');
         $this->montant = 0;
         $this->mode = 'especes';
@@ -104,6 +113,7 @@ class Index extends Component
     public function save()
     {
         $this->validate();
+        $this->validate(['mode' => 'required|in:'.implode(',', array_keys(\App\Support\SalesLists::MODES)), 'banque' => 'nullable|string|max:100', 'date_echeance' => 'nullable|date']);
 
         // ids must belong to this company (global scope)
         if (! \App\Models\Client::find($this->client_id)) {
@@ -128,7 +138,10 @@ class Index extends Component
             'montant' => $this->montant,
             'date' => $this->date,
             'mode' => $this->mode,
-            'numero_cheque' => $this->mode === 'cheque' ? $this->numero_cheque : null,
+            'numero_cheque' => in_array($this->mode, ['cheque', 'effet', 'virement', 'versement', 'transfert'], true) ? (trim((string) $this->numero_cheque) ?: null) : null,
+            'banque' => in_array($this->mode, ['cheque', 'effet', 'virement', 'versement'], true) ? (trim((string) $this->banque) ?: null) : null,
+            'date_echeance' => in_array($this->mode, \App\Support\SalesLists::MODES_PAPIER, true) ? ($this->date_echeance ?: null) : null,
+            'bon_livraison_id' => $this->bon_livraison_id ?: null,
             'notes' => $this->notes,
         ];
         \Illuminate\Support\Facades\DB::transaction(function () use ($data) {
@@ -169,6 +182,7 @@ class Index extends Component
             'printUrl' => route('reglements-clients.print', array_filter($this->filters())),
             'clients' => Client::orderBy('name')->get(),
             'comptes' => TresorerieCompte::where('is_active', true)->orderBy('name')->get(),
+            'banks' => \App\Support\Banks::for(),
         ])->layout('layouts.app');
     }
 }

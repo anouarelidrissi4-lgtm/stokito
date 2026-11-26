@@ -63,6 +63,8 @@ class Client extends Model
     public function solde(): float
     {
         $totalFactures = $this->factures()->whereNull('caisse_ticket_id')->sum('total_ttc');
+        // delivery notes not invoiced yet are owed too; once invoiced they count through their invoice (2026-11-26)
+        $totalFactures += $this->bonLivraisons()->whereDoesntHave('facture')->sum('total');
         $totalRegle = $this->reglements()->sum('montant');
         $totalAvoirs = $this->avoirs()->sum('montant');
 

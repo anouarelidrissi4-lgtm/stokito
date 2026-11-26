@@ -50,6 +50,22 @@ class BonLivraison extends Model
         return $this->hasOne(Facture::class);
     }
 
+    /** payments received on this delivery note (2026-11-26) */
+    public function reglements(): HasMany
+    {
+        return $this->hasMany(ReglementClient::class);
+    }
+
+    public function montantRegle(): float
+    {
+        return (float) $this->reglements()->sum('montant');
+    }
+
+    public function resteAPayer(): float
+    {
+        return max(0.0, round((float) $this->total - $this->montantRegle(), 2));
+    }
+
     public function bonsDeChargement(): BelongsToMany
     {
         return $this->belongsToMany(BonDeChargement::class, 'bon_chargement_items')

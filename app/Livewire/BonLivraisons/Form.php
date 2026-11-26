@@ -34,6 +34,25 @@ class Form extends Component
     #[Validate('nullable|numeric|min:0')]
     public $remise_value = 0;
 
+    /* ---- payments on the delivery note (2026-11-26) ---- */
+    public string $payGroup = '';          // '' closed, 'cash' or 'papier'
+
+    public $payMode = 'especes';
+
+    public $payMontant = null;
+
+    public $payDate = null;
+
+    public $payCompte = null;
+
+    public $payBanque = '';
+
+    public $payNumero = '';
+
+    public $payEcheance = null;
+
+    public array $pendingPayments = [];    // payments typed before the delivery note exists
+
     public array $items = [];
 
     public bool $tarif_gros = false;
@@ -387,6 +406,91 @@ class Form extends Component
         return $ok;
     }
 
+    public function openPayment(string $group): void
+    {
+        $this->resetValidation();
+        $this->payGroup = in_array($group, ['cash', 'papier'], true) ? $group : '';
+        $this->payMode = $group === 'papier' ? 'cheque' : 'especes';
+        $this->payDate = now()->format('Y-m-d');
+        $this->payEcheance = $group === 'papier' ? now()->format('Y-m-d') : null;
+        $this->payBanque = '';
+        $this->payNumero = '';
+        $this->payCompte = null;
+        $this->payMontant = max(0, round($this->resteAPayer(), 2)) ?: null;
+    }
+
+    public function closePayment(): void
+    {
+        $this->payGroup = '';
+    }
+
+    /** total of the delivery note as typed, minus what is already paid */
+    public function resteAPayer(): float
+    {
+        $paid = $this->bonLivraison ? $this->bonLivraison->montantRegle() : array_sum(array_column($this->pendingPayments, 'montant'));
+
+        return round((float) $this->totalTtc - $paid, 2);
+    }
+
+    public function addPayment(): void
+    {
+        $modes = $this->payGroup === 'papier' ? \App\Support\SalesLists::MODES_PAPIER : ['especes', 'virement', 'versement', 'transfert'];
+        $this->validate([
+            'payMode' => 'required|in:'.implode(',', $modes),
+            'payMontant' => 'required|numeric|min:0.01',
+            'payDate' => 'required|date',
+            'payEcheance' => 'nullable|date',
+            'payBanque' => 'nullable|string|max:100',
+            'payNumero' => 'nullable|string|max:60',
+        ], [], ['payMontant' => 'montant', 'payDate' => 'date']);
+        if ($this->payCompte && ! \App\Models\TresorerieCompte::find($this->payCompte)) {
+            $this->addError('payCompte', 'Compte introuvable.');
+
+            return;
+        }
+        $data = [
+            'montant' => round((float) $this->payMontant, 2),
+            'date' => $this->payDate,
+            'mode' => $this->payMode,
+            'tresorerie_compte_id' => $this->payCompte ?: null,
+            'banque' => in_array($this->payMode, ['cheque', 'effet', 'virement', 'versement'], true) ? (trim($this->payBanque) ?: null) : null,
+            'numero_cheque' => trim($this->payNumero) ?: null,
+            'date_echeance' => $this->payGroup === 'papier' ? ($this->payEcheance ?: null) : null,
+        ];
+        if ($this->bonLivraison) {
+            $this->createPayment($this->bonLivraison, $data);
+            $this->bonLivraison->refresh();
+        } else {
+            $this->pendingPayments[] = $data;
+        }
+        $this->payGroup = '';
+    }
+
+    public function removePayment($key): void
+    {
+        if ($this->bonLivraison) {
+            $r = \App\Models\ReglementClient::where('bon_livraison_id', $this->bonLivraison->id)->findOrFail((int) $key);
+            \App\Support\Tenant::tryDelete($r);
+            $this->bonLivraison->refresh();
+        } else {
+            unset($this->pendingPayments[(int) $key]);
+            $this->pendingPayments = array_values($this->pendingPayments);
+        }
+    }
+
+    private function createPayment(BonLivraison $bl, array $data): void
+    {
+        \Illuminate\Support\Facades\DB::transaction(function () use ($bl, $data) {
+            $r = \App\Models\ReglementClient::create($data + [
+                'client_id' => $bl->client_id,
+                'bon_livraison_id' => $bl->id,
+                'facture_id' => $bl->facture?->id,
+                'notes' => 'Règlement du bon de livraison '.$bl->numero,
+            ]);
+            $r->applyEffects();
+        });
+    }
+
     public function save()
     {
         $this->validate([
@@ -442,6 +546,13 @@ class Form extends Component
 
         $this->bonLivraison->recalculateTotals();
         \App\Support\StockSync::bonLivraison($this->bonLivraison->fresh());
+        foreach ($this->pendingPayments as $p) {
+            $this->createPayment($this->bonLivraison->fresh(), $p);
+        }
+        $this->pendingPayments = [];
+        // payments follow the delivery note's customer if it was changed
+        \App\Models\ReglementClient::where('bon_livraison_id', $this->bonLivraison->id)->where('client_id', '!=', $this->bonLivraison->client_id)
+            ->update(['client_id' => $this->bonLivraison->client_id]);
 
         session()->flash('success', 'Bon de livraison enregistré.');
 
@@ -456,6 +567,9 @@ class Form extends Component
             'categories' => \App\Models\Category::orderBy('name')->get(),
             'brands' => \App\Models\Brand::orderBy('name')->get(),
             'fournisseurs' => \App\Models\Fournisseur::orderBy('name')->get(),
+            'payments' => $this->bonLivraison ? $this->bonLivraison->reglements()->with('tresorerieCompte')->orderBy('date')->orderBy('id')->get() : null,
+            'banks' => \App\Support\Banks::for(),
+            'comptes' => \App\Models\TresorerieCompte::where('is_active', true)->orderBy('name')->get(),
         ])->layout('layouts.app');
     }
 }

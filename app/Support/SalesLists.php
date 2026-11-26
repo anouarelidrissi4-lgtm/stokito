@@ -19,7 +19,10 @@ use Illuminate\Support\Str;
  */
 class SalesLists
 {
-    public const MODES = ['especes' => 'Espèces', 'cheque' => 'Chèque', 'virement' => 'Virement', 'carte' => 'Carte', 'effet' => 'Effet', 'prelevement' => 'Prélèvement'];
+    public const MODES = ['especes' => 'Espèces', 'virement' => 'Virement', 'versement' => 'Versement', 'transfert' => 'Transfert cash', 'cheque' => 'Chèque', 'effet' => 'Effet', 'carte' => 'Carte', 'prelevement' => 'Prélèvement'];
+
+    /** modes that come with a bank, a number and a due date */
+    public const MODES_PAPIER = ['cheque', 'effet'];
 
     /** client name + first name + code search on a relation */
     public static function whereClient(Builder $q, string $s): Builder
@@ -70,8 +73,8 @@ class SalesLists
     public static function reglements(array $f): Builder
     {
         $s = trim((string) ($f['search'] ?? ''));
-        $q = ReglementClient::query()->with(['client', 'facture'])
-            ->when($s !== '', fn ($q) => $q->where(fn ($w) => self::whereClient($w->whereHas('facture', fn ($x) => $x->where('numero', 'like', "%{$s}%")), $s)));
+        $q = ReglementClient::query()->with(['client', 'facture', 'bonLivraison'])
+            ->when($s !== '', fn ($q) => $q->where(fn ($w) => self::whereClient($w->whereHas('facture', fn ($x) => $x->where('numero', 'like', "%{$s}%"))->orWhereHas('bonLivraison', fn ($x) => $x->where('numero', 'like', "%{$s}%")), $s)));
 
         return self::dates($q, $f)->latest('date')->latest('id');
     }
@@ -136,7 +139,7 @@ class SalesLists
             'factures' => ['Liste des factures', ['N°', 'BL', 'Client', 'Date', 'Échéance', 'Statut', ['Total TTC', 'r'], ['Reste', 'r']],
                 self::factures($f)->get()->map(fn ($x) => [$x->numero, $x->bonLivraison?->numero ?? '—', $client($x->client), $x->date?->format('d/m/Y'), $x->due_date?->format('d/m/Y') ?? '—', Fmt::status($x->status), $money($x->total_ttc), $money($x->resteAPayer())])->all()],
             'reglements' => ['Liste des règlements clients', ['Date', 'Client', 'Facture', 'Mode', 'N° chèque', ['Montant', 'r']],
-                self::reglements($f)->get()->map(fn ($r) => [$r->date?->format('d/m/Y'), $client($r->client), $r->facture?->numero ?? '—', self::MODES[$r->mode] ?? ucfirst((string) $r->mode), $r->numero_cheque ?: '—', $money($r->montant)])->all()],
+                self::reglements($f)->get()->map(fn ($r) => [$r->date?->format('d/m/Y'), $client($r->client), $r->facture?->numero ?? $r->bonLivraison?->numero ?? '—', self::MODES[$r->mode] ?? ucfirst((string) $r->mode), trim(($r->banque ? $r->banque.' ' : '').($r->numero_cheque ? 'n° '.$r->numero_cheque : '')) ?: '—', $money($r->montant)])->all()],
             'soldes' => (function () use ($f, $client, $money) {
                 $s = trim((string) ($f['search'] ?? ''));
                 $rows = Client::query()->when($s !== '', fn ($q) => $q->where(fn ($w) => $w->where('name', 'like', "%{$s}%")->orWhere('prenom', 'like', "%{$s}%")->orWhere('code', 'like', "%{$s}%")))

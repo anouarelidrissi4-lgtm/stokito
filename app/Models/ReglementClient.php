@@ -12,12 +12,13 @@ class ReglementClient extends Model
     protected $table = 'reglements_clients';
 
     protected $fillable = [
-        'client_id', 'facture_id', 'tresorerie_compte_id',
-        'montant', 'date', 'mode', 'numero_cheque', 'notes',
+        'client_id', 'facture_id', 'bon_livraison_id', 'tresorerie_compte_id',
+        'montant', 'date', 'mode', 'numero_cheque', 'banque', 'date_echeance', 'notes',
     ];
 
     protected $casts = [
         'date' => 'date',
+        'date_echeance' => 'date',
     ];
 
     protected static function booted(): void
@@ -50,6 +51,17 @@ class ReglementClient extends Model
     public function facture(): BelongsTo
     {
         return $this->belongsTo(Facture::class);
+    }
+
+    public function bonLivraison(): BelongsTo
+    {
+        return $this->belongsTo(BonLivraison::class);
+    }
+
+    /** the document it pays: invoice first, else delivery note */
+    public function documentNumero(): ?string
+    {
+        return $this->facture?->numero ?? $this->bonLivraison?->numero;
     }
 
     public function tresorerieCompte(): BelongsTo

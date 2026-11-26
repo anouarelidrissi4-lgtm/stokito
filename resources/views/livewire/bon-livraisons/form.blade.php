@@ -272,6 +272,8 @@
             </div>
         </div>
 
+        @include('livewire.bon-livraisons._payments')
+
         <div class="flex justify-end gap-2 pt-2 border-t">
             <a href="{{ route('bon-livraisons.index') }}" wire:navigate class="px-4 py-2 text-sm text-gray-600">Annuler</a>
             <button wire:click="save" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-700">Enregistrer</button>

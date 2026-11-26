@@ -487,6 +487,10 @@ class Form extends Component
         }
 
         $this->facture->recalculateTotals();
+        if ($this->facture->bon_livraison_id) {
+            \App\Models\ReglementClient::where('bon_livraison_id', $this->facture->bon_livraison_id)->whereNull('facture_id')
+                ->update(['facture_id' => $this->facture->id]);
+        }
         $this->facture->refreshStatus();
         \App\Support\StockSync::facture($this->facture->fresh());
 

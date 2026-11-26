@@ -21,7 +21,7 @@
                 <tr>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Client</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Facture</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Document</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Mode</th>
                     <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Montant</th>
                     <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
@@ -32,8 +32,8 @@
                     <tr wire:key="rc-{{ $reglement->id }}">
                         <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">{{ $reglement->date->format('d/m/Y') }}</td>
                         <td class="px-6 py-4 text-sm text-gray-900">{{ \App\Support\SalesLists::clientLabel($reglement->client) }}@if ($reglement->client?->code)<span class="block text-xs text-gray-400">{{ $reglement->client->code }}</span>@endif</td>
-                        <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">{{ $reglement->facture->numero ?? '-' }}</td>
-                        <td class="px-6 py-4 text-sm text-gray-500">{{ $reglement->modeLabel() }}@if ($reglement->numero_cheque)<span class="block text-xs text-gray-400">N° {{ $reglement->numero_cheque }}</span>@endif</td>
+                        <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">{{ $reglement->documentNumero() ?? '-' }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">{{ $reglement->modeLabel() }}@if ($reglement->banque || $reglement->numero_cheque)<span class="block text-xs text-gray-400">{{ implode(' · ', array_filter([$reglement->banque, $reglement->numero_cheque ? 'N° '.$reglement->numero_cheque : null])) }}</span>@endif</td>
                         <td class="px-6 py-4 text-sm text-right font-semibold text-green-700 whitespace-nowrap">{{ \App\Support\Fmt::money($reglement->montant) }}</td>
                         <td class="px-6 py-4 text-right text-sm">@include('livewire.reglements-clients._actions')</td>
                     </tr>
@@ -52,7 +52,7 @@
                         <div class="min-w-0"><div class="font-semibold text-gray-900">{{ \App\Support\SalesLists::clientLabel($reglement->client) }}@if ($reglement->client?->code)<span class="block text-xs text-gray-400">{{ $reglement->client->code }}</span>@endif</div></div>
                         <div class="text-end shrink-0"><div class="font-bold text-green-700 tabular-nums">{{ \App\Support\Fmt::money($reglement->montant) }}</div></div>
                     </div>
-                    <div class="mt-1 text-sm text-gray-600"><span class="text-xs text-gray-500">{{ $reglement->date->format('d/m/Y') }} · {{ $reglement->modeLabel() }}@if ($reglement->facture) · {{ $reglement->facture->numero }}@endif</span></div>
+                    <div class="mt-1 text-sm text-gray-600"><span class="text-xs text-gray-500">{{ $reglement->date->format('d/m/Y') }} · {{ $reglement->modeLabel() }}@if ($reglement->documentNumero()) · {{ $reglement->documentNumero() }}@endif</span></div>
                     <div class="mt-3 flex items-center justify-end gap-2">@include('livewire.reglements-clients._actions')</div>
                 </div>
             @empty
@@ -94,17 +94,23 @@
                 @error('date') <p class="text-red-600 text-xs mb-2">{{ $message }}</p> @enderror
 
                 <label class="block text-sm font-medium text-gray-700 mb-1 mt-2">Mode</label>
-                <select wire:model="mode" class="w-full rounded-md border-gray-300 text-sm mb-1">
-                    <option value="especes">Espèces</option>
-                    <option value="cheque">Chèque</option>
-                    <option value="virement">Virement</option>
-                    <option value="carte">Carte</option>
-                    <option value="effet">Effet</option>
+                <select wire:model.live="mode" class="w-full rounded-md border-gray-300 text-sm mb-1">
+                    @foreach (\App\Support\SalesLists::MODES as $k => $l)<option value="{{ $k }}">{{ $l }}</option>@endforeach
                 </select>
+                @error('mode') <p class="text-red-600 text-xs">{{ $message }}</p> @enderror
 
-                @if ($mode === 'cheque')
-                    <label class="block text-sm font-medium text-gray-700 mb-1 mt-2">Numéro chèque</label>
-                    <input wire:model="numero_cheque" type="text" class="w-full rounded-md border-gray-300 text-sm mb-1">
+                @if (in_array($mode, ['cheque', 'effet', 'virement', 'versement'], true))
+                    <label class="block text-sm font-medium text-gray-700 mb-1 mt-2">Banque</label>
+                    <input wire:model="banque" list="stk-banks-r" type="text" maxlength="100" placeholder="Choisir ou écrire une banque" class="w-full rounded-md border-gray-300 text-sm mb-1">
+                    <datalist id="stk-banks-r">@foreach ($banks as $b)<option value="{{ $b }}"></option>@endforeach</datalist>
+                @endif
+                @if (in_array($mode, ['cheque', 'effet', 'virement', 'versement', 'transfert'], true))
+                    <label class="block text-sm font-medium text-gray-700 mb-1 mt-2">{{ in_array($mode, ['cheque', 'effet'], true) ? 'Numéro '.($mode === 'cheque' ? 'du chèque' : 'de l’effet') : 'Référence' }}</label>
+                    <input wire:model="numero_cheque" type="text" maxlength="60" class="w-full rounded-md border-gray-300 text-sm mb-1">
+                @endif
+                @if (in_array($mode, ['cheque', 'effet'], true))
+                    <label class="block text-sm font-medium text-gray-700 mb-1 mt-2">Date d’échéance</label>
+                    <input wire:model="date_echeance" type="date" class="w-full rounded-md border-gray-300 text-sm mb-1">
                 @endif
 
                 <div class="flex justify-end gap-2 mt-4">
