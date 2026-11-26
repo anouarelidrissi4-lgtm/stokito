@@ -13,6 +13,7 @@
         <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700{{ $rtl ? '|tajawal:400,500,700,800' : '' }}&display=swap" rel="stylesheet" />
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @include('partials.analytics')
     </head>
     {{-- industrial / dépôt style, same as the landing page (2026-11-23) --}}
     <body class="sp-guest text-zinc-900 antialiased bg-zinc-50">
@@ -62,5 +63,6 @@
                 </div>
             </div>
         </div>
+        @include('partials.cookie-banner')
     </body>
 </html>

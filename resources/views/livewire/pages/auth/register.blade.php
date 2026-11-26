@@ -80,7 +80,8 @@ new #[Layout('layouts.guest')] class extends Component
         session()->regenerate();
         session()->flash('welcome', true);
 
-        $this->redirect(route('dashboard', absolute: false), navigate: true);
+        session()->flash('gtm_event', ['event' => 'sign_up', 'method' => 'email']);   // GA4 conversion (sent only with consent)
+        $this->redirect(route('dashboard', absolute: false), navigate: false);
     }
 
     public function with(): array

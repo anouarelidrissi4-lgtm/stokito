@@ -104,6 +104,7 @@ Route::get('demo', function () {
 
     auth()->login($demo);
     request()->session()->regenerate();
+    session()->flash('gtm_event', ['event' => 'demo_start']);   // GA4 (sent only with consent)
 
     return redirect()->route('dashboard');
 })->middleware('guest')->name('demo.login');

@@ -133,6 +133,7 @@
         @keyframes cClick { 0%,30% { background: #fff; color: #111; } 34%,88% { background: #ffcc00; color: #111; } 95%,100% { background: #fff; color: #111; } }
         @keyframes cToggle { 0%,35% { background: #111; } 40%,85% { background: #cfcac0; } 90%,100% { background: #111; } }
     </style>
+@include('partials.analytics')
 </head>
 <body class="antialiased sp-ind text-zinc-900" x-data="{ menu: false }">
 
@@ -748,5 +749,6 @@
 <x-site-footer />
 
 @livewireScripts
+@include('partials.cookie-banner')
 </body>
 </html>

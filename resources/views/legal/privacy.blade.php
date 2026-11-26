@@ -1,4 +1,4 @@
-<x-legal-page title="Politique de confidentialité" ref="SP-PRIV">
+<x-legal-page title="Politique de confidentialité" ref="SP-PRIV" updated="26/11/2026">
 <h2>1. Qui sommes-nous ?</h2>
 <p>Stokito (stokito.com) est un logiciel en ligne de gestion de stock, de devis et de facturation, édité par Anouar Elidrissi, responsable du traitement de vos données (adresse dans les <a href="{{ route('legal.mentions') }}">mentions légales</a>). Pour toute question sur vos données, écrivez à <a href="mailto:contact@stokito.com">contact@stokito.com</a> ou contactez-nous sur WhatsApp au <a href="https://wa.me/212676035777">+212 676 035 777</a>.</p>
 
@@ -30,6 +30,8 @@
 <h2>6. Vos droits</h2>
 <p>Vous pouvez demander l'accès à vos données, leur correction, leur export ou leur suppression, en nous écrivant sur WhatsApp. Selon votre pays, ces droits sont prévus notamment par le RGPD (Union européenne) et la loi 09-08 (Maroc).</p>
 
-<h2>7. Cookies</h2>
-<p>Stokito utilise uniquement les cookies nécessaires au fonctionnement : session de connexion, sécurité des formulaires et langue choisie.</p>
+<h2 id="cookies">7. Cookies et mesure d’audience</h2>
+<p>Stokito utilise les cookies nécessaires au fonctionnement : session de connexion, sécurité des formulaires et langue choisie. Ils ne demandent pas votre accord.</p>
+<p>Sur le site public (accueil, blog, outils gratuits, connexion et inscription), nous mesurons l’audience avec <strong>Google Analytics</strong>, chargé par Google Tag Manager, <strong>uniquement si vous cliquez sur « Accepter »</strong> dans le bandeau. Google Analytics dépose alors des cookies (_ga, _ga_…) et nous indique les pages vues, d’où viennent les visites (moteur de recherche, réseau social, lien) et le nombre d’inscriptions et de démos. Ces mesures sont traitées par Google Ireland Limited ; des transferts vers les États-Unis sont possibles. L’intérieur de votre espace Stokito (vos documents, vos clients, vos chiffres) n’est pas mesuré.</p>
+<p>Si vous cliquez sur « Refuser », rien n’est chargé. Vous pouvez changer d’avis à tout moment avec le lien « Gérer les cookies » en bas des pages, ou ici : <button type="button" onclick="window.stkConsent && stkConsent.open()" class="font-semibold underline decoration-[#ffcc00] decoration-2">Gérer les cookies</button>.</p>
 </x-legal-page>

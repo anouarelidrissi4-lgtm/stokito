@@ -51,5 +51,6 @@
         <a href="{{ route('legal.terms') }}" class="hover:text-zinc-900">{{ __('Conditions d’utilisation') }}</a>
         <a href="{{ route('legal.privacy') }}" class="hover:text-zinc-900">{{ __('Politique de confidentialité') }}</a>
         <a href="{{ route('legal.mentions') }}" class="hover:text-zinc-900">{{ __('Mentions légales') }}</a>
+        <button type="button" onclick="window.stkConsent && stkConsent.open()" class="hover:text-zinc-900">{{ __('Gérer les cookies') }}</button>
     </div>
 </footer>

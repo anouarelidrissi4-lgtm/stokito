@@ -31,6 +31,7 @@
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         @livewireStyles
+        @include('partials.analytics')
     </head>
     {{-- simple / modern style, same as the landing page (2026-11-25) --}}
     <body class="sp-pub antialiased bg-zinc-50 text-zinc-900" x-data="{ menu: false }">
@@ -87,5 +88,6 @@
 
         <x-site-footer />
         @livewireScripts
+        @include('partials.cookie-banner')
     </body>
 </html>

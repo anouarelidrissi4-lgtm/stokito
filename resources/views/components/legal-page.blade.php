@@ -17,6 +17,7 @@
         .legal ul { list-style: disc; padding-left: 22px; margin: 8px 0 14px; }
         .legal a { text-decoration: underline; text-decoration-color: #ffcc00; text-decoration-thickness: 2px; }
     </style>
+    @include('partials.analytics')
 </head>
 <body class="bg-white text-zinc-900">
     <header class="sp-topbar backdrop-blur border-b border-zinc-200 text-zinc-900">
@@ -30,5 +31,6 @@
         <h1 class="ind-h text-4xl leading-tight mt-2">{{ $title }}</h1>
         {{ $slot }}
     </main>
+    @include('partials.cookie-banner')
 </body>
 </html>
