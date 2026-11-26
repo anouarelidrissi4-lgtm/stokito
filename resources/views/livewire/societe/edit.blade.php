@@ -36,6 +36,49 @@
             </div>
         </div>
 
+        <!-- Couleur des documents (2026-11-26) -->
+        <div class="p-6" x-data="{ c: @entangle('pdf_color') }">
+            <h2 class="text-sm font-semibold text-indigo-600 uppercase tracking-wide mb-1">Couleur des documents</h2>
+            <p class="text-sm text-gray-500 mb-4">La couleur de vos devis, factures, bons de livraison et bons de commande en PDF.</p>
+            <div class="flex flex-col lg:flex-row gap-6">
+                <div class="flex-1">
+                    <div class="flex flex-wrap gap-2">
+                        @foreach (\App\Models\Societe::PDF_COLORS as $label => $hex)
+                            <button type="button" @click="c = '{{ $hex }}'" title="{{ $label }}" aria-label="{{ $label }}"
+                                class="w-10 h-10 rounded-full ring-offset-2 transition" style="background: {{ $hex }}"
+                                :class="(c || '').toLowerCase() === '{{ $hex }}' ? 'ring-2 ring-zinc-900 scale-110' : 'ring-1 ring-black/10 hover:scale-105'"></button>
+                        @endforeach
+                    </div>
+                    <label class="mt-4 inline-flex items-center gap-3 text-sm text-gray-700">
+                        <input type="color" x-model="c" class="h-10 w-14 cursor-pointer rounded border border-gray-300 bg-white p-1">
+                        Autre couleur : <span class="font-mono" x-text="(c || '').toUpperCase()"></span>
+                    </label>
+                    @error('pdf_color') <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
+                    <p class="text-xs text-gray-400 mt-2">Le texte passe en blanc sur les couleurs foncées, pour rester lisible. Cliquez sur Enregistrer en bas de la page.</p>
+                </div>
+                {{-- mini preview of a document --}}
+                <div class="w-full lg:w-80 shrink-0 rounded-lg border border-gray-200 bg-white p-4 shadow-sm text-[10px] text-zinc-800" aria-hidden="true">
+                    <div class="h-1 rounded" :style="'background:' + c"></div>
+                    <div class="mt-3 flex justify-between"><span class="font-bold uppercase">{{ $name ?: 'Votre société' }}</span><span class="text-zinc-500">FAC-00001</span></div>
+                    <div class="mt-3 text-center"><span class="font-bold tracking-[3px] text-xs border-b-[3px] pb-0.5" :style="'border-color:' + c">FACTURE</span></div>
+                    <div class="mt-3 grid grid-cols-[1fr_auto_auto] text-[9px] font-bold border border-zinc-900 rounded-lg" :style="'background:' + c + ';color:' + (luma(c) > 0.4 ? '#111' : '#fff')">
+                        <span class="px-1.5 py-1">Désignation</span><span class="px-1.5 py-1">Qté</span><span class="px-1.5 py-1">Total HT</span>
+                    </div>
+                    <div class="grid grid-cols-[1fr_auto_auto] border-x border-b border-zinc-900"><span class="px-1.5 py-1">Produit</span><span class="px-1.5 py-1">2</span><span class="px-1.5 py-1">100,00</span></div>
+                    <div class="mt-1 ms-auto w-40 grid grid-cols-2 border border-zinc-900 font-bold text-[9px] rounded-lg" :style="'background:' + c + ';color:' + (luma(c) > 0.4 ? '#111' : '#fff')">
+                        <span class="px-1.5 py-1">TOTAL TTC</span><span class="px-1.5 py-1 text-right">120,00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            window.luma = window.luma || function (hex) {
+                var m = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(hex || ''); if (!m) return 1;
+                var l = [m[1], m[2], m[3]].map(function (x) { x = parseInt(x, 16) / 255; return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4); });
+                return 0.2126 * l[0] + 0.7152 * l[1] + 0.0722 * l[2];
+            };
+        </script>
+
         <!-- Informations generales -->
         <div class="p-6">
             <h2 class="text-sm font-semibold text-indigo-600 uppercase tracking-wide mb-4">Informations generales</h2>

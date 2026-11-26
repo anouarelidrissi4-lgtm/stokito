@@ -13,7 +13,7 @@ class Societe extends Model
 
     protected $fillable = [
         'name', 'activite', 'rib', 'country', 'country_code', 'city', 'address', 'phone', 'phone2', 'fax', 'email', 'ice',
-        'identifiant_fiscal', 'registre_commerce', 'patente', 'cnss', 'conditions_paiement', 'logo_path',
+        'identifiant_fiscal', 'registre_commerce', 'patente', 'cnss', 'conditions_paiement', 'logo_path', 'pdf_color',
         'currency', 'tva_rate_default', 'qty_decimals', 'price_decimals',
         'tva_franchise', 'penalites_taux', 'indemnite_40', 'escompte_neant', 'tva_debits', 'nature_operation_default', 'devis_validite_jours', 'relances_auto',
         'stock_threshold_default', 'facture_type', 'stock_verification',
@@ -77,6 +77,28 @@ class Societe extends Model
      * (dompdf's remote/disk image loading can be unreliable, so PDF templates
      * should always use this instead of Storage::url()).
      */
+    /** Ready-made colours offered for the PDF documents (label => hex). */
+    public const PDF_COLORS = [
+        'Jaune' => '#ffcc00', 'Orange' => '#ea580c', 'Rouge' => '#dc2626', 'Bordeaux' => '#9f1239',
+        'Violet' => '#7c3aed', 'Bleu' => '#2563eb', 'Bleu marine' => '#1e3a8a', 'Turquoise' => '#0d9488',
+        'Vert' => '#16a34a', 'Anthracite' => '#374151',
+    ];
+
+    /**
+     * Colours of the PDF documents: accent (table header, total), text on the accent, light tint (total rows).
+     * Text is black on light accents and white on dark ones, so any chosen colour stays readable.
+     */
+    public function pdfColors(): array
+    {
+        $hex = preg_match('/^#[0-9a-f]{6}$/i', (string) $this->pdf_color) ? strtolower($this->pdf_color) : '#ffcc00';
+        [$r, $g, $b] = array_map('hexdec', str_split(substr($hex, 1), 2));
+        $lin = fn ($c) => ($c /= 255) <= 0.03928 ? $c / 12.92 : (($c + 0.055) / 1.055) ** 2.4;
+        $lum = 0.2126 * $lin($r) + 0.7152 * $lin($g) + 0.0722 * $lin($b);
+        $tint = sprintf('#%02x%02x%02x', ...array_map(fn ($c) => (int) round(255 - (255 - $c) * 0.22), [$r, $g, $b]));
+
+        return ['accent' => $hex, 'on' => $lum > 0.4 ? '#111111' : '#ffffff', 'tint' => $tint];
+    }
+
     public function logoDataUri(): ?string
     {
         if (! $this->logo_path || ! Storage::disk('public')->exists($this->logo_path)) {

@@ -60,6 +60,8 @@ class Edit extends Component
 
     public $facture_type = 'sans_entete';
 
+    public $pdf_color = '#ffcc00';
+
     public $stock_verification = false;
 
     public $show_ref_facture = true;
@@ -118,6 +120,7 @@ class Edit extends Component
         $this->price_decimals = $this->societe->price_decimals ?? 2;
         $this->stock_threshold_default = $this->societe->stock_threshold_default ?? 0;
         $this->facture_type = $this->societe->facture_type ?? 'sans_entete';
+        $this->pdf_color = $this->societe->pdf_color ?: '#ffcc00';
         $this->stock_verification = (bool) $this->societe->stock_verification;
         $this->show_ref_facture = $this->societe->show_ref_facture === null ? true : (bool) $this->societe->show_ref_facture;
         $this->show_ref_bl = $this->societe->show_ref_bl === null ? true : (bool) $this->societe->show_ref_bl;
@@ -170,6 +173,7 @@ class Edit extends Component
             'price_decimals' => 'required|integer|min:0|max:6',
             'stock_threshold_default' => 'nullable|integer|min:0',
             'facture_type' => 'required|in:sans_entete,avec_entete',
+            'pdf_color' => ['required', 'regex:/^#[0-9a-fA-F]{6}$/'],
             'penalites_taux' => 'nullable|string|max:255',
             'nature_operation_default' => 'nullable|in:biens,services,mixte',
             'devis_validite_jours' => 'required|integer|min:1|max:365',
@@ -200,6 +204,7 @@ class Edit extends Component
             'price_decimals' => $this->price_decimals,
             'stock_threshold_default' => $this->stock_threshold_default ?: 0,
             'facture_type' => $this->facture_type,
+            'pdf_color' => strtolower($this->pdf_color) === '#ffcc00' ? null : strtolower($this->pdf_color),
             'stock_verification' => $this->stock_verification,
             'show_ref_facture' => $this->show_ref_facture,
             'show_ref_bl' => $this->show_ref_bl,
