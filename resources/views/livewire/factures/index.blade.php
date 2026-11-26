@@ -14,7 +14,9 @@
     <x-list-totals :totals="$totals" />
 
     @if (count($selected) > 0)
-        <div class="flex justify-end mb-3">
+        <div class="flex flex-wrap items-center justify-end gap-3 mb-3 px-4 py-3 rounded-lg bg-[#ffcc00]/20 border border-amber-300">
+            <span class="me-auto text-sm font-semibold text-zinc-900">{{ count($selected) }} facture{{ count($selected) > 1 ? 's' : '' }} sélectionnée{{ count($selected) > 1 ? 's' : '' }}</span>
+            <a href="{{ route('factures.pdf-selection', ['ids' => implode(',', $selected)]) }}" target="_blank" rel="noopener" class="flex items-center gap-1.5 bg-zinc-900 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-zinc-700"><x-sp-icon name="printer" class="w-4 h-4" /> Imprimer la sélection</a>
             <button wire:click="deleteSelected" wire:confirm="Supprimer les {{ count($selected) }} facture(s) sélectionnée(s) ?" class="flex items-center gap-1.5 bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-red-600"><x-sp-icon name="trash" class="w-4 h-4" /> Supprimer la sélection ({{ count($selected) }})</button>
         </div>
     @endif
@@ -68,7 +70,7 @@
             @forelse ($factures as $facture)
                 <div class="p-4" wire:key="fac-m-{{ $facture->id }}">
                     <div class="flex items-start justify-between gap-3">
-                        <div class="min-w-0"><div class="font-semibold text-gray-900">{{ $facture->numero }}</div></div>
+                        <label class="min-w-0 flex items-center gap-3"><input type="checkbox" wire:model.live="selected" value="{{ $facture->id }}" class="h-4 w-4 rounded border-gray-300 text-zinc-900 focus:ring-zinc-900"><span class="font-semibold text-gray-900">{{ $facture->numero }}</span></label>
                         <div class="text-end shrink-0"><div class="font-bold text-gray-900 tabular-nums">{{ \App\Support\Fmt::money($facture->total_ttc) }}</div>@if ($facture->resteAPayer() > 0)<div class="text-xs font-semibold text-red-600">Reste {{ \App\Support\Fmt::money($facture->resteAPayer()) }}</div>@endif<div class="mt-1"><span @class([
                                 'px-2 py-1 rounded-full text-xs font-semibold',
                                 'bg-gray-100 text-gray-600' => $facture->status === 'brouillon',

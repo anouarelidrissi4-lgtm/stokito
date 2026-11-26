@@ -373,6 +373,15 @@ Route::middleware(['auth'])->group(function () {
 
         return $pdf->download($devis->numero.'.pdf');
     })->name('devis.pdf');
+    // quotes ticked in the list -> one PDF, one per page (2026-11-27)
+    Route::get('devis/pdf-selection', function (\Illuminate\Http\Request $request) {
+        abort_unless(auth()->user()->hasPermission('devis_consulter'), 403);
+        $ids = collect(explode(',', (string) $request->query('ids')))->map(fn ($v) => (int) $v)->filter()->unique()->take(200);
+        $docs = \App\Models\Devis::with(['client', 'items.product'])->whereIn('id', $ids)->orderBy('date')->orderBy('numero')->get();
+        abort_if($docs->isEmpty(), 404);
+
+        return \App\Support\DocumentPdf::many('devis', $docs)->stream('devis-'.now()->format('Y-m-d').'.pdf');
+    })->name('devis.pdf-selection');
 
     Route::get('bon-livraisons', \App\Livewire\BonLivraisons\Index::class)->name('bon-livraisons.index');
     Route::get('bon-livraisons/create', \App\Livewire\BonLivraisons\Form::class)->name('bon-livraisons.create');
@@ -444,6 +453,15 @@ Route::middleware(['auth'])->group(function () {
 
         return $pdf->download($facture->numero.'.pdf');
     })->name('factures.pdf');
+    // invoices ticked in the list -> one PDF, one per page (2026-11-27)
+    Route::get('factures/pdf-selection', function (\Illuminate\Http\Request $request) {
+        abort_unless(auth()->user()->hasPermission('factures_consulter'), 403);
+        $ids = collect(explode(',', (string) $request->query('ids')))->map(fn ($v) => (int) $v)->filter()->unique()->take(200);
+        $docs = \App\Models\Facture::with(['client', 'items.product', 'devis'])->whereIn('id', $ids)->orderBy('date')->orderBy('numero')->get();
+        abort_if($docs->isEmpty(), 404);
+
+        return \App\Support\DocumentPdf::many('facture', $docs)->stream('factures-'.now()->format('Y-m-d').'.pdf');
+    })->name('factures.pdf-selection');
 
     Route::get('reglements-clients', \App\Livewire\ReglementsClients\Index::class)->name('reglements-clients.index');
     Route::get('reglements-clients/create/{factureId?}', \App\Livewire\ReglementsClients\Index::class)->name('reglements-clients.create');
