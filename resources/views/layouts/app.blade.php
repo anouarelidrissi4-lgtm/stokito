@@ -118,6 +118,34 @@
                 </div>
             </div>
         </div>
+        {{-- iPhone/iPad: no install prompt, so explain "Sur l'écran d'accueil" (2026-11-26) --}}
+        <div id="stk-ios-help" hidden class="fixed z-[60] inset-x-3 bottom-3 sm:inset-x-auto sm:end-4 sm:max-w-sm rounded-xl border border-zinc-200 bg-white p-4 text-sm text-zinc-800 shadow-2xl">
+            <p class="font-semibold text-zinc-900">{{ __("Installer Stokito sur l'iPhone") }}</p>
+            <p class="mt-1">{{ __("Dans Safari, touchez le bouton Partager (le carré avec une flèche), puis « Sur l'écran d'accueil ».") }}</p>
+            <button type="button" onclick="this.parentElement.hidden = true" class="mt-3 h-9 px-4 rounded-lg bg-zinc-900 text-white font-semibold">{{ __('Compris') }}</button>
+        </div>
+        <script>
+            (function () {
+                if (window.stkPwa) return;
+                window.stkPwa = { prompt: null };
+                var standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+                var ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+                function show() {
+                    document.querySelectorAll('[data-stk-install]').forEach(function (b) { b.style.display = (standalone || !(window.stkPwa.prompt || ios)) ? 'none' : ''; });
+                }
+                if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(function () {});
+                window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); window.stkPwa.prompt = e; show(); });
+                window.addEventListener('appinstalled', function () { window.stkPwa.prompt = null; standalone = true; show(); });
+                document.addEventListener('click', function (e) {
+                    if (!e.target.closest('[data-stk-install]')) return;
+                    if (window.stkPwa.prompt) { window.stkPwa.prompt.prompt(); window.stkPwa.prompt = null; show(); }
+                    else if (ios) document.getElementById('stk-ios-help').hidden = false;
+                });
+                document.addEventListener('livewire:navigated', show);
+                document.addEventListener('DOMContentLoaded', show);
+                show();
+            })();
+        </script>
         @livewireScripts
     </body>
 </html>

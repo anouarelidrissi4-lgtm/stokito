@@ -153,6 +153,14 @@
             <a href="/docs/guide-stokito-{{ in_array(app()->getLocale(), ['ar', 'en'], true) ? app()->getLocale() : 'fr' }}.pdf" target="_blank" rel="noopener" class="{{ $linkClass(false) }}">
                 <x-sp-icon name="doc" class="w-[18px] h-[18px]" /> {{ __("Guide d'utilisation") }}
             </a>
+            {{-- help on WhatsApp + install as an app (2026-11-26) --}}
+            @php $waText = rawurlencode("Bonjour, j'ai besoin d'aide sur Stokito.".(\App\Models\Societe::current()?->name ? ' (Société : '.\App\Models\Societe::current()->name.')' : '')); @endphp
+            <a href="https://wa.me/212676035777?text={{ $waText }}" target="_blank" rel="noopener" class="{{ $linkClass(false) }}">
+                <x-sp-icon name="whatsapp" class="w-[18px] h-[18px]" /> {{ __('Aide sur WhatsApp') }}
+            </a>
+            <button type="button" data-stk-install style="display:none" class="w-full {{ $linkClass(false) }}">
+                <x-sp-icon name="download" class="w-[18px] h-[18px]" /> {{ __("Installer l'application") }}
+            </button>
             <a href="{{ route('profile') }}" wire:navigate class="{{ $linkClass(request()->routeIs('profile')) }}">
                 <x-sp-icon name="user" class="w-[18px] h-[18px]" /> <span class="truncate">{{ $user->name }}</span>
             </a>

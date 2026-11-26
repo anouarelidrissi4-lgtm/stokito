@@ -9,6 +9,8 @@
         'pencil' => '<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>',
         'trash' => '<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/>',
         'barcode' => '<path d="M3 5v14M6.5 5v14M9.5 5v14M13 5v14M16 5v14M19 5v14M21 5v14"/>',
+        'whatsapp' => '<path d="M4 20.5l1.4-4A8.5 8.5 0 1 1 8.6 19.3z"/><path d="M9.2 8.6c.2 2.9 2.4 5.3 5.4 5.7l1-1.2-1.8-.9-.8.8a4.3 4.3 0 0 1-2.4-2.4l.8-.8-.9-1.8z"/>',
+        'download' => '<path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 20h14"/>',
         'printer' => '<path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/>',
         'send' => '<path d="M21 3 10 14"/><path d="M21 3 14 21l-4-7-7-4z"/>',
         'check' => '<path d="m5 12 5 5 9-10"/>',
