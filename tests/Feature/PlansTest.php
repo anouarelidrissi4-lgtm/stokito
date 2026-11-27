@@ -52,7 +52,7 @@ class PlansTest extends TestCase
     public function test_superadmin_extends_a_plan_and_admin_sees_the_page(): void
     {
         $this->companyUser('FR');
-        $this->get(route('abonnement'))->assertOk()->assertSee('Premium')->assertSee('25 €');
+        $this->get(route('abonnement'))->assertOk()->assertSee('Premium')->assertSee('25 €')->assertSee('AimaneAdri', false)->assertSee('79EUR', false);
         $project = auth()->user()->project;
 
         $sa = new \App\Models\User();

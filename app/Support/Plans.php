@@ -19,6 +19,9 @@ class Plans
 
     public const TRIAL_MONTHS = 3;
 
+    /** PayPal.me account that receives the payments (manual activation afterwards) */
+    public const PAYPAL_ME = 'AimaneAdri';
+
     /** price per period, in DH for Moroccan companies, in € otherwise */
     public const PRICES = [
         'pro' => ['trimestre' => ['MAD' => 249, 'EUR' => 25], 'annee' => ['MAD' => 799, 'EUR' => 79]],

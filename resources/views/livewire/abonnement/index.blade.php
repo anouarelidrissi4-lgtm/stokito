@@ -13,6 +13,8 @@
     $wa = function ($plan, $period) use ($societe, $currency) {
         return 'https://wa.me/212676035777?text='.rawurlencode('Bonjour, je souhaite passer au plan '.\App\Support\Plans::LABELS[$plan].' ('.\App\Support\Plans::PERIODS[$period]['label'].', '.\App\Support\Plans::price($plan, $period, $currency).') pour la société '.($societe?->name ?? '').' (compte : '.auth()->user()->email.').');
     };
+    // PayPal.me (2026-11-27): PayPal has no MAD, so PayPal amounts are always in euros
+    $paypal = fn ($plan, $period) => 'https://paypal.me/'.\App\Support\Plans::PAYPAL_ME.'/'.\App\Support\Plans::PRICES[$plan][$period]['EUR'].'EUR';
     $features = [
         'free' => [['Devis, bons de livraison, stock et caisse', true], [\App\Support\Plans::FREE_INVOICES_PER_MONTH.' factures par mois', true], ['Copilot IA', false], ['Scanner IA des factures', false]],
         'pro' => [['Devis, bons de livraison, stock et caisse', true], ['Factures illimitées', true], [config('services.anthropic.copilot_per_month', 150).' messages Copilot par mois', true], [config('services.anthropic.scans_per_month', 30).' scans de factures par mois', true]],
@@ -86,14 +88,18 @@
                     @endforeach
                 </ul>
                 <div class="mt-6">
-                    @if ($isCurrent && ! ($project?->plan_trial))
-                        <span class="flex h-11 items-center justify-center rounded-lg border border-zinc-300 text-sm font-semibold text-zinc-500">Votre plan actuel</span>
-                    @elseif ($p === 'free')
-                        <span class="flex h-11 items-center justify-center rounded-lg border border-zinc-200 text-sm text-zinc-400">Toujours disponible</span>
+                    @php $renew = $isCurrent && ! ($project?->plan_trial); @endphp
+                    @if ($p === 'free')
+                        <span class="flex h-11 items-center justify-center rounded-lg border border-zinc-200 text-sm {{ $isCurrent ? 'font-semibold text-zinc-600' : 'text-zinc-400' }}">{{ $isCurrent ? 'Votre plan actuel' : 'Toujours disponible' }}</span>
                     @else
+                        @if ($renew)<p class="mb-2 text-center text-xs font-semibold text-zinc-500">Votre plan actuel</p>@endif
                         <a :href="period === 'annee' ? @js($wa($p, 'annee')) : @js($wa($p, 'trimestre'))" target="_blank" rel="noopener"
                            class="flex h-11 items-center justify-center gap-2 rounded-lg text-sm font-semibold {{ $top ? 'bg-zinc-900 text-white hover:bg-zinc-700' : 'bg-[#ffcc00] text-zinc-900 hover:bg-[#ffd633]' }}">
-                            <x-sp-icon name="whatsapp" class="w-4 h-4" /> Choisir {{ $L[$p] }}
+                            <x-sp-icon name="whatsapp" class="w-4 h-4" /> {{ $renew ? 'Renouveler' : 'Choisir' }} {{ $L[$p] }}
+                        </a>
+                        <a :href="period === 'annee' ? @js($paypal($p, 'annee')) : @js($paypal($p, 'trimestre'))" target="_blank" rel="noopener"
+                           class="mt-2 flex h-11 items-center justify-center gap-1.5 rounded-lg border border-zinc-300 bg-white text-sm font-semibold text-zinc-800 hover:border-zinc-900">
+                            Payer avec PayPal · <span x-text="period === 'annee' ? @js(\App\Support\Plans::PRICES[$p]['annee']['EUR'].' €') : @js(\App\Support\Plans::PRICES[$p]['trimestre']['EUR'].' €')"></span>
                         </a>
                     @endif
                 </div>
@@ -103,6 +109,6 @@
 
     <div class="mt-6 rounded-2xl border border-zinc-200 bg-zinc-50 p-5 text-sm text-zinc-600 leading-relaxed">
         <p><strong class="text-zinc-900">Comment payer ?</strong> Cliquez sur « Choisir » : votre demande part sur WhatsApp. Nous vous envoyons les coordonnées pour payer par virement ou versement bancaire, et votre plan est activé dès réception du paiement.</p>
-        <p class="mt-2">Paiement en ligne par PayPal : bientôt disponible.</p>
+        <p class="mt-2"><strong class="text-zinc-900">PayPal ?</strong> Cliquez sur « Payer avec PayPal » (montant en euros) et choisissez « Biens et services ». Envoyez ensuite la confirmation sur WhatsApp : votre plan est activé dans la journée.</p>
     </div>
 </div>
