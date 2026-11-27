@@ -16,6 +16,18 @@ class Index extends Component
 
     public string $search = '';
 
+    /* filtres (2026-11-27) : période sur la date du règlement + plusieurs fournisseurs */
+    public string $periode = '';
+
+    public string $from = '';
+
+    public string $to = '';
+
+    public array $fournisseurIds = [];
+
+    public const PERIODES = ['' => 'Toutes les dates', 'mois' => 'Ce mois-ci', 'mois_precedent' => 'Le mois dernier', 'trimestre' => 'Ce trimestre',
+        'annee' => 'Cette année', 'annee_precedente' => 'L’année dernière', 'perso' => 'Période personnalisée'];
+
     public bool $showModal = false;
 
     #[Validate('required|exists:fournisseurs,id')]
@@ -92,6 +104,76 @@ class Index extends Component
         session()->flash('success', 'Règlement enregistré.');
     }
 
+    public function updatedPeriode(): void
+    {
+        $n = now();
+        [$from, $to] = match ($this->periode) {
+            'mois' => [$n->copy()->startOfMonth(), $n->copy()->endOfMonth()],
+            'mois_precedent' => [$n->copy()->subMonthNoOverflow()->startOfMonth(), $n->copy()->subMonthNoOverflow()->endOfMonth()],
+            'trimestre' => [$n->copy()->startOfQuarter(), $n->copy()->endOfQuarter()],
+            'annee' => [$n->copy()->startOfYear(), $n->copy()->endOfYear()],
+            'annee_precedente' => [$n->copy()->subYear()->startOfYear(), $n->copy()->subYear()->endOfYear()],
+            default => [null, null],
+        };
+        if ($this->periode !== 'perso') {
+            $this->from = $from ? $from->toDateString() : '';
+            $this->to = $to ? $to->toDateString() : '';
+        }
+        $this->resetPage();
+    }
+
+    public function updatedFrom(): void
+    {
+        $this->periode = 'perso';
+        $this->resetPage();
+    }
+
+    public function updatedTo(): void
+    {
+        $this->periode = 'perso';
+        $this->resetPage();
+    }
+
+    public function updatedSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedFournisseurIds(): void
+    {
+        $this->fournisseurIds = array_values(array_unique(array_filter(array_map('intval', $this->fournisseurIds))));
+        $this->resetPage();
+    }
+
+    public function removeFournisseur($id): void
+    {
+        $this->fournisseurIds = array_values(array_filter($this->fournisseurIds, fn ($f) => (int) $f !== (int) $id));
+        $this->resetPage();
+    }
+
+    public function resetFilters(): void
+    {
+        $this->reset(['search', 'periode', 'from', 'to', 'fournisseurIds']);
+        $this->resetPage();
+    }
+
+    /** Règlements filtrés (liste + totaux utilisent la même requête). */
+    public static function filtered(string $search, string $from, string $to, array $fournisseurIds)
+    {
+        $ids = array_values(array_filter(array_map('intval', $fournisseurIds)));
+
+        return ReglementFournisseur::query()
+            ->when($search, fn ($q) => $q->whereHas('fournisseur', fn ($q2) => $q2->where('name', 'like', "%{$search}%")))
+            ->when($ids, fn ($q) => $q->whereIn('fournisseur_id', $ids))
+            ->when(self::validDate($from), fn ($q) => $q->whereDate('date', '>=', $from))
+            ->when(self::validDate($to), fn ($q) => $q->whereDate('date', '<=', $to));
+    }
+
+    private static function validDate(string $d): bool
+    {
+        return (bool) preg_match('/^\d{4}-\d{2}-\d{2}$/', $d);
+    }
+
     public function delete($id)
     {
         if (\App\Support\Tenant::tryDelete(ReglementFournisseur::findOrFail($id))) {
@@ -101,14 +183,23 @@ class Index extends Component
 
     public function render()
     {
-        $reglements = ReglementFournisseur::query()
+        $base = fn () => self::filtered($this->search, $this->from, $this->to, $this->fournisseurIds);
+        $reglements = $base()
             ->with(['fournisseur', 'commandeFournisseur'])
-            ->when($this->search, fn ($q) => $q->whereHas('fournisseur', fn ($q2) => $q2->where('name', 'like', "%{$this->search}%")))
-            ->latest('date')
+            ->latest('date')->latest('id')
             ->paginate(10);
+        $total = (float) $base()->sum('montant');
+        $count = $base()->count();
+        // sous-totaux par fournisseur quand plusieurs sont choisis
+        $parFournisseur = count($this->fournisseurIds) > 1
+            ? $base()->selectRaw('fournisseur_id, SUM(montant) as total, COUNT(*) as nb')->groupBy('fournisseur_id')->get()->keyBy('fournisseur_id')
+            : collect();
 
         return view('livewire.reglements-fournisseurs.index', [
             'reglements' => $reglements,
+            'total' => $total,
+            'count' => $count,
+            'parFournisseur' => $parFournisseur,
             'fournisseurs' => Fournisseur::orderBy('name')->get(),
             'comptes' => TresorerieCompte::where('is_active', true)->orderBy('name')->get(),
         ])->layout('layouts.app');
