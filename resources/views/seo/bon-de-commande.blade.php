@@ -11,6 +11,8 @@
         ['Un bon de commande a-t-il une valeur juridique ?', 'Oui, une fois accepté. Selon l’article 1583 du Code civil, la vente est conclue dès que l’acheteur et le vendeur sont d’accord sur la chose et sur le prix. Un bon de commande signé par l’acheteur et accepté par le fournisseur engage donc les deux parties.'],
         ['Quelle différence entre un bon de commande et un devis ?', 'Le devis est rédigé par le vendeur : il propose un prix. Le bon de commande est rédigé par l’acheteur (ou signé par lui) : il confirme ce qu’il commande. Souvent, le bon de commande reprend les lignes d’un devis accepté.'],
         ['Le bon de commande remplace-t-il la facture ?', 'Non. La facture reste obligatoire entre professionnels et doit porter des mentions précises. Le bon de commande sert à passer et à suivre la commande ; la facture vient après la livraison ou la prestation.'],
+        ['Comment annuler un bon de commande signé avec acompte ?', 'En principe, on ne peut pas : un bon de commande signé est un contrat ferme, et un acompte confirme l’engagement. Si vous annulez, le vendeur peut exiger le paiement du prix ou des dommages et intérêts. L’annulation reste possible si le vendeur l’accepte (demandez-le par écrit), si le contrat prévoit une clause d’annulation, si le vendeur ne livre pas à la date convenue, ou, pour un particulier, si la commande a été signée hors du magasin (démarchage) ou à distance : il dispose alors de 14 jours pour se rétracter. Attention : entre un professionnel et un particulier, une somme versée d’avance est considérée comme des arrhes, sauf si le contrat dit clairement « acompte ». Avec des arrhes, on peut renoncer à la commande en les perdant.'],
+        ['Comment dit-on bon de commande en anglais ?', 'Purchase order, souvent abrégé PO. Le numéro de bon de commande se dit « PO number ». Le devis se dit quote ou quotation, le bon de livraison delivery note et la facture invoice.'],
         ['Peut-on faire un bon de commande sur Excel ?', 'Oui, mais il faut recalculer les totaux, numéroter les bons à la main et ressaisir les lignes dans la facture et le stock. Un logiciel comme Stokito numérote, calcule la TVA et, à la réception, fait monter le stock automatiquement.'],
     ];
     $jsonLd = json_encode(['@context' => 'https://schema.org', '@graph' => [
@@ -38,8 +40,8 @@
     $a = 'font-semibold text-zinc-900 underline decoration-amber-400 decoration-2 underline-offset-4';
 @endphp
 @component('layouts.public', [
-    'title' => 'Modèle de bon de commande gratuit : exemple et PDF vierge | Stokito',
-    'description' => 'Modèle de bon de commande gratuit en PDF vierge, exemple de bon de commande rempli, informations à indiquer et différence avec le devis et la facture.',
+    'title' => 'Bon de commande : exemple et modèle gratuit (PDF vierge) | Stokito',
+    'description' => 'Bon de commande : exemple rempli, modèle gratuit en PDF vierge, informations à indiquer, valeur juridique, annulation et différence avec le devis et la facture.',
     'canonical' => $url,
     'jsonLd' => $jsonLd,
     'ogImage' => url('/images/bon-de-commande/exemple-bon-de-commande.webp'),
@@ -53,7 +55,7 @@
                     <a href="{{ url('/') }}" class="hover:text-white">Accueil</a> <span aria-hidden="true">/</span> <span class="text-zinc-300">Modèle de bon de commande</span>
                 </nav>
                 <p class="mt-8 text-sm font-semibold text-amber-300">Gratuit · PDF vierge · exemple rempli</p>
-                <h1 class="mt-3 text-4xl sm:text-5xl font-extrabold tracking-tight leading-[1.05]">Modèle de bon de commande gratuit <span class="text-amber-300">(exemple + PDF vierge)</span></h1>
+                <h1 class="mt-3 text-4xl sm:text-5xl font-extrabold tracking-tight leading-[1.05]">Bon de commande : modèle gratuit <span class="text-amber-300">(exemple + PDF vierge)</span></h1>
                 <p class="mt-5 text-lg text-zinc-300 leading-relaxed">Téléchargez un modèle de bon de commande vierge au format PDF, voyez un exemple de bon de commande rempli, et vérifiez en deux minutes qu’il ne manque rien sur les vôtres.</p>
                 <div class="mt-7 flex flex-wrap gap-3">
                     <a href="{{ $pdf }}" download class="inline-flex items-center gap-2 h-12 px-6 rounded-lg bg-[#ffcc00] text-zinc-900 font-semibold hover:bg-[#ffd633]">

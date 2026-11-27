@@ -229,10 +229,11 @@
                     :class="i === {{ $k }} ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-3'"
                     @if ($k > 0) x-cloak @endif>
                     <div class="lg:col-span-6">
-                        <p class="text-sm font-semibold text-[#ffcc00]">{{ $s['eyebrow'] }}</p>
                         @if ($k === 0)
-                            <h1 class="mt-4 hero-title text-4xl sm:text-5xl xl:text-6xl">{{ $s['title'] }} @if ($s['accent'])<span class="text-[#ffcc00]">{{ $s['accent'] }}</span>@endif</h1>
+                            {{-- SEO 2026-11-27: l'eyebrow « Logiciel de gestion de stock en ligne » fait partie du H1 (même rendu) --}}
+                            <h1><span class="block text-sm font-semibold text-[#ffcc00]">{{ $s['eyebrow'] }}</span><span class="block mt-4 hero-title text-4xl sm:text-5xl xl:text-6xl">{{ $s['title'] }} @if ($s['accent'])<span class="text-[#ffcc00]">{{ $s['accent'] }}</span>@endif</span></h1>
                         @else
+                            <p class="text-sm font-semibold text-[#ffcc00]">{{ $s['eyebrow'] }}</p>
                             <h2 class="mt-4 hero-title text-4xl sm:text-5xl xl:text-6xl">{{ $s['title'] }}</h2>
                         @endif
                         <p class="mt-6 text-lg text-zinc-300 max-w-xl leading-relaxed">{{ $s['text'] }}</p>
