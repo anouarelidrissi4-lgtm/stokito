@@ -282,6 +282,10 @@
             </div>
         </div>
 
+        @if ($canPay)
+            @include('livewire.bon-livraisons._payments', ['payLater' => 'Ils seront enregistrés avec le bon de commande.'])
+        @endif
+
         <div class="flex justify-end gap-2 pt-2 border-t">
             <a href="{{ route('commande-fournisseurs.index') }}" wire:navigate class="px-4 py-2 text-sm text-gray-600">Annuler</a>
             <button wire:click="save" class="bg-[#16a34a] text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-[#15803d]">Enregistrer</button>

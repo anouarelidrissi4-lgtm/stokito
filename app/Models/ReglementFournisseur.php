@@ -13,12 +13,29 @@ class ReglementFournisseur extends Model
 
     protected $fillable = [
         'fournisseur_id', 'commande_fournisseur_id', 'tresorerie_compte_id',
-        'montant', 'date', 'mode', 'numero_cheque', 'notes',
+        'montant', 'date', 'mode', 'numero_cheque', 'notes', 'banque', 'date_echeance', 'tireur',
     ];
 
     protected $casts = [
         'date' => 'date',
+        'date_echeance' => 'date',
     ];
+
+    protected static function booted(): void
+    {
+        // a deleted payment leaves no treasury entry or pending cheque behind (2026-11-27)
+        static::deleting(function (ReglementFournisseur $r) {
+            ChequeEffetFournisseur::where('reglement_fournisseur_id', $r->id)->where('status', 'en_attente')->delete();
+        });
+        static::deleted(function (ReglementFournisseur $r) {
+            MouvementBancaire::where('reference_type', 'reglement_fournisseur')->where('reference_id', $r->id)->delete();
+        });
+    }
+
+    public function modeLabel(): string
+    {
+        return \App\Support\SalesLists::MODES[$this->mode] ?? ucfirst((string) $this->mode);
+    }
 
     public function fournisseur(): BelongsTo
     {

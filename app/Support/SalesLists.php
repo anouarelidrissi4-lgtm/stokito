@@ -147,7 +147,35 @@ class SalesLists
 
                 return ['Soldes clients', ['Code', 'Client', 'Téléphone', ['Plafond', 'r'], ['Solde', 'r']], $rows];
             })(),
+            'plafonds' => (function () use ($f, $money) {
+                $rows = self::plafondClients((string) ($f['search'] ?? ''))->map(function ($c) use ($money) {
+                    $solde = $c->solde();
+                    $over = $solde - (float) $c->credit_limit;
+
+                    return [$c->code ?? '—', self::clientLabel($c), $c->phone ?: '—', $money($c->credit_limit), $money($solde), $over > 0 ? $money($over) : '—'];
+                })->all();
+
+                return ['Plafonds clients', ['Code', 'Client', 'Téléphone', ['Plafond', 'r'], ['Solde', 'r'], ['Dépassement', 'r']], $rows];
+            })(),
         };
+    }
+
+    /** clients with a credit limit, same filter as the Plafonds screen */
+    public static function plafondClients(string $search = '')
+    {
+        $s = trim($search);
+
+        return Client::query()->whereNotNull('credit_limit')->where('credit_limit', '>', 0)
+            ->when($s !== '', fn ($q) => $q->where(fn ($w) => $w->where('name', 'like', "%{$s}%")->orWhere('prenom', 'like', "%{$s}%")->orWhere('code', 'like', "%{$s}%")))
+            ->orderBy('name')->get();
+    }
+
+    public static function plafondsTotals(string $search = ''): array
+    {
+        $clients = self::plafondClients($search);
+        $over = $clients->map(fn ($c) => $c->solde() - (float) $c->credit_limit)->filter(fn ($v) => $v > 0);
+
+        return ['Clients' => (string) $clients->count(), 'En dépassement' => (string) $over->count(), 'Total dépassement' => Fmt::money($over->sum())];
     }
 
     public static function totalSoldes(string $search = ''): float

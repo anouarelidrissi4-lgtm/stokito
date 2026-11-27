@@ -54,6 +54,21 @@ class SalesListsTest extends TestCase
         }
     }
 
+    public function test_plafonds_print_lists_overdrawn_clients(): void
+    {
+        $this->companyUser('FR');
+        $c = $this->client('Durand');
+        $c->update(['credit_limit' => 100]);
+        $this->client('Sans Plafond');
+        $this->facture(160, '2026-11-02', 'FAC-00001');
+
+        $this->get(route('plafonds-clients.print'))->assertOk()
+            ->assertSee('Plafonds clients')->assertSee('Durand')->assertDontSee('Sans Plafond')->assertSee('Dépassement')->assertSee('60');
+        Livewire::test(\App\Livewire\ClientReports\Index::class, ['mode' => 'plafonds'])
+            ->assertViewHas('printUrl', fn ($u) => str_contains($u, 'plafonds-clients/imprimer'))
+            ->assertSee('client-reports-phone', false);
+    }
+
     public function test_edit_and_delete_payment_keep_treasury_and_invoice_right(): void
     {
         $this->companyUser('FR');

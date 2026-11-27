@@ -40,6 +40,29 @@ class Form extends Component
 
     public $reference_fournisseur = '';
 
+    /* ---- payments on the purchase order (2026-11-27), same panel as the delivery note ---- */
+    public string $payGroup = '';          // '' closed, 'cash' or 'papier'
+
+    public $payMode = 'especes';
+
+    public $payMontant = null;
+
+    public $payDate = null;
+
+    public $payCompte = null;
+
+    public $payBanque = '';
+
+    public $payNumero = '';
+
+    public $payEcheance = null;
+
+    public $payTireur = '';
+
+    public $payNotes = '';
+
+    public array $pendingPayments = [];    // payments typed before the order exists
+
     // --- Scanner IA d'une facture fournisseur (2026-11-24) ---
     public $scanFile = null;
 
@@ -431,6 +454,117 @@ class Form extends Component
         return $this->totalHt * (1 + ((float) $this->tva_rate) / 100);
     }
 
+    private function canPay(): bool
+    {
+        return (bool) auth()->user()?->hasPermission('gestion_reglements_fournisseurs');
+    }
+
+    public function openPayment(string $group): void
+    {
+        abort_unless($this->canPay(), 403);
+        $this->resetValidation();
+        $this->payGroup = in_array($group, ['cash', 'papier'], true) ? $group : '';
+        $this->payMode = $group === 'papier' ? 'cheque' : 'especes';
+        $this->payDate = now()->format('Y-m-d');
+        $this->payEcheance = $group === 'papier' ? now()->format('Y-m-d') : null;
+        $this->payBanque = '';
+        $this->payNumero = '';
+        $this->payTireur = '';
+        $this->payNotes = '';
+        $this->payCompte = null;
+        $this->payMontant = max(0, round($this->resteAPayer(), 2)) ?: null;
+    }
+
+    public function closePayment(): void
+    {
+        $this->payGroup = '';
+    }
+
+    /** total of the order as typed, minus what is already paid */
+    public function resteAPayer(): float
+    {
+        $paid = $this->commande ? (float) $this->commande->reglements()->sum('montant') : array_sum(array_column($this->pendingPayments, 'montant'));
+
+        return round((float) $this->totalTtc - $paid, 2);
+    }
+
+    public function addPayment(): void
+    {
+        abort_unless($this->canPay(), 403);
+        $modes = $this->payGroup === 'papier' ? \App\Support\SalesLists::MODES_PAPIER : ['especes', 'virement', 'versement', 'transfert'];
+        $this->validate([
+            'payMode' => 'required|in:'.implode(',', $modes),
+            'payMontant' => 'required|numeric|min:0.01',
+            'payDate' => 'required|date',
+            'payEcheance' => 'nullable|date',
+            'payBanque' => 'nullable|string|max:100',
+            'payNumero' => 'nullable|string|max:60',
+            'payTireur' => 'nullable|string|max:120',
+            'payNotes' => 'nullable|string|max:500',
+        ], [], ['payMontant' => 'montant', 'payDate' => 'date', 'payTireur' => 'nom sur le chèque', 'payNotes' => 'observation']);
+        if ($this->payCompte && ! \App\Models\TresorerieCompte::find($this->payCompte)) {
+            $this->addError('payCompte', 'Compte introuvable.');
+
+            return;
+        }
+        $data = [
+            'montant' => round((float) $this->payMontant, 2),
+            'date' => $this->payDate,
+            'mode' => $this->payMode,
+            'tresorerie_compte_id' => $this->payCompte ?: null,
+            'banque' => in_array($this->payMode, ['cheque', 'effet', 'virement', 'versement'], true) ? (trim($this->payBanque) ?: null) : null,
+            'numero_cheque' => trim($this->payNumero) ?: null,
+            'date_echeance' => $this->payGroup === 'papier' ? ($this->payEcheance ?: null) : null,
+            'tireur' => $this->payGroup === 'papier' ? (trim((string) $this->payTireur) ?: null) : null,
+            'notes' => trim((string) $this->payNotes) ?: null,
+        ];
+        if ($this->commande) {
+            $this->createPayment($this->commande, $data);
+            $this->commande->refresh();
+        } else {
+            $this->pendingPayments[] = $data;
+        }
+        $this->payGroup = '';
+    }
+
+    public function removePayment($key): void
+    {
+        abort_unless($this->canPay(), 403);
+        if ($this->commande) {
+            $r = \App\Models\ReglementFournisseur::where('commande_fournisseur_id', $this->commande->id)->findOrFail((int) $key);
+            \App\Support\Tenant::tryDelete($r);
+            $this->commande->refresh();
+        } else {
+            unset($this->pendingPayments[(int) $key]);
+            $this->pendingPayments = array_values($this->pendingPayments);
+        }
+    }
+
+    private function createPayment(CommandeFournisseur $cf, array $data): void
+    {
+        \Illuminate\Support\Facades\DB::transaction(function () use ($cf, $data) {
+            $r = \App\Models\ReglementFournisseur::create($data + [
+                'fournisseur_id' => $cf->fournisseur_id,
+                'commande_fournisseur_id' => $cf->id,
+            ]);
+            $r->applyEffects();
+            // a cheque or an effet also goes to the "Chèques / effets fournisseurs" follow-up, like the Règlements page
+            if (in_array($r->mode, \App\Support\SalesLists::MODES_PAPIER, true)) {
+                \App\Models\ChequeEffetFournisseur::create([
+                    'fournisseur_id' => $cf->fournisseur_id,
+                    'reglement_fournisseur_id' => $r->id,
+                    'numero_cheque' => $r->numero_cheque ?: '—',
+                    'banque' => $r->banque,
+                    'montant' => $r->montant,
+                    'date_emission' => $r->date,
+                    'date_echeance' => $r->date_echeance ?? $r->date,
+                    'status' => 'en_attente',
+                    'notes' => trim(implode(' · ', array_filter([$r->mode === 'effet' ? 'Effet' : null, $r->tireur, $r->notes]))) ?: null,
+                ]);
+            }
+        });
+    }
+
     public function save()
     {
         $this->validate([
@@ -489,6 +623,15 @@ class Form extends Component
         }
 
         $this->commande->recalculateTotals();
+        if ($this->canPay()) {
+            foreach ($this->pendingPayments as $p) {
+                $this->createPayment($this->commande->fresh(), $p);
+            }
+        }
+        $this->pendingPayments = [];
+        // payments follow the order's supplier if it was changed
+        \App\Models\ReglementFournisseur::where('commande_fournisseur_id', $this->commande->id)->where('fournisseur_id', '!=', $this->commande->fournisseur_id)
+            ->update(['fournisseur_id' => $this->commande->fournisseur_id]);
 
         if ($receiveNow) {
             $this->commande->load('items.product')->markReceived();
@@ -510,6 +653,10 @@ class Form extends Component
             'categories' => \App\Models\Category::orderBy('name')->get(),
             'brands' => \App\Models\Brand::orderBy('name')->get(),
             'scansLeft' => ($l = \App\Support\Plans::limit('scans')) === null ? null : max(0, $l - \App\Models\AiScan::usedThisMonth()),
+            'canPay' => $this->canPay(),
+            'payments' => $this->commande ? $this->commande->reglements()->with('tresorerieCompte')->orderBy('date')->orderBy('id')->get() : null,
+            'banks' => \App\Support\Banks::for(),
+            'comptes' => \App\Models\TresorerieCompte::where('is_active', true)->orderBy('name')->get(),
         ])->layout('layouts.app');
     }
 }

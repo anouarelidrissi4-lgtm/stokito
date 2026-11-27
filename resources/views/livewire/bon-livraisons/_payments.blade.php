@@ -1,10 +1,10 @@
-{{-- Règlements du bon de livraison (2026-11-26). Before the first save they are kept in $pendingPayments and saved with the BL. --}}
+{{-- Règlements du bon de livraison (2026-11-26), reused by the bon de commande fournisseur (2026-11-27). Before the first save they are kept in $pendingPayments and saved with the document. --}}
 @php
     $money = fn ($v) => \App\Support\Fmt::money($v);
     $detail = fn ($banque, $num, $ech, $tireur = null) => implode(' · ', array_filter([$banque, $num ? 'n° '.$num : null, $tireur, $ech ? 'échéance '.$ech : null]));
     $rows = $payments
         ? $payments->map(fn ($r) => ['key' => $r->id, 'date' => $r->date?->format('d/m/Y'), 'mode' => $r->modeLabel(), 'compte' => $r->tresorerieCompte?->name,
-            'detail' => $detail($r->banque, $r->numero_cheque, $r->date_echeance?->format('d/m/Y'), $r->tireur), 'obs' => $r->observation(), 'montant' => (float) $r->montant])
+            'detail' => $detail($r->banque, $r->numero_cheque, $r->date_echeance?->format('d/m/Y'), $r->tireur), 'obs' => method_exists($r, 'observation') ? $r->observation() : $r->notes, 'montant' => (float) $r->montant])
         : collect($pendingPayments)->map(fn ($p, $i) => ['key' => $i, 'date' => \Illuminate\Support\Carbon::parse($p['date'])->format('d/m/Y'),
             'mode' => \App\Support\SalesLists::MODES[$p['mode']] ?? $p['mode'], 'compte' => null,
             'detail' => $detail($p['banque'] ?? null, $p['numero_cheque'] ?? null, ! empty($p['date_echeance']) ? \Illuminate\Support\Carbon::parse($p['date_echeance'])->format('d/m/Y') : null, $p['tireur'] ?? null), 'obs' => $p['notes'] ?? null, 'montant' => (float) $p['montant']]);
@@ -17,7 +17,7 @@
     <div class="p-4 flex flex-wrap items-center justify-between gap-3 border-b border-gray-200">
         <div>
             <h3 class="font-semibold text-gray-900">Règlements</h3>
-            <p class="text-xs text-gray-500">{{ $payments ? 'Chaque règlement est enregistré tout de suite.' : 'Ils seront enregistrés avec le bon de livraison.' }}</p>
+            <p class="text-xs text-gray-500">{{ $payments ? 'Chaque règlement est enregistré tout de suite.' : ($payLater ?? 'Ils seront enregistrés avec le bon de livraison.') }}</p>
         </div>
         <div class="flex flex-wrap gap-2">
             <button type="button" wire:click="openPayment('cash')" class="inline-flex items-center gap-1.5 min-h-10 px-4 py-2 rounded-lg bg-[#16a34a] text-white text-sm font-semibold hover:bg-[#15803d]">

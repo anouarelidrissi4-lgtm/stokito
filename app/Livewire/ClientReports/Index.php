@@ -40,7 +40,7 @@ class Index extends Component
 
         return view('livewire.client-reports.index', ['clients' => $clients,
             'totalSoldes' => $this->mode === 'soldes' ? \App\Support\SalesLists::totalSoldes($this->search) : null,
-            'printUrl' => $this->mode === 'soldes' ? route('soldes-clients.print', array_filter(['search' => $this->search])) : null])
+            'printUrl' => route($this->mode === 'plafonds' ? 'plafonds-clients.print' : 'soldes-clients.print', array_filter(['search' => $this->search]))])
             ->layout('layouts.app');
     }
 }
