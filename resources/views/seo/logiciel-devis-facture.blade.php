@@ -144,7 +144,7 @@
                 <div class="text-[15px] leading-relaxed text-zinc-700">L’obligation d’émettre des factures électroniques s’étend aux PME et aux micro-entreprises.</div>
             </div>
         </div>
-        <p>Une facture électronique non émise alors qu’elle était due coûte 50 € par facture, dans la limite de 15 000 € par an. Avant de choisir un logiciel de devis et facture, demandez à l’éditeur comment il compte se connecter à une plateforme agréée. Le détail du calendrier, des plateformes et des sanctions est dans notre article <a href="{{ route('blog.show', 'facture-electronique-obligatoire-2026-2027') }}">facture électronique obligatoire 2026-2027</a>.</p>
+        <p>Une facture électronique non émise alors qu’elle était due coûte 50 € par facture, dans la limite de 15 000 € par an. Avant de choisir un logiciel de devis et facture, demandez à l’éditeur dans quel format il produit vos factures et comment il compte se connecter à une plateforme agréée. Stokito produit déjà des <a href="{{ route('seo.factur-x') }}">factures Factur-X</a>. Le détail du calendrier, des plateformes et des sanctions est dans notre article <a href="{{ route('blog.show', 'facture-electronique-obligatoire-2026-2027') }}">facture électronique obligatoire 2026-2027</a>.</p>
 
         <h2 id="criteres">6 critères pour choisir un logiciel de devis et facture</h2>
         <div class="my-6 grid sm:grid-cols-2 gap-4">
@@ -187,7 +187,7 @@
         </figure>
         <h3>Ce que Stokito ne fait pas encore</h3>
         <ul>
-            <li>Ce n’est <strong>pas une plateforme de facturation électronique agréée</strong> : les factures sont produites en PDF.</li>
+            <li>Ce n’est <strong>pas une plateforme de facturation électronique agréée</strong> : pour une entreprise établie en France, les factures sont produites en <a href="{{ route('seo.factur-x') }}">PDF Factur-X</a> (profil EN 16931), l’un des formats que les plateformes agréées acceptent.</li>
             <li>Pas de durée de validité dédiée sur le devis (à indiquer dans les notes), ni de factures de situation pour les chantiers.</li>
         </ul>
         <p>Pour voir chaque écran pas à pas, téléchargez le <a href="/docs/guide-stokito-fr.pdf" target="_blank" rel="noopener">guide d’utilisation (PDF)</a> ou ouvrez la <a href="{{ route('demo.login') }}">démo avec des données fictives</a>.</p>

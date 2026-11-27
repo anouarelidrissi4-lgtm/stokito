@@ -112,14 +112,22 @@ class FacturX
         if ($f->objet) {
             $d->addDocumentNote((string) $f->objet);
         }
+        // the same French mentions as the PDF (resources/views/pdf/_body.blade.php)
+        $nat = ['biens' => 'livraison de biens', 'services' => 'prestation de services', 'mixte' => 'livraison de biens et prestation de services'];
+        if ($f->nature_operation && isset($nat[$f->nature_operation])) {
+            $d->addDocumentNote('Nature des opérations : '.$nat[$f->nature_operation].'.', null, 'AAI');
+        }
+        if ($s->tva_debits) {
+            $d->addDocumentNote('Option pour le paiement de la taxe d’après les débits.', null, 'AAI');
+        }
         if ($s->penalites_taux) {
-            $d->addDocumentNote('Pénalités de retard : '.$s->penalites_taux.' % par an.', null, 'PMD');
+            $d->addDocumentNote('Pénalités de retard : '.rtrim((string) $s->penalites_taux, '. ').', exigibles sans rappel.', null, 'PMD');
         }
         if ($s->indemnite_40) {
-            $d->addDocumentNote('Indemnité forfaitaire pour frais de recouvrement en cas de retard de paiement : 40 €.', null, 'PMT');
+            $d->addDocumentNote('Indemnité forfaitaire pour frais de recouvrement en cas de retard de paiement : 40 € (clients professionnels).', null, 'PMT');
         }
         if ($s->escompte_neant) {
-            $d->addDocumentNote('Pas d’escompte pour paiement anticipé.', null, 'AAB');
+            $d->addDocumentNote('Escompte pour paiement anticipé : néant.', null, 'AAB');
         }
 
         // seller
@@ -173,7 +181,10 @@ class FacturX
         if (preg_match('/^[A-Z]{2}\d{2}[A-Z0-9]{10,30}$/', $iban)) {
             $d->addDocumentPaymentMean('58', 'Virement', null, null, null, null, $iban, (string) $s->name);
         }
-        $d->addDocumentPaymentTerm('Paiement à réception de facture'.($f->due_date ? ', au plus tard le '.$f->due_date->format('d/m/Y') : '').'.',
+        // payment terms as printed on the PDF ("Conditions de paiement"), with the due date
+        $cond = trim((string) $s->conditions_paiement);
+        $echeance = $f->due_date ? 'Échéance : '.$f->due_date->format('d/m/Y').'.' : null;
+        $d->addDocumentPaymentTerm(trim(($cond ? rtrim($cond, '. ').'. ' : '').($echeance ?? '')) ?: 'Paiement à réception de facture.',
             ($f->due_date ?? $f->date)->toDateTime());
 
         // lines

@@ -20,13 +20,13 @@ class FacturXTest extends TestCase
         $this->companyUser('FR', array_merge([
             'name' => 'Atelier Durand SARL', 'ice' => '732 829 320 00074', 'identifiant_fiscal' => 'FR44732829320',
             'address' => "12 rue des Lilas\n75011 Paris", 'phone' => '01 23 45 67 89', 'email' => 'contact@durand.test',
-            'rib' => 'FR76 3000 6000 0112 3456 7890 189', 'penalites_taux' => 10, 'indemnite_40' => true, 'escompte_neant' => true,
+            'rib' => 'FR76 3000 6000 0112 3456 7890 189', 'penalites_taux' => 'trois fois le taux d’intérêt légal', 'conditions_paiement' => 'Paiement à 30 jours fin de mois, par virement', 'indemnite_40' => true, 'escompte_neant' => true,
         ], $societe));
         $c = Client::create(['name' => 'Boulangerie Martin', 'ice' => 'FR13542107651', 'address' => '3 place du Marché, 69002 Lyon']);
         $p1 = Product::create(['reference' => 'TOLE-2', 'name' => 'Tôle acier 2 mm', 'unit' => 'kg', 'purchase_price' => 1, 'sale_price' => 2, 'stock_qty' => 500]);
         $p2 = Product::create(['reference' => 'LIV', 'name' => 'Livre technique', 'unit' => 'pièce', 'purchase_price' => 10, 'sale_price' => 20, 'stock_qty' => 50]);
         $f = Facture::create(['client_id' => $c->id, 'numero' => 'FAC-2026-0042', 'date' => '2026-11-20', 'due_date' => '2026-12-20', 'tva_rate' => 20,
-            'status' => 'brouillon', 'remise_type' => 'percent', 'remise_value' => 5, 'adresse_livraison' => 'Chantier, 10 avenue Foch, 69006 Lyon']);
+            'status' => 'brouillon', 'remise_type' => 'percent', 'remise_value' => 5, 'adresse_livraison' => 'Chantier, 10 avenue Foch, 69006 Lyon', 'nature_operation' => 'biens']);
         // 2 × 100 − 10 % = 180 at 20 %, 3 × 50 = 150 at 5.5 %, then 5 % on the whole invoice
         $f->items()->create(['product_id' => $p1->id, 'quantity' => 2, 'unit_price' => 100, 'tva_rate' => 20, 'remise_type' => 'percent', 'remise_value' => 10, 'total' => 180]);
         $f->items()->create(['product_id' => $p2->id, 'quantity' => 3, 'unit_price' => 50, 'tva_rate' => 5.5, 'remise_type' => 'percent', 'remise_value' => 0, 'total' => 150]);
@@ -77,6 +77,12 @@ class FacturXTest extends TestCase
         $this->assertSame('FR13542107651', $v('//ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID'));
         $this->assertSame('FR7630006000011234567890189', $v('//ram:PayeePartyCreditorFinancialAccount/ram:IBANID'));
         $this->assertSame('KGM', $v('(//ram:BilledQuantity)[1]/@unitCode'));
+        // same payment terms and mentions as the PDF
+        $this->assertSame('Paiement à 30 jours fin de mois, par virement. Échéance : 20/12/2026.', $v('//ram:SpecifiedTradePaymentTerms/ram:Description'));
+        $this->assertSame('20261220', $v('//ram:SpecifiedTradePaymentTerms/ram:DueDateDateTime/udt:DateTimeString'));
+        $notes = $x->evaluate('string(//rsm:ExchangedDocument)');
+        $this->assertStringContainsString('Nature des opérations : livraison de biens.', $notes);
+        $this->assertStringContainsString('Pénalités de retard : trois fois le taux d’intérêt légal, exigibles sans rappel.', $notes);
 
         // 330 net lines, 5 % global discount = 16.50 → 313.50 HT; VAT 171 × 20 % + 142.50 × 5.5 %
         $vt = $f->vatTotals();
@@ -163,6 +169,14 @@ class FacturXTest extends TestCase
         $this->get(route('factures.pdf', $f->id))->assertOk()->assertHeader('Content-Type', 'application/pdf');
         $r = $this->get(route('factures.xml', $f->id))->assertOk();
         $this->assertStringContainsString('FAC-2026-0042', $r->getContent());
+    }
+
+    public function test_seo_page_and_sitemap(): void
+    {
+        $this->get(route('seo.factur-x'))->assertOk()
+            ->assertSee('Facture électronique', false)->assertSee('factur-x.xml', false)->assertSee('n’est pas une plateforme agréée', false);
+        $this->get(route('sitemap'))->assertOk()->assertSee(route('seo.factur-x'), false);
+        $this->get(route('seo.logiciel-devis-facture'))->assertOk()->assertSee(route('seo.factur-x'), false);
     }
 
     public function test_companies_outside_france_keep_the_plain_pdf(): void
