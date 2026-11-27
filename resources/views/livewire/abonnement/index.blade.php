@@ -110,5 +110,6 @@
     <div class="mt-6 rounded-2xl border border-zinc-200 bg-zinc-50 p-5 text-sm text-zinc-600 leading-relaxed">
         <p><strong class="text-zinc-900">Comment payer ?</strong> Cliquez sur « Choisir » : votre demande part sur WhatsApp. Nous vous envoyons les coordonnées pour payer par virement ou versement bancaire, et votre plan est activé dès réception du paiement.</p>
         <p class="mt-2"><strong class="text-zinc-900">PayPal ?</strong> Cliquez sur « Payer avec PayPal » (montant en euros) et choisissez « Biens et services ». Envoyez ensuite la confirmation sur WhatsApp : votre plan est activé dans la journée.</p>
+        <p class="mt-2"><strong class="text-zinc-900">Sans engagement.</strong> Pas de renouvellement automatique : à la fin de la période, votre compte repasse au plan Free et vos données restent là. Premier paiement remboursé sur simple demande dans les 14 jours. Voir les <a href="{{ route('legal.terms') }}" target="_blank" class="font-semibold text-zinc-900 underline decoration-amber-400 decoration-2 underline-offset-2">conditions générales de vente</a>.</p>
     </div>
 </div>

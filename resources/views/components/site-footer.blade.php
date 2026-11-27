@@ -13,46 +13,46 @@
         <div>
             <h3 class="ind-h text-lg text-white">{{ __('Produit') }}</h3>
             <ul class="mt-3 space-y-2">
-                <li><a href="{{ route('seo.logiciel-gratuit') }}" class="hover:text-zinc-900">{{ __('Logiciel de gestion de stock gratuit') }}</a></li>
-                <li><a href="{{ route('seo.logiciel-devis-facture') }}" class="hover:text-zinc-900">{{ __('Logiciel devis facture gratuit') }}</a></li>
-                <li><a href="{{ route('seo.scanner-facture') }}" class="hover:text-zinc-900">{{ __('Scanner de factures fournisseurs') }}</a></li>
-                <li><a href="{{ route('seo.caisse') }}" class="hover:text-zinc-900">{{ __('Logiciel de caisse gratuit') }}</a></li>
-                <li><a href="{{ route('seo.bon-de-commande') }}" class="hover:text-zinc-900">{{ __('Modèle de bon de commande') }}</a></li>
-                <li><a href="{{ route('seo.code-barre') }}" class="hover:text-zinc-900">{{ __('Générateur de code barre gratuit') }}</a></li>
-                <li><a href="{{ route('seo.code-barre-pays') }}" class="hover:text-zinc-900">{{ __('Code barre pays') }}</a></li>
-                <li><a href="{{ route('seo.scanner-code-barre') }}" class="hover:text-zinc-900">{{ __('Scanner code barre en ligne') }}</a></li>
-                <li><a href="{{ $home }}#parcours" class="hover:text-zinc-900">{{ __('Comment ça marche') }}</a></li>
-                <li><a href="{{ $home }}#fonctionnalites" class="hover:text-zinc-900">{{ __('Fonctionnalités') }}</a></li>
-                <li><a href="{{ $home }}#ecrans" class="hover:text-zinc-900">{{ __('Écrans') }}</a></li>
-                <li><a href="{{ route('register') }}" class="hover:text-zinc-900">{{ __('Créer un compte gratuit') }}</a></li>
-                <li><a href="{{ route('demo.login') }}" class="hover:text-zinc-900">{{ __('Tester la démo') }}</a></li>
+                <li><a href="{{ route('seo.logiciel-gratuit') }}" class="hover:text-white">{{ __('Logiciel de gestion de stock gratuit') }}</a></li>
+                <li><a href="{{ route('seo.logiciel-devis-facture') }}" class="hover:text-white">{{ __('Logiciel devis facture gratuit') }}</a></li>
+                <li><a href="{{ route('seo.scanner-facture') }}" class="hover:text-white">{{ __('Scanner de factures fournisseurs') }}</a></li>
+                <li><a href="{{ route('seo.caisse') }}" class="hover:text-white">{{ __('Logiciel de caisse gratuit') }}</a></li>
+                <li><a href="{{ route('seo.bon-de-commande') }}" class="hover:text-white">{{ __('Modèle de bon de commande') }}</a></li>
+                <li><a href="{{ route('seo.code-barre') }}" class="hover:text-white">{{ __('Générateur de code barre gratuit') }}</a></li>
+                <li><a href="{{ route('seo.code-barre-pays') }}" class="hover:text-white">{{ __('Code barre pays') }}</a></li>
+                <li><a href="{{ route('seo.scanner-code-barre') }}" class="hover:text-white">{{ __('Scanner code barre en ligne') }}</a></li>
+                <li><a href="{{ $home }}#parcours" class="hover:text-white">{{ __('Comment ça marche') }}</a></li>
+                <li><a href="{{ $home }}#fonctionnalites" class="hover:text-white">{{ __('Fonctionnalités') }}</a></li>
+                <li><a href="{{ $home }}#ecrans" class="hover:text-white">{{ __('Écrans') }}</a></li>
+                <li><a href="{{ route('register') }}" class="hover:text-white">{{ __('Créer un compte gratuit') }}</a></li>
+                <li><a href="{{ route('demo.login') }}" class="hover:text-white">{{ __('Tester la démo') }}</a></li>
             </ul>
         </div>
         <div class="lg:col-span-2">
             <h3 class="ind-h text-lg text-white">{{ __('Derniers articles') }}</h3>
             <ul class="mt-3 space-y-2">
                 @foreach ($latest as $p)
-                    <li><a href="{{ route('blog.show', $p->slug) }}" class="hover:text-zinc-900">{{ $p->title }}</a></li>
+                    <li><a href="{{ route('blog.show', $p->slug) }}" class="hover:text-white">{{ $p->title }}</a></li>
                 @endforeach
-                <li><a href="{{ route('blog.index') }}" class="text-white hover:text-zinc-900 underline decoration-amber-400 decoration-2 underline-offset-4">{{ __('Tous les articles du blog') }}</a></li>
+                <li><a href="{{ route('blog.index') }}" class="text-white hover:text-white underline decoration-amber-400 decoration-2 underline-offset-4">{{ __('Tous les articles du blog') }}</a></li>
             </ul>
         </div>
         <div>
             <h3 class="ind-h text-lg text-white">{{ __('Ressources') }}</h3>
             <ul class="mt-3 space-y-2">
-                <li><a href="/docs/guide-stokito-fr.pdf" target="_blank" rel="noopener" class="hover:text-zinc-900">{{ __('Guide en français (PDF)') }}</a></li>
-                <li><a href="/docs/guide-stokito-ar.pdf" target="_blank" rel="noopener" class="hover:text-zinc-900" dir="rtl">الدليل بالعربية (PDF)</a></li>
-                <li><a href="/docs/guide-stokito-en.pdf" target="_blank" rel="noopener" class="hover:text-zinc-900">User guide in English (PDF)</a></li>
-                <li><a href="{{ $wa }}" target="_blank" rel="noopener" class="hover:text-zinc-900 ind-mono" dir="ltr">WhatsApp +212 676 035 777</a></li>
-                <li><a href="{{ route('login') }}" class="hover:text-zinc-900">{{ __('Se connecter') }}</a></li>
+                <li><a href="/docs/guide-stokito-fr.pdf" target="_blank" rel="noopener" class="hover:text-white">{{ __('Guide en français (PDF)') }}</a></li>
+                <li><a href="/docs/guide-stokito-ar.pdf" target="_blank" rel="noopener" class="hover:text-white" dir="rtl">الدليل بالعربية (PDF)</a></li>
+                <li><a href="/docs/guide-stokito-en.pdf" target="_blank" rel="noopener" class="hover:text-white">User guide in English (PDF)</a></li>
+                <li><a href="{{ $wa }}" target="_blank" rel="noopener" class="hover:text-white ind-mono" dir="ltr">WhatsApp +212 676 035 777</a></li>
+                <li><a href="{{ route('login') }}" class="hover:text-white">{{ __('Se connecter') }}</a></li>
             </ul>
         </div>
     </div>
     <div class="border-t border-zinc-800 py-5 px-4 flex flex-wrap justify-center gap-x-6 gap-y-2 ind-mono text-xs">
         <span>&copy; {{ date('Y') }} Stokito · {{ __('Tous droits réservés.') }}</span>
-        <a href="{{ route('legal.terms') }}" class="hover:text-zinc-900">{{ __('Conditions d’utilisation') }}</a>
-        <a href="{{ route('legal.privacy') }}" class="hover:text-zinc-900">{{ __('Politique de confidentialité') }}</a>
-        <a href="{{ route('legal.mentions') }}" class="hover:text-zinc-900">{{ __('Mentions légales') }}</a>
-        <button type="button" onclick="window.stkConsent && stkConsent.open()" class="hover:text-zinc-900">{{ __('Gérer les cookies') }}</button>
+        <a href="{{ route('legal.terms') }}" class="hover:text-white">{{ __('Conditions d’utilisation') }}</a>
+        <a href="{{ route('legal.privacy') }}" class="hover:text-white">{{ __('Politique de confidentialité') }}</a>
+        <a href="{{ route('legal.mentions') }}" class="hover:text-white">{{ __('Mentions légales') }}</a>
+        <button type="button" onclick="window.stkConsent && stkConsent.open()" class="hover:text-white">{{ __('Gérer les cookies') }}</button>
     </div>
 </footer>
