@@ -103,21 +103,21 @@
     <div class="overflow-x-auto">
         <table class="min-w-full text-sm">
             <thead class="bg-gray-50 text-xs text-gray-500">
-                <tr><th class="px-4 py-2 text-start font-medium">Date</th><th class="px-4 py-2 text-start font-medium">Type</th><th class="px-4 py-2 text-end font-medium">Montant</th><th class="px-2 py-2"></th></tr>
+                <tr><th class="hidden sm:table-cell px-2 sm:px-4 py-2 text-start font-medium">Date</th><th class="px-2 sm:px-4 py-2 text-start font-medium">Type</th><th class="px-2 sm:px-4 py-2 text-end font-medium">Montant</th><th class="px-2 py-2"></th></tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
                 @forelse ($rows as $r)
                     <tr wire:key="pay-{{ $payments ? 'r' : 'p' }}-{{ $r['key'] }}">
-                        <td class="px-4 py-2.5 whitespace-nowrap text-gray-700">{{ $r['date'] }}</td>
-                        <td class="px-4 py-2.5">
-                            <span class="font-medium text-gray-900">{{ $r['mode'] }}</span>
+                        <td class="hidden sm:table-cell px-2 sm:px-4 py-2.5 whitespace-nowrap text-gray-700">{{ $r['date'] }}</td>
+                        <td class="px-2 sm:px-4 py-2.5">
+                            <span class="font-medium text-gray-900">{{ $r['mode'] }}</span><span class="sm:hidden block text-xs text-gray-500">{{ $r['date'] }}</span>
                             @if ($r['detail'] || $r['compte'])<span class="block text-xs text-gray-500">{{ implode(' · ', array_filter([$r['detail'], $r['compte']])) }}</span>@endif
                             @if (! empty($r['obs']))<span class="block text-xs italic text-gray-500">{{ $r['obs'] }}</span>@endif
                         </td>
-                        <td class="px-4 py-2.5 text-end font-semibold tabular-nums whitespace-nowrap">{{ $money($r['montant']) }}</td>
-                        <td class="px-2 py-2.5 text-end whitespace-nowrap">
-                            <button type="button" wire:click="editPayment({{ $r['key'] }})" class="p-1.5 rounded text-gray-500 hover:text-zinc-900 hover:bg-gray-100" title="Modifier" aria-label="Modifier"><x-sp-icon name="pencil" class="w-4 h-4" /></button>
-                            <button type="button" wire:click="removePayment({{ $r['key'] }})" wire:confirm="Supprimer ce règlement ?" class="p-1.5 rounded text-gray-400 hover:text-red-600" title="Supprimer"><x-sp-icon name="trash" class="w-4 h-4" /></button>
+                        <td class="px-2 sm:px-4 py-2.5 text-end font-semibold tabular-nums whitespace-nowrap">{{ $money($r['montant']) }}</td>
+                        <td class="ps-0 pe-1 sm:px-2 py-2.5 text-end whitespace-nowrap">
+                            <button type="button" wire:click="editPayment({{ $r['key'] }})" class="p-1 sm:p-1.5 rounded text-gray-500 hover:text-zinc-900 hover:bg-gray-100" title="Modifier" aria-label="Modifier"><x-sp-icon name="pencil" class="w-4 h-4" /></button>
+                            <button type="button" wire:click="removePayment({{ $r['key'] }})" wire:confirm="Supprimer ce règlement ?" class="p-1 sm:p-1.5 rounded text-gray-400 hover:text-red-600" title="Supprimer"><x-sp-icon name="trash" class="w-4 h-4" /></button>
                         </td>
                     </tr>
                 @empty
@@ -125,10 +125,10 @@
                 @endforelse
             </tbody>
             <tfoot class="border-t border-gray-200">
-                <tr><td colspan="2" class="px-4 py-2 text-end font-semibold text-gray-700">Total des règlements</td><td class="px-4 py-2 text-end font-bold tabular-nums whitespace-nowrap">{{ $money($regle) }}</td><td></td></tr>
+                <tr><td class="hidden sm:table-cell"></td><td class="px-2 sm:px-4 py-2 text-end font-semibold text-gray-700">Total des règlements</td><td class="px-2 sm:px-4 py-2 text-end font-bold tabular-nums whitespace-nowrap">{{ $money($regle) }}</td><td></td></tr>
                 <tr>
-                    <td colspan="2" class="px-4 py-2 text-end font-semibold text-gray-700">Reste à payer</td>
-                    <td class="px-4 py-2 text-end font-bold tabular-nums whitespace-nowrap {{ $reste > 0.01 ? 'text-red-600' : ((float) $this->totalTtc > 0 ? 'text-green-700' : 'text-gray-400') }}">{{ $reste > 0.01 ? $money($reste) : ($reste < -0.01 ? 'Trop-perçu '.$money(-$reste) : ((float) $this->totalTtc > 0 ? 'Payé' : '—')) }}</td><td></td>
+                    <td class="hidden sm:table-cell"></td><td class="px-2 sm:px-4 py-2 text-end font-semibold text-gray-700">Reste à payer</td>
+                    <td class="px-2 sm:px-4 py-2 text-end font-bold tabular-nums whitespace-nowrap {{ $reste > 0.01 ? 'text-red-600' : ((float) $this->totalTtc > 0 ? 'text-green-700' : 'text-gray-400') }}">{{ $reste > 0.01 ? $money($reste) : ($reste < -0.01 ? 'Trop-perçu '.$money(-$reste) : ((float) $this->totalTtc > 0 ? 'Payé' : '—')) }}</td><td></td>
                 </tr>
             </tfoot>
         </table>
