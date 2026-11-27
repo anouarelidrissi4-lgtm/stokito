@@ -10,11 +10,19 @@
      x-data="{ sel: [], url: @js(route('bons-de-chargement.pdf-selection')),
         toggle(id) { this.sel = this.sel.includes(id) ? this.sel.filter(x => x !== id) : [...this.sel, id] },
         all(ids, on) { this.sel = on ? [...new Set([...this.sel, ...ids])] : this.sel.filter(x => !ids.includes(x)) } }">
-    <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-900">Bons de chargement</h1>
-        <p class="mt-1 text-sm text-gray-500">Un bon de chargement est créé automatiquement avec chaque bon de livraison. Ouvrez-le pour saisir les quantités chargées.</p>
+    <div class="mb-6 flex flex-wrap items-start justify-between gap-3">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Bons de chargement</h1>
+            <p class="mt-1 text-sm text-gray-500">Un bon de chargement est créé automatiquement avec chaque bon de livraison. Vous pouvez aussi en créer un pour plusieurs BL (un camion).</p>
+        </div>
+        <button type="button" wire:click="create" data-sp="bc-add" class="inline-flex items-center gap-1.5 h-10 px-4 rounded-lg bg-zinc-900 text-white text-sm font-semibold hover:bg-zinc-700">
+            <x-sp-icon name="plus" class="w-4 h-4" /> Ajouter un bon de chargement
+        </button>
     </div>
 
+    @if (session('error'))
+        <div class="mb-4 bg-red-50 text-red-700 px-4 py-2 rounded-lg text-sm">{{ session('error') }}</div>
+    @endif
     @if (session('success'))
         <div class="mb-4 bg-green-50 text-green-700 px-4 py-2 rounded-lg text-sm">{{ session('success') }}</div>
     @endif
@@ -71,6 +79,9 @@
                                 <div class="inline-flex items-center gap-2">
                                     <a href="{{ route('bons-de-chargement.pdf', $bc->id) }}" target="_blank" class="{{ $pdfBtn }}"><x-sp-icon name="printer" class="w-3.5 h-3.5" />PDF</a>
                                     <a href="{{ route('bons-de-chargement.show', $bc->id) }}" wire:navigate class="inline-flex items-center gap-1 border border-gray-300 bg-white px-2 py-1 rounded-md text-xs font-bold text-gray-800 hover:border-zinc-900">Charger</a>
+                                    @unless ($bc->bon_livraison_id)
+                                        <button type="button" wire:click="delete({{ $bc->id }})" wire:confirm="Supprimer ce bon de chargement ?" class="p-1 rounded text-gray-400 hover:text-red-600" title="Supprimer"><x-sp-icon name="trash" class="w-4 h-4" /></button>
+                                    @endunless
                                 </div>
                             </td>
                         </tr>
@@ -95,6 +106,9 @@
                     <div class="mt-3 flex justify-end gap-2">
                         <a href="{{ route('bons-de-chargement.pdf', $bc->id) }}" target="_blank" class="{{ $pdfBtn }}"><x-sp-icon name="printer" class="w-3.5 h-3.5" />PDF</a>
                         <a href="{{ route('bons-de-chargement.show', $bc->id) }}" wire:navigate class="inline-flex items-center border border-gray-300 bg-white px-2 py-1 rounded-md text-xs font-bold text-gray-800">Charger</a>
+                        @unless ($bc->bon_livraison_id)
+                            <button type="button" wire:click="delete({{ $bc->id }})" wire:confirm="Supprimer ce bon de chargement ?" class="p-1 rounded text-gray-400 hover:text-red-600" title="Supprimer"><x-sp-icon name="trash" class="w-4 h-4" /></button>
+                        @endunless
                     </div>
                 </div>
             @empty
@@ -104,4 +118,63 @@
 
         <div class="p-4">{{ $chargements->links() }}</div>
     </div>
+
+    {{-- manual loading slip (2026-11-27): several delivery notes in one truck, lines merged by product --}}
+    @if ($showModal)
+        @php $f = 'w-full rounded-md border-gray-300 text-sm'; @endphp
+        <div class="fixed inset-0 bg-black/40 flex items-end sm:items-center justify-center z-50" wire:click.self="$set('showModal', false)">
+            <div class="bg-white rounded-t-2xl sm:rounded-xl shadow-xl p-5 w-full max-w-lg max-h-[92vh] overflow-y-auto" x-data="{ q: '' }">
+                <h2 class="text-lg font-semibold text-gray-900">Nouveau bon de chargement</h2>
+                <p class="text-xs text-gray-500 mb-4">Choisissez les bons de livraison à charger : les produits sont regroupés sur un seul bon.</p>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Date</label>
+                        <input wire:model="date" type="date" class="{{ $f }}">
+                        @error('date') <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Immatriculation</label>
+                        <input wire:model="vehicule" type="text" maxlength="120" placeholder="Ex. 12345-A-6" class="{{ $f }}">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Nom du chauffeur</label>
+                        <input wire:model="chauffeur" type="text" maxlength="120" class="{{ $f }}">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Commercial responsable</label>
+                        <input wire:model="commercial" type="text" maxlength="120" class="{{ $f }}">
+                    </div>
+                </div>
+
+                <div class="mt-4 flex items-center justify-between gap-2">
+                    <label class="text-xs font-medium text-gray-500">Bons de livraison à charger</label>
+                    <span class="text-xs font-semibold text-zinc-900">{{ count($selectedBonLivraisons) }} sélectionné(s)</span>
+                </div>
+                @error('selectedBonLivraisons') <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
+                <input x-model="q" type="search" placeholder="N° de BL, client…" class="{{ $f }} mt-1">
+                <div class="mt-2 border border-gray-200 rounded-md max-h-56 overflow-y-auto divide-y divide-gray-100">
+                    @forelse ($availableBonLivraisons as $bl)
+                        @php $cl = $bl->client ? \App\Support\SalesLists::clientLabel($bl->client) : ''; @endphp
+                        <label class="flex items-center gap-3 px-3 py-2 text-sm cursor-pointer hover:bg-gray-50" wire:key="abl-{{ $bl->id }}"
+                               data-s="{{ \Illuminate\Support\Str::lower($bl->numero.' '.$cl.' '.($bl->client->code ?? '')) }}" x-show="! q || $el.dataset.s.includes(q.toLowerCase())">
+                            <input type="checkbox" wire:model.live="selectedBonLivraisons" value="{{ $bl->id }}" class="h-4 w-4 rounded border-gray-300 text-zinc-900 focus:ring-zinc-900">
+                            <span class="flex-1 min-w-0"><span class="font-semibold text-gray-900">{{ $bl->numero }}</span> <span class="text-gray-600">· {{ $cl ?: '—' }}</span></span>
+                            <span class="text-xs text-gray-400 whitespace-nowrap">{{ $bl->date?->format('d/m/Y') }}</span>
+                        </label>
+                    @empty
+                        <div class="px-3 py-4 text-sm text-gray-400">Aucun bon de livraison.</div>
+                    @endforelse
+                </div>
+
+                <label class="block text-xs font-medium text-gray-500 mb-1 mt-4">Notes</label>
+                <textarea wire:model="notes" rows="2" maxlength="1000" class="{{ $f }}"></textarea>
+
+                <div class="flex justify-end gap-2 mt-4">
+                    <button type="button" wire:click="$set('showModal', false)" class="px-4 py-2 text-sm text-gray-600">Annuler</button>
+                    <button type="button" wire:click="save" class="h-10 px-5 rounded-lg bg-[#16a34a] text-white text-sm font-semibold hover:bg-[#15803d]">Enregistrer</button>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>

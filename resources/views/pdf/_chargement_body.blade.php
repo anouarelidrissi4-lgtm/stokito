@@ -1,7 +1,9 @@
 {{-- one loading slip: same look as the other documents (2026-11-27) --}}
 @php
     $bl = $bc->bonLivraison;
-    $client = $bl?->client;
+    $bls = $bl ? collect([$bl]) : $bc->bonLivraisons;      // manual slip: several delivery notes
+    $client = $bls->count() === 1 ? $bls->first()->client : null;
+    $clients = $bls->map(fn ($b) => $b->client ? trim(($b->client->name ?? '').' '.($b->client->prenom ?? '')) : null)->filter()->unique()->implode(', ');
     $phones = implode(' / ', array_filter([$societe->phone, $societe->phone2]));
     $statuts = \App\Models\BonChargementLigne::STATUTS;
     $qty = fn ($v) => $v === null ? '' : \App\Support\Fmt::qty($v);
@@ -22,8 +24,8 @@
             <div class="place">{{ $societe->city ? $societe->city.', le' : 'Le' }} <strong>{{ $bc->date?->format('d/m/Y') }}</strong></div>
             <table class="meta">
                 <tr><td class="k">Chargement N°</td><td class="v">{{ $bc->numero }}</td></tr>
-                @if ($bl)<tr><td class="k">Bon de livraison</td><td class="v">{{ $bl->numero }}</td></tr>@endif
-                @if ($client)<tr><td class="k">Client</td><td class="v">{{ trim(($client->name ?? '').' '.($client->prenom ?? '')) }}</td></tr>@endif
+                @if ($bls->isNotEmpty())<tr><td class="k">{{ $bls->count() > 1 ? 'Bons de livraison' : 'Bon de livraison' }}</td><td class="v">{{ $bls->pluck('numero')->implode(', ') }}</td></tr>@endif
+                @if ($clients)<tr><td class="k">{{ $bls->count() > 1 ? 'Clients' : 'Client' }}</td><td class="v">{{ $clients }}</td></tr>@endif
                 @if ($client?->address)<tr><td class="k">Adresse</td><td>{{ $client->address }}</td></tr>@endif
                 @if ($bc->chauffeur)<tr><td class="k">Chauffeur</td><td class="v">{{ $bc->chauffeur }}</td></tr>@endif
                 @if ($bc->vehicule)<tr><td class="k">Immatriculation</td><td class="v">{{ $bc->vehicule }}</td></tr>@endif

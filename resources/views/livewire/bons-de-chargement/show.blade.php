@@ -1,6 +1,8 @@
 {{-- One loading slip: ordered vs loaded quantity per product (2026-11-27) --}}
 @php
     $bl = $bc->bonLivraison;
+    $bls = $bl ? collect([$bl]) : $bc->bonLivraisons;      // manual slip: several delivery notes
+    $clients = $bls->map(fn ($b) => $b->client ? \App\Support\SalesLists::clientLabel($b->client) : null)->filter()->unique()->implode(', ');
     $labels = \App\Models\BonDeChargement::STATUTS;
     $badge = ['preparation' => 'bg-gray-100 text-gray-600', 'partiel' => 'bg-[#ffcc00]/30 text-zinc-900', 'charge' => 'bg-green-100 text-green-700', 'livre' => 'bg-zinc-900 text-white'];
     $lineBadge = ['a_charger' => 'bg-gray-100 text-gray-600', 'partiel' => 'bg-[#ffcc00]/30 text-zinc-900', 'charge' => 'bg-green-100 text-green-700'];
@@ -31,11 +33,11 @@
     <div class="bg-white shadow rounded-lg p-5 grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <div>
             <p class="text-xs font-medium text-gray-500">Bon de livraison</p>
-            <p class="mt-1 text-sm font-semibold">@if ($bl)<a href="{{ route('bon-livraisons.edit', $bl->id) }}" wire:navigate class="hover:underline">{{ $bl->numero }}</a>@else — @endif</p>
+            <p class="mt-1 text-sm font-semibold">@forelse ($bls as $b)<a href="{{ route('bon-livraisons.edit', $b->id) }}" wire:navigate class="hover:underline">{{ $b->numero }}</a>@if (! $loop->last), @endif @empty — @endforelse</p>
         </div>
         <div>
             <p class="text-xs font-medium text-gray-500">Client</p>
-            <p class="mt-1 text-sm font-semibold">{{ $bl?->client ? \App\Support\SalesLists::clientLabel($bl->client) : '—' }}</p>
+            <p class="mt-1 text-sm font-semibold">{{ $clients ?: '—' }}</p>
         </div>
         <div>
             <label class="block text-xs font-medium text-gray-500 mb-1">Immatriculation</label>

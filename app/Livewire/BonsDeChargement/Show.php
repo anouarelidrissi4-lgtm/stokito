@@ -27,7 +27,7 @@ class Show extends Component
     {
         $this->requirePermission('bons_chargement');
         abort_unless(\App\Support\Chargement::enabled(), 403, 'Le module Bons de chargement est désactivé. Activez-le depuis Ma Société.');
-        $this->bc = BonDeChargement::with(['lignes', 'bonLivraison.client'])->findOrFail($id);
+        $this->bc = BonDeChargement::with(['lignes', 'bonLivraison.client', 'bonLivraisons.client'])->findOrFail($id);
         $this->fillForm();
     }
 
