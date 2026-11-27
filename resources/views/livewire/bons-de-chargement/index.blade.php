@@ -43,16 +43,16 @@
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="ps-6 pe-2 py-3 w-8"><input type="checkbox" class="{{ $cb }}" aria-label="Tout sélectionner"
+                        <th class="ps-4 pe-1 xl:ps-6 xl:pe-2 py-3 w-8"><input type="checkbox" class="{{ $cb }}" aria-label="Tout sélectionner"
                             :checked="@js($ids).length && @js($ids).every(i => sel.includes(i))" @change="all(@js($ids), $event.target.checked)"></th>
-                        <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">N°</th>
-                        <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">BL</th>
-                        <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Client</th>
-                        <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                        <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Chauffeur · immat.</th>
-                        <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Commercial</th>
-                        <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Chargement</th>
-                        <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Statut</th>
+                        <th class="px-2 xl:px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">N°</th>
+                        <th class="px-2 xl:px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">BL</th>
+                        <th class="px-2 xl:px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Client</th>
+                        <th class="px-2 xl:px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                        <th class="px-2 xl:px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Chauffeur · immat.<span class="2xl:hidden"> · com.</span></th>
+                        <th class="hidden 2xl:table-cell px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Commercial</th>
+                        <th class="px-2 xl:px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Chargement</th>
+                        <th class="px-2 xl:px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Statut</th>
                         <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
                     </tr>
                 </thead>
@@ -63,19 +63,19 @@
                             $tot = $bc->lignes->count(); $done = $bc->lignes->filter(fn ($l) => $l->statut() === 'charge')->count();
                         @endphp
                         <tr wire:key="bc-{{ $bc->id }}" :class="sel.includes({{ $bc->id }}) ? 'bg-[#ffcc00]/10' : ''">
-                            <td class="ps-6 pe-2 py-4"><input type="checkbox" class="{{ $cb }}" aria-label="Sélectionner {{ $bc->numero }}" :checked="sel.includes({{ $bc->id }})" @change="toggle({{ $bc->id }})"></td>
-                            <td class="px-3 py-4 text-sm font-semibold text-gray-900 whitespace-nowrap"><a href="{{ route('bons-de-chargement.show', $bc->id) }}" wire:navigate class="hover:underline">{{ $bc->numero }}</a></td>
-                            <td class="px-3 py-4 text-sm text-gray-600 whitespace-nowrap">{{ $bl?->numero ?? '—' }}@if ($bc->bonLivraisons->count() > 1)<span class="text-xs text-gray-400"> +{{ $bc->bonLivraisons->count() - 1 }}</span>@endif</td>
-                            <td class="px-3 py-4 text-sm text-gray-700">{{ $bl?->client ? \App\Support\SalesLists::clientLabel($bl->client) : '—' }}</td>
-                            <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">{{ $bc->date?->format('d/m/Y') }}</td>
-                            <td class="px-3 py-4 text-sm text-gray-700">{{ $bc->chauffeur ?: '—' }}@if ($bc->vehicule)<span class="block text-xs font-mono text-gray-500 whitespace-nowrap">{{ $bc->vehicule }}</span>@endif</td>
-                            <td class="px-3 py-4 text-sm text-gray-700">{{ $bc->commercial ?: '—' }}</td>
-                            <td class="px-3 py-4 text-sm text-gray-600 whitespace-nowrap">
+                            <td class="ps-4 pe-1 xl:ps-6 xl:pe-2 py-4"><input type="checkbox" class="{{ $cb }}" aria-label="Sélectionner {{ $bc->numero }}" :checked="sel.includes({{ $bc->id }})" @change="toggle({{ $bc->id }})"></td>
+                            <td class="px-2 xl:px-2 xl:px-3 py-4 text-sm font-semibold text-gray-900 whitespace-nowrap"><a href="{{ route('bons-de-chargement.show', $bc->id) }}" wire:navigate class="hover:underline">{{ $bc->numero }}</a></td>
+                            <td class="px-2 xl:px-2 xl:px-3 py-4 text-sm text-gray-600 whitespace-nowrap">{{ $bl?->numero ?? '—' }}@if ($bc->bonLivraisons->count() > 1)<span class="text-xs text-gray-400"> +{{ $bc->bonLivraisons->count() - 1 }}</span>@endif</td>
+                            <td class="px-2 xl:px-2 xl:px-3 py-4 text-sm text-gray-700">{{ $bl?->client ? \App\Support\SalesLists::clientLabel($bl->client) : '—' }}</td>
+                            <td class="px-2 xl:px-2 xl:px-3 py-4 text-sm text-gray-500 whitespace-nowrap">{{ $bc->date?->format('d/m/Y') }}</td>
+                            <td class="px-2 xl:px-2 xl:px-3 py-4 text-sm text-gray-700">{{ $bc->chauffeur ?: '—' }}@if ($bc->vehicule)<span class="block text-xs font-mono text-gray-500 whitespace-nowrap">{{ $bc->vehicule }}</span>@endif @if ($bc->commercial)<span class="2xl:hidden block text-xs text-gray-500">Com. : {{ $bc->commercial }}</span>@endif</td>
+                            <td class="hidden 2xl:table-cell px-2 xl:px-3 py-4 text-sm text-gray-700">{{ $bc->commercial ?: '—' }}</td>
+                            <td class="px-2 xl:px-2 xl:px-3 py-4 text-sm text-gray-600 whitespace-nowrap">
                                 {{ $done }} / {{ $tot }} ligne{{ $tot > 1 ? 's' : '' }}
-                                <div class="mt-1 h-1.5 w-24 rounded-full bg-gray-200"><div class="h-1.5 rounded-full bg-[#ffcc00]" style="width: {{ $tot ? round($done / $tot * 100) : 0 }}%"></div></div>
+                                <div class="mt-1 h-1.5 w-20 rounded-full bg-gray-200"><div class="h-1.5 rounded-full bg-[#ffcc00]" style="width: {{ $tot ? round($done / $tot * 100) : 0 }}%"></div></div>
                             </td>
-                            <td class="px-3 py-4 text-sm"><span class="whitespace-nowrap px-2 py-1 rounded-full text-xs font-semibold {{ $badge[$bc->status] ?? 'bg-gray-100 text-gray-600' }}">{{ $labels[$bc->status] ?? $bc->status }}</span></td>
-                            <td class="px-3 py-4 text-right text-sm whitespace-nowrap">
+                            <td class="px-2 xl:px-2 xl:px-3 py-4 text-sm"><span class="whitespace-nowrap px-2 py-1 rounded-full text-xs font-semibold {{ $badge[$bc->status] ?? 'bg-gray-100 text-gray-600' }}">{{ $labels[$bc->status] ?? $bc->status }}</span></td>
+                            <td class="px-2 xl:px-2 xl:px-3 py-4 text-right text-sm whitespace-nowrap">
                                 <div class="inline-flex items-center gap-2">
                                     <a href="{{ route('bons-de-chargement.pdf', $bc->id) }}" target="_blank" class="{{ $pdfBtn }}"><x-sp-icon name="printer" class="w-3.5 h-3.5" />PDF</a>
                                     <a href="{{ route('bons-de-chargement.show', $bc->id) }}" wire:navigate class="inline-flex items-center gap-1 border border-gray-300 bg-white px-2 py-1 rounded-md text-xs font-bold text-gray-800 hover:border-zinc-900">Charger</a>
