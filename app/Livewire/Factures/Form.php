@@ -426,6 +426,11 @@ class Form extends Component
 
     public function save()
     {
+        if (! $this->facture && ! \App\Support\Plans::canCreateFacture()) {
+            $this->addError('plan', \App\Support\Plans::factureLimitMessage());
+
+            return;
+        }
         $this->validate([
             'client_id' => 'required|exists:clients,id',
             'date' => 'required|date',

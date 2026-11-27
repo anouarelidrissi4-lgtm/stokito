@@ -39,6 +39,7 @@ abstract class TestCase extends BaseTestCase
     protected function companyUser(string $country = 'FR', array $societe = [], array $user = []): User
     {
         $p = Project::create(['name' => 'Test '.uniqid(), 'is_active' => true, 'country_code' => $country]);
+        $p->forceFill(['plan' => 'pro', 'plan_ends_at' => null, 'plan_trial' => false])->save();
         $u = new User();
         $u->forceFill(array_merge([
             'name' => 'Admin Test', 'email' => uniqid('u').'@example.test', 'password' => bcrypt('secret-pass-123'),

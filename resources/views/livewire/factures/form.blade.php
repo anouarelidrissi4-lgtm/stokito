@@ -10,6 +10,14 @@
     @if (session('success'))
         <div class="mb-4 bg-green-50 text-green-700 px-4 py-2 rounded-lg text-sm">{{ session('success') }}</div>
     @endif
+    {{-- plan Free: 5 invoices a month (2026-11-27) --}}
+    @if (! $facture && ! \App\Support\Plans::canCreateFacture())
+        <div class="mb-4 flex flex-wrap items-center gap-3 rounded-lg border border-amber-300 bg-[#ffcc00]/20 px-4 py-3 text-sm text-zinc-900">
+            <span class="flex-1">{{ \App\Support\Plans::factureLimitMessage() }}</span>
+            <a href="{{ route('abonnement') }}" wire:navigate class="shrink-0 rounded-lg bg-zinc-900 px-3 py-1.5 font-semibold text-white">Voir les plans</a>
+        </div>
+    @endif
+    @error('plan') <div class="mb-4 rounded-lg bg-red-50 px-4 py-2 text-sm text-red-700">{{ $message }}</div> @enderror
 
     @if (! $facture)
         <div class="bg-white shadow rounded-lg p-4 mb-4">

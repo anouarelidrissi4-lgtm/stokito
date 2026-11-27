@@ -158,13 +158,15 @@ class Form extends Component
             'scanFile.max' => 'Fichier trop lourd (10 Mo maximum).',
         ]);
         $scanner = app(\App\Support\InvoiceScanner::class);
-        $limit = (int) config('services.anthropic.scans_per_month', 30);
+        $limit = \App\Support\Plans::limit('scans');
 
         if (auth()->user()->isDemo()) {
             $this->addError('scanFile', 'Le scanner IA est désactivé dans la démo. Créez votre compte gratuit pour l’essayer sur vos factures.');
         } elseif (! $scanner->isConfigured()) {
             $this->addError('scanFile', 'Le scanner IA n’est pas encore activé sur ce serveur.');
-        } elseif (\App\Models\AiScan::usedThisMonth() >= $limit) {
+        } elseif ($limit === 0) {
+            $this->addError('scanFile', \App\Support\Plans::aiNotIncluded('Le scanner IA'));
+        } elseif ($limit !== null && \App\Models\AiScan::usedThisMonth() >= $limit) {
             $this->addError('scanFile', "Vous avez utilisé vos {$limit} scans de ce mois. Le compteur repart le 1er du mois prochain.");
         }
         if ($this->getErrorBag()->has('scanFile')) {
@@ -507,7 +509,7 @@ class Form extends Component
             'products' => Product::with('brand')->orderBy('name')->get(),
             'categories' => \App\Models\Category::orderBy('name')->get(),
             'brands' => \App\Models\Brand::orderBy('name')->get(),
-            'scansLeft' => max(0, (int) config('services.anthropic.scans_per_month', 30) - \App\Models\AiScan::usedThisMonth()),
+            'scansLeft' => ($l = \App\Support\Plans::limit('scans')) === null ? null : max(0, $l - \App\Models\AiScan::usedThisMonth()),
         ])->layout('layouts.app');
     }
 }

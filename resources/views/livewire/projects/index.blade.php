@@ -18,6 +18,7 @@
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nom</th>
                     <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Utilisateurs</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Statut</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Plan</th>
                     <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
                 </tr>
             </thead>
@@ -31,6 +32,16 @@
                                 {{ $project->is_active ? 'Actif' : 'Inactif' }}
                             </span>
                         </td>
+                        <td class="px-6 py-4 text-sm">
+                            @php $eff = \App\Support\Plans::effective($project); @endphp
+                            <span class="px-2 py-1 rounded-full text-xs font-semibold {{ $eff === 'premium' ? 'bg-zinc-900 text-amber-300' : ($eff === 'pro' ? 'bg-[#ffcc00] text-zinc-900' : 'bg-gray-100 text-gray-600') }}">{{ \App\Support\Plans::LABELS[$eff] }}{{ $project->plan_trial && $eff !== 'free' ? ' · essai' : '' }}</span>
+                            @if ($eff !== 'free' && $project->plan_ends_at)<span class="block mt-1 text-xs text-gray-500">jusqu’au {{ $project->plan_ends_at->format('d/m/Y') }}</span>@endif
+                            <div class="mt-2 flex flex-wrap gap-1">
+                                @foreach ([['pro', 3, 'Pro 3 mois'], ['pro', 12, 'Pro 1 an'], ['premium', 3, 'Premium 3 mois'], ['premium', 12, 'Premium 1 an'], ['free', 0, 'Free']] as [$pl, $m, $lab])
+                                    <button type="button" wire:click="setPlan({{ $project->id }}, '{{ $pl }}', {{ $m }})" wire:confirm="{{ $project->name }} : {{ $lab }} ?" class="px-2 py-0.5 rounded border border-gray-300 text-[11px] font-semibold text-gray-700 hover:border-zinc-900">{{ $lab }}</button>
+                                @endforeach
+                            </div>
+                        </td>
                         <td class="px-6 py-4 text-right text-sm">
                             <button wire:click="toggleActive({{ $project->id }})" class="text-indigo-600 hover:underline">
                                 {{ $project->is_active ? 'Desactiver' : 'Activer' }}
@@ -38,7 +49,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="4" class="px-6 py-8 text-center text-sm text-gray-400">Aucun projet.</td></tr>
+                    <tr><td colspan="5" class="px-6 py-8 text-center text-sm text-gray-400">Aucun projet.</td></tr>
                 @endforelse
             </tbody>
         </table>

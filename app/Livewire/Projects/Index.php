@@ -84,6 +84,21 @@ class Index extends Component
         session()->flash('success', 'Projet créé avec son administrateur.');
     }
 
+    /** manual activation after a transfer / WhatsApp payment (2026-11-27) */
+    public function setPlan($id, string $plan, int $months = 0)
+    {
+        abort_unless(auth()->user()->isSuperAdmin(), 403);
+        abort_unless(array_key_exists($plan, \App\Support\Plans::LABELS), 422);
+        $p = Project::findOrFail($id);
+        if ($plan === 'free') {
+            $p->forceFill(['plan' => 'free', 'plan_ends_at' => null, 'plan_period' => null, 'plan_trial' => false])->save();
+        } else {
+            $from = ($p->plan === $plan && $p->plan_ends_at && $p->plan_ends_at->isFuture() && ! $p->plan_trial) ? $p->plan_ends_at : now();
+            $p->forceFill(['plan' => $plan, 'plan_ends_at' => $from->copy()->addMonths(max(1, $months)), 'plan_period' => $months >= 12 ? 'annee' : 'trimestre', 'plan_trial' => false])->save();
+        }
+        session()->flash('success', $p->name.' : plan '.\App\Support\Plans::LABELS[$plan].($p->plan_ends_at ? ' jusqu’au '.$p->plan_ends_at->format('d/m/Y') : '').'.');
+    }
+
     public function toggleActive($id)
     {
         $project = Project::findOrFail($id);

@@ -25,7 +25,7 @@
                     <p class="font-bold text-gray-900">Scanner une facture fournisseur
                         <span class="ml-1 align-middle text-[10px] font-bold uppercase tracking-wide bg-zinc-900 text-white px-1.5 py-0.5 rounded">IA</span></p>
                     <p class="text-sm text-gray-700 mt-0.5">Prenez la facture en photo ou choisissez un PDF : le fournisseur, la date et les lignes se remplissent. Vous vérifiez, puis vous enregistrez.</p>
-                    <p class="text-xs text-gray-500 mt-1">{{ auth()->user()->isDemo() ? 'Désactivé dans la démo : créez votre compte gratuit pour l’essayer sur vos factures.' : $scansLeft.' scan(s) restant(s) ce mois-ci.' }}</p>
+                    <p class="text-xs text-gray-500 mt-1">{{ auth()->user()->isDemo() ? 'Désactivé dans la démo : créez votre compte gratuit pour l’essayer sur vos factures.' : ($scansLeft === null ? 'Scans illimités.' : (\App\Support\Plans::limit('scans') === 0 ? 'Non inclus dans le plan Free.' : $scansLeft.' scan(s) restant(s) ce mois-ci.')) }}</p>
                 </div>
                 <label class="shrink-0 cursor-pointer inline-flex items-center justify-center gap-2 bg-zinc-900 text-white px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-black"
                     wire:loading.class="opacity-50 pointer-events-none" wire:target="scanFile">

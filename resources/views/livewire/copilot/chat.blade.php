@@ -15,7 +15,7 @@
             <p class="mt-1 text-sm text-zinc-500">Écrivez en français, en arabe ou en darija. Le Copilot répond avec vos chiffres et prépare vos documents ; vous vérifiez avant d’enregistrer.</p>
         </div>
         <div class="flex items-center gap-3 text-xs text-zinc-500">
-            <span class="ind-mono">{{ $left }} message(s) restant(s) ce mois-ci</span>
+            <span class="ind-mono">{{ $left === null ? 'Messages illimités' : (\App\Support\Plans::limit('copilot') === 0 ? 'Non inclus dans le plan Free' : $left.' message(s) restant(s) ce mois-ci') }}</span>
             @if ($thread)
                 <button type="button" wire:click="reset_" class="border border-zinc-200 bg-white px-2.5 py-1 font-semibold hover:bg-zinc-100 rounded-lg">Nouvelle conversation</button>
             @endif

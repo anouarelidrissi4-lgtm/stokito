@@ -36,12 +36,13 @@ class Chat extends Component
         $name = mb_substr((string) $this->attachment->getClientOriginalName(), 0, 80);
         $this->thread[] = ['role' => 'user', 'text' => '📎 Facture jointe : '.$name];
         $scanner = app(InvoiceScanner::class);
-        $limit = (int) config('services.anthropic.scans_per_month', 30);
+        $limit = \App\Support\Plans::limit('scans');
         $block = match (true) {
             ! $u->hasPermission('gestion_commandes_fournisseurs') => 'Vous n’avez pas le droit de créer des bons de commande : demandez-le à votre administrateur.',
             $u->isDemo() => 'La lecture de factures est désactivée dans la démo. Créez votre compte gratuit pour l’essayer sur vos factures.',
             ! $scanner->isConfigured() => 'La lecture de factures n’est pas encore activée sur ce serveur.',
-            AiScan::usedThisMonth() >= $limit => "Vous avez utilisé vos {$limit} lectures de factures de ce mois.",
+            $limit === 0 => \App\Support\Plans::aiNotIncluded('La lecture de factures'),
+            $limit !== null && AiScan::usedThisMonth() >= $limit => "Vous avez utilisé vos {$limit} lectures de factures de ce mois.",
             default => null,
         };
         if ($block) {
@@ -151,11 +152,12 @@ class Chat extends Component
             return;
         }
         $copilot = app(Copilot::class);
-        $limit = (int) config('services.anthropic.copilot_per_month', 150);
+        $limit = \App\Support\Plans::limit('copilot');
         $block = match (true) {
             auth()->user()->isDemo() => 'Le Copilot est désactivé dans la démo. Créez votre compte gratuit pour l’essayer avec vos propres produits et clients.',
             ! $copilot->isConfigured() => 'Le Copilot n’est pas encore activé sur ce serveur.',
-            AiScan::usedThisMonth('copilot') >= $limit => "Vous avez utilisé les {$limit} messages Copilot de ce mois. Le compteur repart le 1er du mois prochain.",
+            $limit === 0 => \App\Support\Plans::aiNotIncluded('Le Copilot'),
+            $limit !== null && AiScan::usedThisMonth('copilot') >= $limit => "Vous avez utilisé les {$limit} messages Copilot de ce mois. Le compteur repart le 1er du mois prochain.",
             default => null,
         };
         $history = $this->thread;
@@ -198,7 +200,7 @@ class Chat extends Component
     public function render()
     {
         return view('livewire.copilot.chat', [
-            'left' => max(0, (int) config('services.anthropic.copilot_per_month', 150) - AiScan::usedThisMonth('copilot')),
+            'left' => ($l = \App\Support\Plans::limit('copilot')) === null ? null : max(0, $l - AiScan::usedThisMonth('copilot')),
         ])->layout('layouts.app');
     }
 }

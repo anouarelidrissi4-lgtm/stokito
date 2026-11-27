@@ -500,6 +500,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('blog-admin/create', \App\Livewire\BlogAdmin\Form::class)->name('blog-admin.create');
     Route::get('blog-admin/{postId}/edit', \App\Livewire\BlogAdmin\Form::class)->name('blog-admin.edit');
     Route::get('ma-societe', \App\Livewire\Societe\Edit::class)->name('societe.edit');
+    Route::get('abonnement', \App\Livewire\Abonnement\Index::class)->name('abonnement');
 
     Route::get('statistiques', function () {
         abort_unless(auth()->user()->hasPermission('statistiques'), 403);

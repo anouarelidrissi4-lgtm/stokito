@@ -153,6 +153,13 @@
             <a href="/docs/guide-stokito-{{ in_array(app()->getLocale(), ['ar', 'en'], true) ? app()->getLocale() : 'fr' }}.pdf" target="_blank" rel="noopener" class="{{ $linkClass(false) }}">
                 <x-sp-icon name="doc" class="w-[18px] h-[18px]" /> {{ __("Guide d'utilisation") }}
             </a>
+            @if ($user->isAdmin() || $user->hasPermission('gestion_societe'))
+                @php $curPlan = \App\Support\Plans::current(); @endphp
+                <a href="{{ route('abonnement') }}" wire:navigate class="{{ $linkClass(request()->routeIs('abonnement')) }}">
+                    <x-sp-icon name="wallet" class="w-[18px] h-[18px]" /> <span class="flex-1">{{ __('Abonnement') }}</span>
+                    <span class="rounded-full px-2 py-0.5 text-[11px] font-bold {{ $curPlan === 'free' ? 'bg-zinc-200 text-zinc-700' : 'bg-[#ffcc00] text-zinc-900' }}">{{ \App\Support\Plans::LABELS[$curPlan] }}</span>
+                </a>
+            @endif
             {{-- help on WhatsApp + install as an app (2026-11-26) --}}
             @php $waText = rawurlencode("Bonjour, j'ai besoin d'aide sur Stokito.".(\App\Models\Societe::current()?->name ? ' (Société : '.\App\Models\Societe::current()->name.')' : '')); @endphp
             <a href="https://wa.me/212676035777?text={{ $waText }}" target="_blank" rel="noopener" class="{{ $linkClass(false) }}">
