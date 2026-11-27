@@ -167,7 +167,7 @@
                                                     this.highlighted = 0;
                                                     this.$nextTick(() => {
                                                         const rect = this.$refs.productInput.getBoundingClientRect();
-                                                        this.menuStyle = 'position:fixed; top:' + (rect.bottom + 4) + 'px; left:' + rect.left + 'px; width:' + rect.width + 'px;';
+                                                        const mw = Math.min(Math.max(rect.width, 340), window.innerWidth - 16); this.menuStyle = 'position:fixed; top:' + (rect.bottom + 4) + 'px; left:' + Math.max(8, Math.min(rect.left, window.innerWidth - mw - 8)) + 'px; width:' + mw + 'px;';
                                                     });
                                                 },
                                                 moveDown() {
