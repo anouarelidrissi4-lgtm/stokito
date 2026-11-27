@@ -37,6 +37,7 @@ class DemoReset extends Command
 
     /** Tables holding tenant data, children first. */
     protected array $tables = [
+        'employe_avances', 'employe_credits', 'employe_paies', 'employe_presences', 'employes',
         'depenses', 'depenses_recurrentes', 'caisse_journal', 'caisse_clotures', 'caisse_tickets',
         'reglements_clients', 'reglements_fournisseurs', 'avoirs_clients', 'avoirs_fournisseurs',
         'cheques_effets_fournisseurs', 'mouvements_bancaires', 'bons_de_chargement',
@@ -74,11 +75,35 @@ class DemoReset extends Command
             $this->wipe($project->id);
             Auth::setUser($user); // the ScopedToDemoMode hooks now tag every new row as demo + project
             $this->seed();
+            $this->seedPersonnel();
         });
 
         $this->info('Demo reset OK for project #'.$project->id.' (user #'.$user->id.').');
 
         return self::SUCCESS;
+    }
+
+    /** Module Personnel (2026-11-28): three workers, this month's attendance on working days, one advance (no expense: the demo result stays positive). */
+    protected function seedPersonnel(): void
+    {
+        $today = now()->startOfDay();
+        $karim = \App\Models\Employe::create(['nom' => 'Karim Benali', 'poste' => 'Soudeur', 'telephone' => '06 12 34 56 78', 'type_paie' => 'jour', 'taux' => 150,
+            'date_entree' => $today->copy()->subYears(2)->toDateString(), 'actif' => true]);
+        $youssef = \App\Models\Employe::create(['nom' => 'Youssef Amrani', 'poste' => 'Chauffeur livreur', 'telephone' => '06 98 76 54 32', 'type_paie' => 'mois', 'taux' => 3200,
+            'date_entree' => $today->copy()->subYear()->toDateString(), 'actif' => true]);
+        $said = \App\Models\Employe::create(['nom' => 'Saïd Ouali', 'poste' => 'Manutentionnaire', 'type_paie' => 'semaine', 'taux' => 700,
+            'date_entree' => $today->copy()->subMonths(5)->toDateString(), 'actif' => true]);
+        $n = 0;
+        for ($d = $today->copy()->startOfMonth(); $d->lte($today); $d->addDay()) {
+            if ($d->isSunday()) {
+                continue;
+            }
+            $n++;
+            foreach ([[$karim, $n === 3 ? 'A' : 'P'], [$youssef, 'P'], [$said, $n === 5 ? 'D' : 'P']] as [$e, $s]) {
+                \App\Models\EmployePresence::create(['employe_id' => $e->id, 'date' => $d->toDateString(), 'statut' => $s]);
+            }
+        }
+        \App\Models\EmployeAvance::create(['employe_id' => $karim->id, 'date' => $today->toDateString(), 'montant' => 200, 'mode_paiement' => 'especes', 'notes' => 'Avance demandée en fin de semaine']);
     }
 
     protected function wipe(int $projectId): void
