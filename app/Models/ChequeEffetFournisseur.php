@@ -12,7 +12,7 @@ class ChequeEffetFournisseur extends Model
     protected $table = 'cheques_effets_fournisseurs';
 
     protected $fillable = [
-        'fournisseur_id', 'reglement_fournisseur_id', 'numero_cheque', 'banque',
+        'fournisseur_id', 'reglement_fournisseur_id', 'type', 'numero_cheque', 'banque',
         'montant', 'date_emission', 'date_echeance', 'status', 'notes',
     ];
 
@@ -29,6 +29,19 @@ class ChequeEffetFournisseur extends Model
     public function reglementFournisseur(): BelongsTo
     {
         return $this->belongsTo(ReglementFournisseur::class);
+    }
+
+    public const PAIEMENT = ['en_attente' => 'Non payé', 'encaisse' => 'Payé', 'rejete' => 'Rejeté'];
+
+    public function typeLabel(): string
+    {
+        return $this->type === 'effet' ? 'Effet' : 'Chèque';
+    }
+
+    /** the account it is drawn on: the treasury account of its payment, else the bank typed by hand */
+    public function compteLabel(): ?string
+    {
+        return $this->reglementFournisseur?->tresorerieCompte?->name ?: ($this->banque ?: null);
     }
 
     public function isEnRetard(): bool

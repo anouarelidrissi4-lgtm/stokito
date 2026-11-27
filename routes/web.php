@@ -482,12 +482,31 @@ Route::middleware(['auth'])->group(function () {
     Route::get('avoirs-fournisseurs/ajouter', \App\Livewire\AvoirsFournisseurs\Index::class)->name('avoirs-fournisseurs.create');
 
     Route::get('cheques-fournisseurs', \App\Livewire\ChequesFournisseurs\Index::class)->name('cheques-fournisseurs.index');
+    // printable list, same filters as the screen (2026-11-27)
+    Route::get('cheques-fournisseurs/pdf', function (\Illuminate\Http\Request $request) {
+        $data = \App\Livewire\ChequesFournisseurs\Index::data((string) $request->query('q', ''), (string) $request->query('du', ''), (string) $request->query('au', ''), (string) $request->query('statut', ''));
+
+        return \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.cheques-fournisseurs', $data + ['societe' => \App\Models\Societe::current()])
+            ->setPaper('a4', 'landscape')->stream('cheques-effets-fournisseurs-'.now()->format('Ymd-Hi').'.pdf');
+    })->name('cheques-fournisseurs.pdf');
 
     Route::get('tresorerie/mouvements-bancaires', \App\Livewire\MouvementsBancaires\Index::class)->name('tresorerie.mouvements-bancaires');
 
     Route::get('soldes-clients', \App\Livewire\ClientReports\Index::class)->name('soldes-clients.index')->defaults('mode', 'soldes');
     Route::get('plafonds-clients', \App\Livewire\ClientReports\Index::class)->name('plafonds-clients.index')->defaults('mode', 'plafonds');
+    Route::get('dossier-clients', \App\Livewire\DossierClients\Index::class)->name('dossier-clients.index');
     Route::get('dossier-clients/{clientId}', \App\Livewire\DossierClients\Show::class)->name('dossier-clients.show');
+    // grand livre client, printable (2026-11-27)
+    Route::get('dossier-clients/{clientId}/pdf', function (\Illuminate\Http\Request $request, $clientId) {
+        abort_unless(auth()->user()->hasPermission('dossier_client'), 403);
+        $client = \App\Models\Client::findOrFail($clientId);
+        $d = fn ($k) => preg_match('/^\d{4}-\d{2}-\d{2}$/', (string) $request->query($k)) ? $request->query($k) : null;
+        $ledger = \App\Support\GrandLivre::client($client, $d('du'), $d('au'), $request->boolean('payes'));
+
+        return \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.grand-livre', ['societe' => \App\Models\Societe::current(), 'client' => $client, 'ledger' => $ledger,
+            'from' => $d('du'), 'to' => $d('au'), 'hidePaid' => $request->boolean('payes')])
+            ->stream('grand-livre-'.\Illuminate\Support\Str::slug($client->name).'-'.now()->format('Ymd').'.pdf');
+    })->whereNumber('clientId')->name('dossier-clients.pdf');
 
     Route::get('soldes-fournisseurs', \App\Livewire\FournisseurReports\Index::class)->name('soldes-fournisseurs.index');
     Route::get('dossier-fournisseurs/{fournisseurId}', \App\Livewire\DossierFournisseurs\Show::class)->name('dossier-fournisseurs.show');

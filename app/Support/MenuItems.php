@@ -63,6 +63,7 @@ class MenuItems
         'avoirs-clients.create' => ['label' => 'Ajouter un avoir', 'route' => 'avoirs-clients.create', 'active' => 'avoirs-clients.create', 'permission' => 'gestion_avoirs_clients', 'module' => null, 'admin_override' => false, 'section' => 'ventes', 'order' => 89],
         'avoirs-clients.index' => ['label' => 'Liste des avoirs', 'route' => 'avoirs-clients.index', 'active' => 'avoirs-clients.index', 'permission' => 'gestion_avoirs_clients', 'module' => null, 'admin_override' => false, 'section' => 'ventes', 'order' => 90],
         'soldes-clients.index' => ['label' => 'Soldes Clients', 'route' => 'soldes-clients.index', 'active' => 'soldes-clients.index', 'permission' => 'soldes_clients', 'module' => null, 'admin_override' => false, 'section' => 'ventes', 'order' => 100],
+        'dossier-clients.index' => ['label' => 'Dossier clients', 'route' => 'dossier-clients.index', 'active' => 'dossier-clients.*', 'permission' => 'dossier_client', 'module' => null, 'admin_override' => false, 'section' => 'ventes', 'order' => 105],
         'plafonds-clients.index' => ['label' => 'Plafonds Clients', 'route' => 'plafonds-clients.index', 'active' => 'plafonds-clients.index', 'permission' => 'plafonds_clients', 'module' => null, 'admin_override' => false, 'section' => 'ventes', 'order' => 110],
 
         'fournisseurs.index' => ['label' => 'Fournisseurs', 'route' => 'fournisseurs.index', 'active' => 'fournisseurs.index', 'permission' => 'gestion_fournisseurs', 'module' => null, 'admin_override' => false, 'section' => 'achats', 'order' => 10],

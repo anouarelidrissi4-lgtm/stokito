@@ -548,6 +548,7 @@ class Form extends Component
         $vals = [
             'fournisseur_id' => $cf->fournisseur_id,
             'reglement_fournisseur_id' => $r->id,
+            'type' => $r->mode === 'effet' ? 'effet' : 'cheque',
             'numero_cheque' => $r->numero_cheque ?: '—',
             'banque' => $r->banque,
             'montant' => $r->montant,
