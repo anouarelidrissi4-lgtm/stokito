@@ -78,7 +78,7 @@ class DocumentSender
         $s = Societe::current();
         $pdf = null;
         if ($withPdf) {
-            $pdf = ($doc instanceof Devis ? DocumentPdf::devis($doc) : DocumentPdf::facture($doc))->output();
+            $pdf = $doc instanceof Devis ? DocumentPdf::devis($doc)->output() : FacturX::output($doc, DocumentPdf::facture($doc));
         }
         try {
             Mail::to($to)->send(new DocumentMail($sujet, $message, $s->name ?: 'Stokito', $s->email ?: $user->email, $pdf, $withPdf ? $doc->numero.'.pdf' : null));

@@ -62,7 +62,7 @@ class RelancerFactures extends Command
                     }
                     try {
                         Mail::to($email)->send(new DocumentMail($txt['sujet'], $txt['message'], $s->name ?: 'Stokito', $s->email ?: $user->email,
-                            DocumentPdf::facture($f)->output(), $f->numero.'.pdf'));
+                            \App\Support\FacturX::output($f, DocumentPdf::facture($f)), $f->numero.'.pdf'));
                         $f->update(['relance_niveau' => $niveau, 'relance_at' => now()]);
                         $sent++;
                     } catch (\Throwable $e) {

@@ -97,7 +97,7 @@ Route::get('d/{type}/{id}', function (string $type, int $id) {
     $doc = $cls::findOrFail($id);
     $pdf = $type === 'devis' ? \App\Support\DocumentPdf::devis($doc) : \App\Support\DocumentPdf::facture($doc);
 
-    $response = $pdf->stream($doc->numero.'.pdf');
+    $response = $type === 'devis' ? $pdf->stream($doc->numero.'.pdf') : \App\Support\FacturX::response($doc, $pdf, 'inline');
     \Illuminate\Support\Facades\Auth::forgetUser(); // never leave the owner attached to the visitor's request
 
     return $response;
@@ -476,8 +476,17 @@ Route::middleware(['auth'])->group(function () {
         $facture = \App\Models\Facture::with(['client', 'items.product'])->findOrFail($factureId);
         $pdf = \App\Support\DocumentPdf::facture($facture);
 
-        return $pdf->download($facture->numero.'.pdf');
+        return \App\Support\FacturX::response($facture, $pdf); // Factur-X (EN 16931) for companies in France
     })->name('factures.pdf');
+    Route::get('factures/{factureId}/xml', function ($factureId) {
+        abort_unless(auth()->user()->hasPermission('factures_consulter'), 403);
+        $facture = \App\Models\Facture::with(['client', 'items.product'])->findOrFail($factureId);
+        $name = preg_replace('/[^A-Za-z0-9._-]/', '-', (string) $facture->numero).'-factur-x.xml';
+
+        return response(\App\Support\FacturX::xml($facture), 200, [
+            'Content-Type' => 'application/xml; charset=UTF-8', 'Content-Disposition' => 'attachment; filename="'.$name.'"',
+        ]);
+    })->name('factures.xml');
     // invoices ticked in the list -> one PDF, one per page (2026-11-27)
     Route::get('factures/pdf-selection', function (\Illuminate\Http\Request $request) {
         abort_unless(auth()->user()->hasPermission('factures_consulter'), 403);
