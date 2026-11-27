@@ -116,7 +116,7 @@
                         </td>
                         <td class="px-2 sm:px-4 py-2.5 text-end font-semibold tabular-nums whitespace-nowrap">{{ $money($r['montant']) }}</td>
                         <td class="ps-0 pe-1 sm:px-2 py-2.5 text-end whitespace-nowrap">
-                            <button type="button" wire:click="editPayment({{ $r['key'] }})" class="p-1 sm:p-1.5 rounded text-gray-500 hover:text-zinc-900 hover:bg-gray-100" title="Modifier" aria-label="Modifier"><x-sp-icon name="pencil" class="w-4 h-4" /></button>
+                            <button type="button" wire:click="editPayment({{ $r['key'] }})" data-sp="pay-edit" class="inline-flex items-center gap-1 h-8 px-2.5 rounded-md bg-[#ffcc00] text-zinc-900 text-xs font-bold hover:bg-[#ffd633] align-middle" title="Modifier"><x-sp-icon name="pencil" class="w-3.5 h-3.5" />Modifier</button>
                             <button type="button" wire:click="removePayment({{ $r['key'] }})" wire:confirm="Supprimer ce règlement ?" class="p-1 sm:p-1.5 rounded text-gray-400 hover:text-red-600" title="Supprimer"><x-sp-icon name="trash" class="w-4 h-4" /></button>
                         </td>
                     </tr>
