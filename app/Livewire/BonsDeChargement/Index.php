@@ -99,12 +99,12 @@ class Index extends Component
     public function delete($id)
     {
         $bc = BonDeChargement::findOrFail($id);
-        if ($bc->bon_livraison_id) {
-            session()->flash('error', 'Ce bon de chargement suit son bon de livraison : il est supprimé avec le BL.');
-
-            return;
-        }
+        $blId = $bc->bon_livraison_id;
         if (\App\Support\Tenant::tryDelete($bc)) {
+            if ($blId) {
+                // automatic slip of a delivery note: remember it, so it is not created again (2026-11-28)
+                \App\Models\BonLivraison::whereKey($blId)->update(['chargement_supprime' => true]);
+            }
             session()->flash('success', 'Bon de chargement supprimé.');
         }
     }

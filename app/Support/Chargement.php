@@ -13,10 +13,13 @@ class Chargement
         return (bool) \App\Models\Societe::current()?->bons_chargement_enabled;
     }
 
-    public static function syncFromBl(BonLivraison $bl): BonDeChargement
+    public static function syncFromBl(BonLivraison $bl): ?BonDeChargement
     {
         $bl->load('items.product');
         $bc = BonDeChargement::where('bon_livraison_id', $bl->id)->first();
+        if (! $bc && $bl->chargement_supprime) {
+            return null;   // the user deleted this note's loading slip: not created again (2026-11-28)
+        }
         if (! $bc) {
             $bc = BonDeChargement::create(['numero' => Tenant::nextNumero(BonDeChargement::class, 'BC-'), 'bon_livraison_id' => $bl->id,
                 'date' => $bl->date, 'status' => 'preparation', 'commercial' => auth()->user()?->name]);
@@ -48,6 +51,6 @@ class Chargement
     /** delivery notes that have no slip yet (older ones, demo data) */
     public static function ensureForAll(): void
     {
-        BonLivraison::whereDoesntHave('chargementAuto')->get()->each(fn ($bl) => self::syncFromBl($bl));
+        BonLivraison::whereDoesntHave('chargementAuto')->where('chargement_supprime', false)->get()->each(fn ($bl) => self::syncFromBl($bl));
     }
 }

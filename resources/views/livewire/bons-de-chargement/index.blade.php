@@ -71,11 +71,9 @@
                             <td class="px-2 xl:px-2 xl:px-3 py-4 text-sm"><span class="whitespace-nowrap px-2 py-1 rounded-full text-xs font-semibold {{ $badge[$bc->status] ?? 'bg-gray-100 text-gray-600' }}">{{ $labels[$bc->status] ?? $bc->status }}</span></td>
                             <td class="px-2 xl:px-2 xl:px-3 py-4 text-right text-sm whitespace-nowrap">
                                 <div class="inline-flex items-center gap-2">
+                                    <button type="button" wire:click="delete({{ $bc->id }})" wire:confirm="Supprimer {{ $bc->numero }} ?{{ $bc->bon_livraison_id ? ' Il ne sera pas recréé pour ce bon de livraison.' : '' }}" class="p-1 rounded text-red-600 hover:text-red-700" title="Supprimer"><x-sp-icon name="trash" class="w-4 h-4" /></button>
                                     <a href="{{ route('bons-de-chargement.pdf', $bc->id) }}" target="_blank" class="{{ $pdfBtn }}"><x-sp-icon name="printer" class="w-3.5 h-3.5" />PDF</a>
                                     <a href="{{ route('bons-de-chargement.show', $bc->id) }}" wire:navigate class="inline-flex items-center gap-1 border border-gray-300 bg-white px-2 py-1 rounded-md text-xs font-bold text-gray-800 hover:border-zinc-900">Charger</a>
-                                    @unless ($bc->bon_livraison_id)
-                                        <button type="button" wire:click="delete({{ $bc->id }})" wire:confirm="Supprimer ce bon de chargement ?" class="p-1 rounded text-red-600 hover:text-red-700" title="Supprimer"><x-sp-icon name="trash" class="w-4 h-4" /></button>
-                                    @endunless
                                 </div>
                             </td>
                         </tr>
@@ -98,11 +96,9 @@
                     <div class="mt-1 text-sm text-gray-600">{{ $bl?->numero }} · {{ $bl?->client ? \App\Support\SalesLists::clientLabel($bl->client) : '' }} <span class="text-xs text-gray-400">{{ $bc->date?->format('d/m/Y') }} · {{ $done }}/{{ $tot }} chargée(s)</span>
                         @if ($bc->chauffeur || $bc->vehicule || $bc->commercial)<span class="block text-xs text-gray-500">{{ implode(' · ', array_filter([$bc->chauffeur, $bc->vehicule, $bc->commercial ? 'Commercial : '.$bc->commercial : null])) }}</span>@endif</div>
                     <div class="mt-3 flex justify-end gap-2">
+                        <button type="button" wire:click="delete({{ $bc->id }})" wire:confirm="Supprimer {{ $bc->numero }} ?{{ $bc->bon_livraison_id ? ' Il ne sera pas recréé pour ce bon de livraison.' : '' }}" class="p-1 rounded text-red-600 hover:text-red-700" title="Supprimer"><x-sp-icon name="trash" class="w-4 h-4" /></button>
                         <a href="{{ route('bons-de-chargement.pdf', $bc->id) }}" target="_blank" class="{{ $pdfBtn }}"><x-sp-icon name="printer" class="w-3.5 h-3.5" />PDF</a>
                         <a href="{{ route('bons-de-chargement.show', $bc->id) }}" wire:navigate class="inline-flex items-center border border-gray-300 bg-white px-2 py-1 rounded-md text-xs font-bold text-gray-800">Charger</a>
-                        @unless ($bc->bon_livraison_id)
-                            <button type="button" wire:click="delete({{ $bc->id }})" wire:confirm="Supprimer ce bon de chargement ?" class="p-1 rounded text-red-600 hover:text-red-700" title="Supprimer"><x-sp-icon name="trash" class="w-4 h-4" /></button>
-                        @endunless
                     </div>
                 </div>
             @empty
