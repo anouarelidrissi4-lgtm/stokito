@@ -1,4 +1,17 @@
 <div class="py-6 px-4 sm:px-6 lg:px-8 max-w-5xl">
+<style>
+    @media (max-width: 767px) {
+        table.sp-lines, table.sp-lines tbody { display: block; width: 100%; min-width: 0 !important; }
+        table.sp-lines thead { display: none; }
+        table.sp-lines tr { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6rem .75rem; padding: .85rem .75rem; }
+        table.sp-lines td { display: block; padding: 0 !important; min-width: 0; text-align: start !important; }
+        table.sp-lines td[data-label]:not([data-label=""])::before { content: attr(data-label); display: block; margin-bottom: .25rem; font-size: .7rem; font-weight: 600; letter-spacing: .02em; text-transform: uppercase; color: #71717a; }
+        table.sp-lines td.sp-line-main { grid-column: 1 / -1; }
+        table.sp-lines td[data-label=""] { grid-column: 1 / -1; text-align: end !important; }
+        table.sp-lines td input, table.sp-lines td select { min-width: 0 !important; width: 100%; }
+        table.sp-lines td input[type=checkbox] { width: auto; }
+    }
+</style>
     <div class="flex items-center justify-between mb-6">
         <h1 class="text-2xl font-bold text-gray-900">{{ $bonLivraison ? 'Modifier' : 'Nouveau' }} Bon de Livraison</h1>
         <a href="{{ route('bon-livraisons.index') }}" wire:navigate class="text-sm text-gray-500 hover:underline">&larr; Retour</a>
@@ -104,10 +117,10 @@
         </label>
 
         <div>
-            <div class="flex items-center justify-between mb-2">
+            <div class="flex flex-wrap gap-2 items-center justify-between mb-2">
                 <label class="block text-sm font-medium text-gray-700">Lignes</label>
-                <div class="flex items-center gap-3">
-                    <button type="button" wire:click="addItem" class="inline-flex items-center gap-1.5 h-10 px-4 rounded-lg border-2 border-[#16a34a] bg-transparent text-sm font-semibold !text-[#16a34a] hover:bg-[#16a34a] hover:!text-white transition">+ Ajouter une ligne</button>
+                <div class="flex flex-wrap gap-2 items-center gap-3">
+                    <button type="button" wire:click="addItem" class="inline-flex items-center gap-1.5 h-10 px-4 rounded-lg border-2 border-[#16a34a] bg-transparent text-sm font-semibold !text-[#16a34a] hover:bg-[#16a34a] hover:!text-white transition whitespace-nowrap">+ Ajouter une ligne</button>
                     <x-barcode-scanner on-scan="onBarcodeScanned" label="Scanner un produit" />
                 </div>
             </div>
@@ -115,7 +128,7 @@
 
             <div class="border rounded-lg overflow-hidden">
                 <div class="overflow-x-auto">
-<table class="min-w-full divide-y divide-gray-200">
+<table class="sp-lines min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
                             <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase min-w-[13rem]">Produit</th>
@@ -134,7 +147,7 @@
                     <tbody class="divide-y divide-gray-100">
                         @foreach ($items as $index => $item)
                             <tr wire:key="item-{{ $index }}">
-                                <td class="px-4 py-2">
+                                <td class="px-4 py-2 sp-line-main" data-label="Produit">
                                     <div class="flex gap-1">
                                         <button type="button" wire:click="openProductModal({{ $index }})" title="Ajouter un produit" class="shrink-0 h-9 w-9 flex items-center justify-center rounded-md border border-gray-300 text-gray-600 hover:bg-gray-50">+</button>
                                         <div class="relative flex-1"
@@ -223,36 +236,36 @@
                                         </p>
                                     @endif
                                 </td>
-                                <td class="px-2 py-2">
+                                <td class="px-2 py-2" data-label="Quantité">
                                     <input wire:model.live="items.{{ $index }}.quantity" type="number" step="0.01" class="w-full min-w-[4.5rem] rounded-md border-gray-300 text-sm text-right">
                                 </td>
-                                <td class="px-2 py-2">
+                                <td class="px-2 py-2" data-label="Prix U. HT">
                                     <input wire:model.live="items.{{ $index }}.unit_price" type="number" step="0.01" class="w-full min-w-[5.25rem] rounded-md border-gray-300 text-sm text-right">
                                 </td>
-                                <td class="px-2 py-2">
+                                <td class="px-2 py-2" data-label="Prix TTC">
                                     {{-- Prix TTC saisissable (2026-11-27) : converti en HT avec le taux de la ligne --}}
                                     @php $ttcLine = round((float) ($item['unit_price'] ?? 0) * (1 + $this->lineRate($item) / 100), 2); @endphp
                                     <input wire:key="ttc-{{ $index }}-{{ $item['unit_price'] ?? 0 }}-{{ $this->lineRate($item) }}" type="number" step="0.01" min="0" value="{{ number_format($ttcLine, 2, '.', '') }}" @change="$wire.setLinePriceTtc({{ $index }}, $event.target.value)" aria-label="Prix TTC de la ligne" class="w-full min-w-[5.25rem] rounded-md border-gray-300 text-sm text-right">
                                 </td>
-                                <td class="px-1 py-2">
+                                <td class="px-1 py-2" data-label="TVA %">
                                     @php $rateOpts = collect($this->vatRateOptions())->push($this->lineRate($item))->map(fn ($r) => (float) $r)->unique()->sortDesc(); @endphp
                                     <select wire:model.live="items.{{ $index }}.tva_rate" class="w-full min-w-[4.75rem] rounded-md border-gray-300 text-sm ps-2 pe-7">
                                         @foreach ($rateOpts as $r)<option value="{{ \App\Support\DocTotals::key($r) }}">{{ \App\Support\DocTotals::label($r) }}</option>@endforeach
                                     </select>
                                 </td>
-                                <td class="px-2 py-2">
+                                <td class="px-2 py-2" data-label="Réduction">
                                     {{-- un seul champ « 0 ou 0% » comme Stokio : 10% = pourcentage, 10 = montant --}}
                                     <input wire:key="rem-{{ $index }}-{{ $item['remise_type'] ?? 'percent' }}-{{ $item['remise_value'] ?? 0 }}" type="text" inputmode="decimal" value="{{ $this->ligneRemiseTexte($item) }}" placeholder="0 ou 0%" @change="$wire.setLineRemise({{ $index }}, $event.target.value)" aria-label="Réduction de la ligne (10% ou montant)" class="w-full min-w-[4.75rem] rounded-md border-gray-300 text-sm text-right">
                                     @error("items.{$index}.remise_value") <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
                                 </td>
-                                <td class="px-2 py-2 text-right text-sm text-gray-900 whitespace-nowrap">
+                                <td class="px-2 py-2 text-right text-sm text-gray-900 whitespace-nowrap" data-label="Total HT">
                                     {{ \App\Support\Fmt::money($this->ligneTotal($item)) }}
                                     @if ($this->ligneRemiseMontant($item) > 0)
                                         <span class="block text-xs text-red-600">- {{ \App\Support\Fmt::money($this->ligneRemiseMontant($item)) }}</span>
                                     @endif
                                 </td>
                                 @if (auth()->user()->hasPermission('marges'))
-                                <td class="px-2 py-2 text-right text-sm text-green-700 whitespace-nowrap">
+                                <td class="px-2 py-2 text-right text-sm text-green-700 whitespace-nowrap" data-label="Marge">
                                     @php
                                         $itemProduct = $products->firstWhere('id', $item['product_id'] ?: null);
                                         $itemMarge = ((float) ($item['unit_price'] ?? 0) - (float) ($itemProduct->purchase_price ?? 0)) * (float) ($item['quantity'] ?? 0) - $this->ligneRemiseMontant($item);
@@ -260,7 +273,7 @@
                                     {{ \App\Support\Fmt::money($itemMarge) }}
                                 </td>
                                 @endif
-                                <td class="px-4 py-2 text-center">
+                                <td class="px-4 py-2 text-center" data-label="">
                                     <button type="button" wire:click="removeItem({{ $index }})" class="text-red-500 hover:text-red-700">&times;</button>
                                 </td>
                             </tr>
