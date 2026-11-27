@@ -66,6 +66,12 @@ class BonLivraison extends Model
         return max(0.0, round((float) $this->total - $this->montantRegle(), 2));
     }
 
+    /** its automatic loading slip */
+    public function chargementAuto(): HasOne
+    {
+        return $this->hasOne(BonDeChargement::class, 'bon_livraison_id');
+    }
+
     public function bonsDeChargement(): BelongsToMany
     {
         return $this->belongsToMany(BonDeChargement::class, 'bon_chargement_items')

@@ -489,6 +489,24 @@ Route::middleware(['auth'])->group(function () {
     Route::get('dossier-fournisseurs/{fournisseurId}', \App\Livewire\DossierFournisseurs\Show::class)->name('dossier-fournisseurs.show');
 
     Route::get('bons-de-chargement', \App\Livewire\BonsDeChargement\Index::class)->name('bons-de-chargement.index');
+    // loading slips: print one or the ticked ones, one per page (2026-11-27)
+    Route::get('bons-de-chargement/pdf-selection', function (\Illuminate\Http\Request $request) {
+        abort_unless(auth()->user()->hasPermission('bons_chargement'), 403);
+        $ids = collect(explode(',', (string) $request->query('ids')))->map(fn ($v) => (int) $v)->filter()->unique()->take(200);
+        $bcs = \App\Models\BonDeChargement::with(['lignes', 'bonLivraison.client'])->whereIn('id', $ids)->orderBy('date')->orderBy('numero')->get();
+        abort_if($bcs->isEmpty(), 404);
+
+        return \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.chargements', ['societe' => \App\Models\Societe::current(), 'bcs' => $bcs])
+            ->stream('bons-de-chargement-'.now()->format('Y-m-d').'.pdf');
+    })->name('bons-de-chargement.pdf-selection');
+    Route::get('bons-de-chargement/{id}/pdf', function ($id) {
+        abort_unless(auth()->user()->hasPermission('bons_chargement'), 403);
+        $bc = \App\Models\BonDeChargement::with(['lignes', 'bonLivraison.client'])->findOrFail($id);
+
+        return \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.chargements', ['societe' => \App\Models\Societe::current(), 'bcs' => collect([$bc])])
+            ->download($bc->numero.'.pdf');
+    })->name('bons-de-chargement.pdf');
+    Route::get('bons-de-chargement/{id}', \App\Livewire\BonsDeChargement\Show::class)->name('bons-de-chargement.show');
 
     Route::get('rappels', \App\Livewire\Rappels\Index::class)->name('rappels.index');
     Route::get('documents-externes', \App\Livewire\DocumentsExternes\Index::class)->name('documents-externes.index');

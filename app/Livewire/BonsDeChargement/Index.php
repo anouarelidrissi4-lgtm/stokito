@@ -20,6 +20,7 @@ class Index extends Component
     {
         $this->requirePermission('bons_chargement');
         abort_unless(\App\Models\Societe::current()->bons_chargement_enabled, 403, "Le module Bons de chargement est désactivé. Activez-le depuis Ma Société.");
+        \App\Support\Chargement::ensureForAll();
     }
 
     #[Validate('required|date')]
@@ -77,11 +78,14 @@ class Index extends Component
 
     public function render()
     {
+        $s = trim($this->search);
         $chargements = BonDeChargement::query()
-            ->withCount('bonLivraisons')
-            ->when($this->search, fn ($q) => $q->where('numero', 'like', "%{$this->search}%"))
-            ->latest('date')
-            ->paginate(10);
+            ->with(['bonLivraison.client', 'lignes', 'bonLivraisons.client'])
+            ->when($s !== '', fn ($q) => $q->where(fn ($w) => $w->where('numero', 'like', "%{$s}%")
+                ->orWhereHas('bonLivraison', fn ($b) => $b->where('numero', 'like', "%{$s}%")
+                    ->orWhereHas('client', fn ($c) => $c->where('name', 'like', "%{$s}%")->orWhere('prenom', 'like', "%{$s}%")->orWhere('code', 'like', "%{$s}%")))))
+            ->latest('date')->latest('id')
+            ->paginate(20);
 
         return view('livewire.bons-de-chargement.index', [
             'chargements' => $chargements,

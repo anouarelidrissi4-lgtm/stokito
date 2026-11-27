@@ -558,6 +558,9 @@ class Form extends Component
 
         $this->bonLivraison->recalculateTotals();
         \App\Support\StockSync::bonLivraison($this->bonLivraison->fresh());
+        if (\App\Support\Chargement::enabled()) {
+            \App\Support\Chargement::syncFromBl($this->bonLivraison->fresh());   // its loading slip follows (2026-11-27)
+        }
         foreach ($this->pendingPayments as $p) {
             $this->createPayment($this->bonLivraison->fresh(), $p);
         }
