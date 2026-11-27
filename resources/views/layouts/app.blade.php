@@ -176,15 +176,42 @@
                     requestAnimationFrame(function () { el.style.opacity = '1'; el.style.transform = 'none'; });
                     setTimeout(close, type === 'error' ? 8000 : 3500);
                 };
+                /* confirmation in the middle of the screen after a save (2026-11-27, idea from Stokio): green glass card + OK */
+                window.stkConfirm = function (title, message) {
+                    if (!title) return;
+                    var old = document.getElementById('stk-confirm'); if (old) old.remove();
+                    var dark = document.documentElement.classList.contains('dark');
+                    var w = document.createElement('div');
+                    w.id = 'stk-confirm';
+                    w.setAttribute('role', 'dialog'); w.setAttribute('aria-modal', 'true'); w.setAttribute('aria-labelledby', 'stk-confirm-title');
+                    w.style.cssText = 'position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(9,9,11,.28);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);opacity:0;transition:opacity .18s ease';
+                    w.innerHTML = '<div style="width:100%;max-width:420px;border-radius:18px;overflow:hidden;border:1px solid rgba(22,163,74,.35);background:' + (dark ? 'rgba(24,24,27,.78)' : 'rgba(255,255,255,.78)') + ';-webkit-backdrop-filter:blur(16px) saturate(1.4);backdrop-filter:blur(16px) saturate(1.4);box-shadow:0 24px 60px -12px rgba(0,0,0,.35);transform:translateY(10px) scale(.97);transition:transform .2s ease">'
+                        + '<div style="display:flex;align-items:center;gap:12px;padding:16px 20px;background:linear-gradient(135deg,rgba(22,163,74,.88),rgba(21,128,61,.78));color:#fff">'
+                        + '<span style="flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:999px;background:rgba(255,255,255,.22)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>'
+                        + '<p id="stk-confirm-title" style="margin:0;font:700 18px/1.3 inherit"></p></div>'
+                        + '<p data-msg style="margin:0;padding:18px 20px 6px;font:500 15px/1.5 inherit;color:' + (dark ? '#e4e4e7' : '#3f3f46') + '"></p>'
+                        + '<div style="display:flex;justify-content:flex-end;padding:12px 20px 18px"><button type="button" data-ok style="min-width:96px;height:42px;padding:0 20px;border:0;border-radius:10px;background:#16a34a;color:#fff;font:700 15px/1 inherit;cursor:pointer;box-shadow:0 6px 14px -6px rgba(22,163,74,.7)">OK</button></div></div>';
+                    w.querySelector('#stk-confirm-title').textContent = String(title).replace(/[.\s]+$/, '');
+                    w.querySelector('[data-msg]').textContent = message || 'Tout est enregistré. Vous pouvez continuer.';
+                    var card = w.firstChild, ok = w.querySelector('[data-ok]');
+                    var close = function () { document.removeEventListener('keydown', key); w.style.opacity = '0'; setTimeout(function () { w.remove(); }, 180); };
+                    var key = function (e) { if (e.key === 'Escape' || e.key === 'Enter') { e.preventDefault(); close(); } };
+                    ok.onclick = close;
+                    w.addEventListener('click', function (e) { if (e.target === w) close(); });
+                    document.addEventListener('keydown', key);
+                    document.body.appendChild(w);
+                    requestAnimationFrame(function () { w.style.opacity = '1'; card.style.transform = 'none'; ok.focus({ preventScroll: true }); });
+                };
                 function showFlash() {
                     var f = window.stkFlash; window.stkFlash = null;
                     if (!f) return;
                     if (f.error) stkToast('error', f.error);
-                    if (f.success) stkToast('success', f.success);
+                    if (f.success) stkConfirm(f.success);   // a save that sends you back to a list: confirmation card
                 }
                 document.addEventListener('livewire:navigated', showFlash);
                 document.addEventListener('livewire:init', function () {
                     Livewire.on('stk-toast', function (e) { e = Array.isArray(e) ? e[0] : e; stkToast(e.type, e.message); });
+                    Livewire.on('stk-confirm', function (e) { e = Array.isArray(e) ? e[0] : e; stkConfirm(e.title, e.message); });
                     Livewire.hook('request', function (r) {
                         r.fail(function (f) {
                             if (f.status === 419) return;   // expired session: Livewire asks to reload
