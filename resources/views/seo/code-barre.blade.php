@@ -133,7 +133,7 @@
             <div>
                 <p class="text-sm font-semibold text-zinc-500">Étiquettes code barre</p>
                 <h2 class="mt-2 text-2xl sm:text-3xl font-bold tracking-tight text-zinc-900">Imprimez vos étiquettes code barre sur une planche A4</h2>
-                <p class="mt-3 text-zinc-600 leading-relaxed">Le code barre du générateur ci-dessus est placé sur des étiquettes adhésives au format A4, avec la désignation et le prix si vous le souhaitez. Pour plusieurs produits, collez une liste.</p>
+                <p class="mt-3 text-zinc-600 leading-relaxed">Le code barre du générateur ci-dessus est placé sur des étiquettes adhésives au format A4, avec la désignation et le prix si vous le souhaitez. Pour plusieurs produits, collez une liste. Codes de types différents ou imprimante d’étiquettes à rouleau : utilisez le <a href="{{ route('seo.etiquette-code-barre') }}" class="font-semibold text-zinc-900 underline decoration-amber-400 decoration-2 underline-offset-4">créateur d’étiquettes code barre</a>.</p>
 
                 <div class="mt-6 grid sm:grid-cols-2 gap-4">
                     <div class="sm:col-span-2">
