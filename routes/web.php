@@ -390,7 +390,9 @@ Route::middleware(['auth'])->group(function () {
         abort_unless(auth()->user()->hasPermission('bl_consulter'), 403);
         $bl = \App\Models\BonLivraison::with(['client', 'items.product'])->findOrFail($bonLivraisonId);
 
-        return \App\Support\DocumentPdf::bonLivraison($bl)->download($bl->numero.'.pdf');
+        $sansPrix = request()->boolean('sans_prix');
+
+        return \App\Support\DocumentPdf::bonLivraison($bl, $sansPrix)->download($bl->numero.($sansPrix ? '-sans-prix' : '').'.pdf');
     })->name('bon-livraisons.pdf');
     // delivery notes ticked in the list -> one PDF, one per page (2026-11-27)
     Route::get('bon-livraisons/pdf-selection', function (\Illuminate\Http\Request $request) {
@@ -399,7 +401,7 @@ Route::middleware(['auth'])->group(function () {
         $bls = \App\Models\BonLivraison::with(['client', 'items.product'])->whereIn('id', $ids)->orderBy('date')->orderBy('numero')->get();
         abort_if($bls->isEmpty(), 404);
 
-        return \App\Support\DocumentPdf::bonLivraisons($bls)->stream('bons-de-livraison-'.now()->format('Y-m-d').'.pdf');
+        return \App\Support\DocumentPdf::bonLivraisons($bls, $request->boolean('sans_prix'))->stream('bons-de-livraison-'.now()->format('Y-m-d').'.pdf');
     })->name('bon-livraisons.pdf-selection');
 
     Route::get('commande-fournisseurs', \App\Livewire\CommandeFournisseurs\Index::class)->name('commande-fournisseurs.index');

@@ -60,4 +60,17 @@ class BlPdfSelectionTest extends TestCase
         $this->get(route('factures.pdf', $f->id))->assertOk();
         $this->get(route('factures.pdf-selection', ['ids' => '999999']))->assertNotFound();
     }
+
+    public function test_delivery_note_without_prices(): void
+    {
+        $this->companyUser('MA');
+        $bl = $this->bl($this->client('Martin'), 'BL-00009');
+        $with = view('pdf.document', ['societe' => \App\Models\Societe::current()] + \App\Support\DocumentPdf::bonLivraisonData($bl))->render();
+        $without = view('pdf.document', ['societe' => \App\Models\Societe::current()] + \App\Support\DocumentPdf::bonLivraisonData($bl, true))->render();
+        $this->assertStringContainsString('Prix unitaire', $with);
+        $this->assertStringNotContainsString('Prix unitaire', $without);
+        $this->assertStringNotContainsString('Total TTC', $without);
+        $this->get(route('bon-livraisons.pdf', [$bl->id, 'sans_prix' => 1]))->assertOk();
+        $this->get(route('bon-livraisons.pdf-selection', ['ids' => $bl->id, 'sans_prix' => 1]))->assertOk();
+    }
 }

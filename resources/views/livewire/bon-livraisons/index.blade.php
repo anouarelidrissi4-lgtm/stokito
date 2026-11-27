@@ -24,6 +24,9 @@
             <a :href="url + '?ids=' + sel.join(',')" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 h-9 px-4 rounded-lg bg-zinc-900 text-white text-sm font-semibold hover:bg-zinc-700">
                 <x-sp-icon name="printer" class="w-4 h-4" /> Imprimer la sélection
             </a>
+            <a :href="url + '?sans_prix=1&ids=' + sel.join(',')" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 h-9 px-4 rounded-lg border border-zinc-900 bg-white text-zinc-900 text-sm font-semibold hover:bg-zinc-50">
+                <x-sp-icon name="printer" class="w-4 h-4" /> Imprimer sans prix
+            </a>
             <button type="button" @click="sel = []" class="text-sm text-zinc-600 underline">Tout désélectionner</button>
         </div>
         <div class="hidden md:block overflow-x-auto">
@@ -54,7 +57,7 @@
                                 'bg-gray-100 text-gray-600' => $bl->status === 'draft',
                                 'bg-green-100 text-green-700' => $bl->status === 'delivered',
                             ])>{{ \App\Support\Fmt::status($bl->status) }}</span></td>
-                        <td class="px-6 py-4 text-right text-sm whitespace-nowrap"><div class="inline-flex items-center gap-2"><a href="{{ route('bon-livraisons.pdf', $bl->id) }}" target="_blank" title="Ouvrir le PDF" class="inline-flex items-center gap-1 bg-[#d92d20] text-white px-2 py-1 rounded-md text-xs font-bold hover:bg-[#b42318]"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h1.5a1.5 1.5 0 0 1 0 3H8v-3zm0 3v2M13 13v5h1a2 2 0 0 0 2-2v-1a2 2 0 0 0-2-2h-1z" stroke-width="1.4"/></svg>PDF</a>@include('livewire.bon-livraisons._actions')</div></td>
+                        <td class="px-6 py-4 text-right text-sm whitespace-nowrap"><div class="inline-flex items-center gap-2"><a href="{{ route('bon-livraisons.pdf', $bl->id) }}" target="_blank" title="Ouvrir le PDF" class="inline-flex items-center gap-1 bg-[#d92d20] text-white px-2 py-1 rounded-md text-xs font-bold hover:bg-[#b42318]"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h1.5a1.5 1.5 0 0 1 0 3H8v-3zm0 3v2M13 13v5h1a2 2 0 0 0 2-2v-1a2 2 0 0 0-2-2h-1z" stroke-width="1.4"/></svg>PDF</a><a href="{{ route('bon-livraisons.pdf', [$bl->id, 'sans_prix' => 1]) }}" target="_blank" title="BL sans prix (quantités seulement)" class="inline-flex items-center gap-1 border border-gray-300 bg-white text-gray-800 px-2 py-1 rounded-md text-xs font-bold hover:border-zinc-900"><x-sp-icon name="printer" class="w-3.5 h-3.5" />Sans prix</a>@include('livewire.bon-livraisons._actions')</div></td>
                     </tr>
                 @empty
                     <tr><td colspan="7" class="px-6 py-8 text-center text-sm text-gray-400">Aucun bon de livraison.</td></tr>
@@ -76,7 +79,7 @@
                             ])>{{ \App\Support\Fmt::status($bl->status) }}</span></div></div>
                     </div>
                     <div class="mt-1 text-sm text-gray-600">{{ \App\Support\SalesLists::clientLabel($bl->client) }}@if ($bl->client?->code)<span class="block text-xs text-gray-400">{{ $bl->client->code }}</span>@endif<span class="text-xs text-gray-400">{{ $bl->date->format('d/m/Y') }}</span></div>
-                    <div class="mt-3 flex items-center justify-end gap-2"><a href="{{ route('bon-livraisons.pdf', $bl->id) }}" target="_blank" title="Ouvrir le PDF" class="inline-flex items-center gap-1 bg-[#d92d20] text-white px-2 py-1 rounded-md text-xs font-bold hover:bg-[#b42318]"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h1.5a1.5 1.5 0 0 1 0 3H8v-3zm0 3v2M13 13v5h1a2 2 0 0 0 2-2v-1a2 2 0 0 0-2-2h-1z" stroke-width="1.4"/></svg>PDF</a>@include('livewire.bon-livraisons._actions')</div>
+                    <div class="mt-3 flex items-center justify-end gap-2"><a href="{{ route('bon-livraisons.pdf', $bl->id) }}" target="_blank" title="Ouvrir le PDF" class="inline-flex items-center gap-1 bg-[#d92d20] text-white px-2 py-1 rounded-md text-xs font-bold hover:bg-[#b42318]"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h1.5a1.5 1.5 0 0 1 0 3H8v-3zm0 3v2M13 13v5h1a2 2 0 0 0 2-2v-1a2 2 0 0 0-2-2h-1z" stroke-width="1.4"/></svg>PDF</a><a href="{{ route('bon-livraisons.pdf', [$bl->id, 'sans_prix' => 1]) }}" target="_blank" title="BL sans prix (quantités seulement)" class="inline-flex items-center gap-1 border border-gray-300 bg-white text-gray-800 px-2 py-1 rounded-md text-xs font-bold hover:border-zinc-900"><x-sp-icon name="printer" class="w-3.5 h-3.5" />Sans prix</a>@include('livewire.bon-livraisons._actions')</div>
                 </div>
             @empty
                 <div class="px-6 py-8 text-center text-sm text-gray-400">Aucun résultat.</div>

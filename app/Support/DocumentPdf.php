@@ -106,8 +106,9 @@ class DocumentPdf
     }
 
     /** view data of one delivery note (2026-11-27, was in the route) */
-    public static function bonLivraisonData(\App\Models\BonLivraison $bl): array
+    public static function bonLivraisonData(\App\Models\BonLivraison $bl, bool $sansPrix = false): array
     {
+        $prices = $bl->show_prices && ! $sansPrix;   // "BL sans prix": quantities only (2026-11-27)
         $bl->loadMissing(['client', 'items.product']);
         $societe = \App\Models\Societe::current();
 
@@ -127,8 +128,8 @@ class DocumentPdf
                 'tva_rate' => $i->tva_rate ?? $bl->tva_rate,
                 'total' => $i->unit_price !== null ? $i->quantity * $i->unit_price : null,
             ]),
-            'showPrices' => $bl->show_prices,
-            'totals' => $bl->show_prices ? [
+            'showPrices' => $prices,
+            'totals' => $prices ? [
                 'brut' => $bl->montantBrutHt(),
                 'remise' => $bl->montantRemise(),
                 'ht' => $bl->total_ht,
@@ -140,17 +141,17 @@ class DocumentPdf
         ];
     }
 
-    public static function bonLivraison(\App\Models\BonLivraison $bl): \Barryvdh\DomPDF\PDF
+    public static function bonLivraison(\App\Models\BonLivraison $bl, bool $sansPrix = false): \Barryvdh\DomPDF\PDF
     {
-        return \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.document', ['societe' => \App\Models\Societe::current()] + self::bonLivraisonData($bl));
+        return \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.document', ['societe' => \App\Models\Societe::current()] + self::bonLivraisonData($bl, $sansPrix));
     }
 
     /** several delivery notes in one PDF, one per page */
-    public static function bonLivraisons($bls): \Barryvdh\DomPDF\PDF
+    public static function bonLivraisons($bls, bool $sansPrix = false): \Barryvdh\DomPDF\PDF
     {
         return \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.documents', [
             'societe' => \App\Models\Societe::current(),
-            'docs' => collect($bls)->map(fn ($bl) => self::bonLivraisonData($bl))->all(),
+            'docs' => collect($bls)->map(fn ($bl) => self::bonLivraisonData($bl, $sansPrix))->all(),
         ]);
     }
 }
