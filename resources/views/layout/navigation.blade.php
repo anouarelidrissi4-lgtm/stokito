@@ -10,7 +10,7 @@
 @php
     $rtl = app()->getLocale() === 'ar';
     $user = auth()->user();
-    $sectionIcons = ['tableau_de_bord' => 'home', 'catalogue' => 'cube', 'caisse' => 'receipt', 'ventes' => 'cart', 'achats' => 'truck', 'tresorerie' => 'wallet', 'administration' => 'cog'];
+    $sectionIcons = ['tableau_de_bord' => 'home', 'catalogue' => 'cube', 'caisse' => 'receipt', 'ventes' => 'cart', 'achats' => 'truck', 'tresorerie' => 'wallet', 'personnel' => 'user', 'administration' => 'cog'];
     $quickKeys = ['devis.create', 'bon-livraisons.create', 'commande-fournisseurs.create'];
     $isActive = fn ($item) => $item['active'] && request()->routeIs($item['active']);
     // every row gets an icon so it reads as a page link, not a heading (2026-11-25)
@@ -20,7 +20,7 @@
         'clients.index' => 'user', 'bons-de-chargement.index' => 'truck', 'reglements-clients.index' => 'coins', 'soldes-clients.index' => 'wallet', 'plafonds-clients.index' => 'alert',
         'fournisseurs.index' => 'user', 'reglements-fournisseurs.index' => 'coins', 'soldes-fournisseurs.index' => 'wallet',
         'caisse.pos' => 'receipt', 'caisse.tickets' => 'doc', 'caisse.clotures' => 'clock',
-        'depenses.index' => 'wallet', 'depenses.recurrentes' => 'clock', 'tresorerie.comptes-bancaires' => 'wallet', 'tresorerie.porte-feuilles' => 'coins', 'cheques-fournisseurs.index' => 'doc', 'tresorerie.mouvements-bancaires' => 'chart',
+        'depenses.index' => 'wallet', 'depenses.recurrentes' => 'clock', 'personnel.index' => 'user', 'personnel.pointage' => 'clock', 'tresorerie.comptes-bancaires' => 'wallet', 'tresorerie.porte-feuilles' => 'coins', 'cheques-fournisseurs.index' => 'doc', 'tresorerie.mouvements-bancaires' => 'chart',
         'statistiques.index' => 'chart', 'documents-externes.index' => 'folder', 'rappels.index' => 'clock', 'utilisateurs.index' => 'user', 'societe.edit' => 'cog',
     ];
     // document sub-groups (2026-11-25): an "Ajouter" row and a "Liste" row folded under the document name

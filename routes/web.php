@@ -266,6 +266,17 @@ Route::middleware(['auth'])->group(function () {
     Route::get('inventaire/nouveau', \App\Livewire\Inventaire\Form::class)->name('inventaire.create');
     Route::get('inventaire/{inventaireId}', \App\Livewire\Inventaire\Form::class)->whereNumber('inventaireId')->name('inventaire.show');
     Route::get('depenses', \App\Livewire\Depenses\Index::class)->name('depenses.index');
+    // module Personnel (2026-11-28)
+    Route::get('personnel', \App\Livewire\Personnel\Index::class)->name('personnel.index');
+    Route::get('personnel/pointage', \App\Livewire\Personnel\Pointage::class)->name('personnel.pointage');
+    Route::get('personnel/{employeId}', \App\Livewire\Personnel\Show::class)->whereNumber('employeId')->name('personnel.show');
+    Route::get('personnel/paies/{paie}/recu', function (int $paie) {
+        abort_unless(auth()->user()->hasPermission('personnel'), 403);
+        $p = \App\Models\EmployePaie::with('employe')->findOrFail($paie);
+
+        return \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.recu-paie', ['paie' => $p, 'societe' => \App\Models\Societe::current()])
+            ->stream('recu-paie-'.\Illuminate\Support\Str::slug($p->employe->nom).'-'.$p->periode_fin->format('Y-m-d').'.pdf');
+    })->whereNumber('paie')->name('personnel.recu');
     Route::get('depenses/{depense}/justificatif', function (int $depense) {
         abort_unless(auth()->user()->hasPermission('depenses'), 403);
         $d = \App\Models\Depense::findOrFail($depense);

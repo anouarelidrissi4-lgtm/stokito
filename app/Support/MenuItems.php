@@ -25,6 +25,7 @@ class MenuItems
         'achats' => ['label' => 'Achats', 'icon' => '🚚', 'order' => 40],
         'caisse' => ['label' => 'Caisse', 'icon' => '🧾', 'order' => 45],
         'tresorerie' => ['label' => 'Tresorerie', 'icon' => '💰', 'order' => 50],
+        'personnel' => ['label' => 'Personnel', 'icon' => '👷', 'order' => 55],
         'administration' => ['label' => 'Administration', 'icon' => '⚙️', 'order' => 60],
     ];
 
@@ -82,6 +83,8 @@ class MenuItems
         'cheques-fournisseurs.index' => ['label' => 'Cheques / Effets Fournisseurs', 'route' => 'cheques-fournisseurs.index', 'active' => 'cheques-fournisseurs.*', 'permission' => null, 'module' => null, 'admin_override' => false, 'section' => 'tresorerie', 'order' => 30],
         'tresorerie.mouvements-bancaires' => ['label' => 'Mouvements Bancaires', 'route' => 'tresorerie.mouvements-bancaires', 'active' => 'tresorerie.mouvements-bancaires', 'permission' => 'mouvements_bancaires', 'module' => null, 'admin_override' => false, 'section' => 'tresorerie', 'order' => 40],
 
+        'personnel.index' => ['label' => 'Employés', 'route' => 'personnel.index', 'active' => ['personnel.index', 'personnel.show'], 'permission' => 'personnel', 'module' => null, 'admin_override' => false, 'section' => 'personnel', 'order' => 10],
+        'personnel.pointage' => ['label' => 'Pointage', 'route' => 'personnel.pointage', 'active' => 'personnel.pointage', 'permission' => 'personnel', 'module' => null, 'admin_override' => false, 'section' => 'personnel', 'order' => 20],
         'statistiques.index' => ['label' => 'Statistiques', 'route' => 'statistiques.index', 'active' => 'statistiques.index', 'permission' => 'statistiques', 'module' => null, 'admin_override' => false, 'section' => 'administration', 'order' => 10],
         'documents-externes.index' => ['label' => 'Documents externes', 'route' => 'documents-externes.index', 'active' => 'documents-externes.index', 'permission' => 'documents_externes', 'module' => null, 'admin_override' => false, 'section' => 'administration', 'order' => 20],
         'rappels.index' => ['label' => 'Rappels', 'route' => 'rappels.index', 'active' => 'rappels.index', 'permission' => 'rappels', 'module' => null, 'admin_override' => false, 'section' => 'administration', 'order' => 30],

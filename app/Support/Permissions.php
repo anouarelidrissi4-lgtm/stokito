@@ -57,6 +57,7 @@ class Permissions
         'produits_prix_achat' => "Produits : Voir Prix d'achat",
         'rappels' => 'Rappels',
         'soldes_fournisseurs' => 'Soldes Fournisseurs',
+        'personnel' => 'Personnel : employés, pointage, avances, paie',
         'soldes_clients' => "Voir l'etat des soldes clients",
         'dossier_client' => 'Voir le dossier client',
         'dossier_fournisseur' => 'Voir le dossier fournisseur',
