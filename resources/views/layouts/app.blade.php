@@ -23,7 +23,8 @@
         <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js" defer></script>
         @livewireStyles
         @if (is_array(session('gtm_event')))@include('partials.analytics')@endif
-    </head>
+        <style>@media (max-width: 767px){input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]),select,textarea{font-size:16px!important}}</style>
+</head>
     <body class="sp-app antialiased bg-zinc-50" x-data="{ nav: false }" @keydown.escape.window="nav = false">
         <div class="min-h-screen flex flex-col">
 

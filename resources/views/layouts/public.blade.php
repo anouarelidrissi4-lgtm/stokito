@@ -32,7 +32,8 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         @livewireStyles
         @include('partials.analytics')
-    </head>
+        <style>@media (max-width: 767px){input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]),select,textarea{font-size:16px!important}}</style>
+</head>
     {{-- simple / modern style, same as the landing page (2026-11-25) --}}
     <body class="sp-pub antialiased bg-zinc-50 text-zinc-900" x-data="{ menu: false }">
 

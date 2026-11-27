@@ -14,7 +14,8 @@
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         @include('partials.analytics')
-    </head>
+        <style>@media (max-width: 767px){input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]),select,textarea{font-size:16px!important}}</style>
+</head>
     {{-- industrial / dépôt style, same as the landing page (2026-11-23) --}}
     <body class="sp-guest text-zinc-900 antialiased bg-zinc-50">
         <div class="min-h-screen grid lg:grid-cols-2">
