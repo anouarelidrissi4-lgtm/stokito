@@ -55,6 +55,8 @@ class Form extends Component
 
     public $payNotes = '';
 
+    public $payEditKey = null;             // payment being edited: its id, or its index before the first save
+
     public array $pendingPayments = [];    // payments typed before the delivery note exists
 
     public array $items = [];
@@ -413,8 +415,14 @@ class Form extends Component
     public function openPayment(string $group): void
     {
         $this->resetValidation();
+        // a payment type ('especes', 'cheque'…) or a group ('cash', 'papier')
+        $mode = in_array($group, ['especes', 'virement', 'versement', 'transfert', 'cheque', 'effet'], true) ? $group : null;
+        if ($mode) {
+            $group = in_array($mode, \App\Support\SalesLists::MODES_PAPIER, true) ? 'papier' : 'cash';
+        }
+        $this->payEditKey = null;
         $this->payGroup = in_array($group, ['cash', 'papier'], true) ? $group : '';
-        $this->payMode = $group === 'papier' ? 'cheque' : 'especes';
+        $this->payMode = $mode ?? ($group === 'papier' ? 'cheque' : 'especes');
         $this->payDate = now()->format('Y-m-d');
         $this->payEcheance = $group === 'papier' ? now()->format('Y-m-d') : null;
         $this->payBanque = '';
@@ -428,6 +436,50 @@ class Form extends Component
     public function closePayment(): void
     {
         $this->payGroup = '';
+        $this->payEditKey = null;
+    }
+
+    private function fillPayment(array $p): void
+    {
+        $this->payMode = $p['mode'];
+        $this->payGroup = in_array($p['mode'], \App\Support\SalesLists::MODES_PAPIER, true) ? 'papier' : 'cash';
+        $this->payMontant = (float) $p['montant'];
+        $this->payDate = $p['date'];
+        $this->payCompte = $p['tresorerie_compte_id'] ?? null;
+        $this->payBanque = (string) ($p['banque'] ?? '');
+        $this->payNumero = (string) ($p['numero_cheque'] ?? '');
+        $this->payEcheance = $p['date_echeance'] ?? null;
+        $this->payTireur = (string) ($p['tireur'] ?? '');
+        $this->payNotes = (string) ($p['notes'] ?? '');
+    }
+
+    private function paymentRow($r, ?string $obs): array
+    {
+        return ['montant' => (float) $r->montant, 'date' => $r->date?->format('Y-m-d'), 'mode' => $r->mode, 'tresorerie_compte_id' => $r->tresorerie_compte_id,
+            'banque' => $r->banque, 'numero_cheque' => $r->numero_cheque, 'date_echeance' => $r->date_echeance?->format('Y-m-d'), 'tireur' => $r->tireur, 'notes' => $obs];
+    }
+
+    public function editPayment($key): void
+    {
+        $this->resetValidation();
+        if ($this->bonLivraison) {
+            $r = \App\Models\ReglementClient::where('bon_livraison_id', $this->bonLivraison->id)->findOrFail((int) $key);
+            $p = $this->paymentRow($r, $r->observation());
+        } elseif (! ($p = $this->pendingPayments[(int) $key] ?? null)) {
+            return;
+        }
+        $this->fillPayment($p);
+        $this->payEditKey = (int) $key;
+    }
+
+    private function updatePayment(BonLivraison $bl, int $id, array $data): void
+    {
+        \Illuminate\Support\Facades\DB::transaction(function () use ($bl, $id, $data) {
+            $r = \App\Models\ReglementClient::where('bon_livraison_id', $bl->id)->findOrFail($id);
+            $r->removeEffects();
+            $r->update($data + ['notes' => 'Règlement du bon de livraison '.$bl->numero]);
+            $r->refresh()->applyEffects();
+        });
     }
 
     /** total of the delivery note as typed, minus what is already paid */
@@ -441,6 +493,9 @@ class Form extends Component
     public function addPayment(): void
     {
         $modes = $this->payGroup === 'papier' ? \App\Support\SalesLists::MODES_PAPIER : ['especes', 'virement', 'versement', 'transfert'];
+        if ($this->payEditKey !== null) {
+            $modes = array_keys(\App\Support\SalesLists::MODES);   // an older payment may use another type
+        }
         $this->validate([
             'payMode' => 'required|in:'.implode(',', $modes),
             'payMontant' => 'required|numeric|min:0.01',
@@ -469,17 +524,27 @@ class Form extends Component
         if (($obs = trim((string) $this->payNotes)) !== '') {
             $data['notes'] = $obs;                         // otherwise the automatic "Règlement du bon de livraison …"
         }
-        if ($this->bonLivraison) {
+        if ($this->payEditKey !== null) {
+            if ($this->bonLivraison) {
+                $this->updatePayment($this->bonLivraison, (int) $this->payEditKey, $data);
+                $this->bonLivraison->refresh();
+            } elseif (isset($this->pendingPayments[(int) $this->payEditKey])) {
+                $this->pendingPayments[(int) $this->payEditKey] = $data;
+            }
+        } elseif ($this->bonLivraison) {
             $this->createPayment($this->bonLivraison, $data);
             $this->bonLivraison->refresh();
         } else {
             $this->pendingPayments[] = $data;
         }
         $this->payGroup = '';
+        $this->payEditKey = null;
     }
 
     public function removePayment($key): void
     {
+        $this->payGroup = '';
+        $this->payEditKey = null;
         if ($this->bonLivraison) {
             $r = \App\Models\ReglementClient::where('bon_livraison_id', $this->bonLivraison->id)->findOrFail((int) $key);
             \App\Support\Tenant::tryDelete($r);

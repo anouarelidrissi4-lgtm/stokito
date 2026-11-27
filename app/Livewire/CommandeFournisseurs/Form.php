@@ -61,6 +61,8 @@ class Form extends Component
 
     public $payNotes = '';
 
+    public $payEditKey = null;             // payment being edited: its id, or its index before the first save
+
     public array $pendingPayments = [];    // payments typed before the order exists
 
     // --- Scanner IA d'une facture fournisseur (2026-11-24) ---
@@ -463,8 +465,14 @@ class Form extends Component
     {
         abort_unless($this->canPay(), 403);
         $this->resetValidation();
+        // a payment type ('especes', 'cheque'…) or a group ('cash', 'papier')
+        $mode = in_array($group, ['especes', 'virement', 'versement', 'transfert', 'cheque', 'effet'], true) ? $group : null;
+        if ($mode) {
+            $group = in_array($mode, \App\Support\SalesLists::MODES_PAPIER, true) ? 'papier' : 'cash';
+        }
+        $this->payEditKey = null;
         $this->payGroup = in_array($group, ['cash', 'papier'], true) ? $group : '';
-        $this->payMode = $group === 'papier' ? 'cheque' : 'especes';
+        $this->payMode = $mode ?? ($group === 'papier' ? 'cheque' : 'especes');
         $this->payDate = now()->format('Y-m-d');
         $this->payEcheance = $group === 'papier' ? now()->format('Y-m-d') : null;
         $this->payBanque = '';
@@ -478,6 +486,76 @@ class Form extends Component
     public function closePayment(): void
     {
         $this->payGroup = '';
+        $this->payEditKey = null;
+    }
+
+    private function fillPayment(array $p): void
+    {
+        $this->payMode = $p['mode'];
+        $this->payGroup = in_array($p['mode'], \App\Support\SalesLists::MODES_PAPIER, true) ? 'papier' : 'cash';
+        $this->payMontant = (float) $p['montant'];
+        $this->payDate = $p['date'];
+        $this->payCompte = $p['tresorerie_compte_id'] ?? null;
+        $this->payBanque = (string) ($p['banque'] ?? '');
+        $this->payNumero = (string) ($p['numero_cheque'] ?? '');
+        $this->payEcheance = $p['date_echeance'] ?? null;
+        $this->payTireur = (string) ($p['tireur'] ?? '');
+        $this->payNotes = (string) ($p['notes'] ?? '');
+    }
+
+    private function paymentRow($r, ?string $obs): array
+    {
+        return ['montant' => (float) $r->montant, 'date' => $r->date?->format('Y-m-d'), 'mode' => $r->mode, 'tresorerie_compte_id' => $r->tresorerie_compte_id,
+            'banque' => $r->banque, 'numero_cheque' => $r->numero_cheque, 'date_echeance' => $r->date_echeance?->format('Y-m-d'), 'tireur' => $r->tireur, 'notes' => $obs];
+    }
+
+    public function editPayment($key): void
+    {
+        abort_unless($this->canPay(), 403);
+        $this->resetValidation();
+        if ($this->commande) {
+            $r = \App\Models\ReglementFournisseur::where('commande_fournisseur_id', $this->commande->id)->findOrFail((int) $key);
+            $p = $this->paymentRow($r, $r->notes);
+        } elseif (! ($p = $this->pendingPayments[(int) $key] ?? null)) {
+            return;
+        }
+        $this->fillPayment($p);
+        $this->payEditKey = (int) $key;
+    }
+
+    private function updatePayment(CommandeFournisseur $cf, int $id, array $data): void
+    {
+        \Illuminate\Support\Facades\DB::transaction(function () use ($cf, $id, $data) {
+            $r = \App\Models\ReglementFournisseur::where('commande_fournisseur_id', $cf->id)->findOrFail($id);
+            $r->removeEffects();
+            $r->update($data);
+            $r->refresh()->applyEffects();
+            $this->syncCheque($cf, $r);
+        });
+    }
+
+    /** a cheque or an effet also goes to the "Chèques / effets fournisseurs" follow-up, like the Règlements page */
+    private function syncCheque(CommandeFournisseur $cf, \App\Models\ReglementFournisseur $r): void
+    {
+        $existing = \App\Models\ChequeEffetFournisseur::where('reglement_fournisseur_id', $r->id)->first();
+        if (! in_array($r->mode, \App\Support\SalesLists::MODES_PAPIER, true)) {
+            if ($existing && $existing->status === 'en_attente') {
+                $existing->delete();
+            }
+
+            return;
+        }
+        $vals = [
+            'fournisseur_id' => $cf->fournisseur_id,
+            'reglement_fournisseur_id' => $r->id,
+            'numero_cheque' => $r->numero_cheque ?: '—',
+            'banque' => $r->banque,
+            'montant' => $r->montant,
+            'date_emission' => $r->date,
+            'date_echeance' => $r->date_echeance ?? $r->date,
+            'notes' => trim(implode(' · ', array_filter([$r->mode === 'effet' ? 'Effet' : null, $r->tireur, $r->notes]))) ?: null,
+        ];
+        $existing ? $existing->update($vals) : \App\Models\ChequeEffetFournisseur::create($vals + ['status' => 'en_attente']);
     }
 
     /** total of the order as typed, minus what is already paid */
@@ -492,6 +570,9 @@ class Form extends Component
     {
         abort_unless($this->canPay(), 403);
         $modes = $this->payGroup === 'papier' ? \App\Support\SalesLists::MODES_PAPIER : ['especes', 'virement', 'versement', 'transfert'];
+        if ($this->payEditKey !== null) {
+            $modes = array_keys(\App\Support\SalesLists::MODES);   // an older payment may use another type
+        }
         $this->validate([
             'payMode' => 'required|in:'.implode(',', $modes),
             'payMontant' => 'required|numeric|min:0.01',
@@ -518,18 +599,28 @@ class Form extends Component
             'tireur' => $this->payGroup === 'papier' ? (trim((string) $this->payTireur) ?: null) : null,
             'notes' => trim((string) $this->payNotes) ?: null,
         ];
-        if ($this->commande) {
+        if ($this->payEditKey !== null) {
+            if ($this->commande) {
+                $this->updatePayment($this->commande, (int) $this->payEditKey, $data);
+                $this->commande->refresh();
+            } elseif (isset($this->pendingPayments[(int) $this->payEditKey])) {
+                $this->pendingPayments[(int) $this->payEditKey] = $data;
+            }
+        } elseif ($this->commande) {
             $this->createPayment($this->commande, $data);
             $this->commande->refresh();
         } else {
             $this->pendingPayments[] = $data;
         }
         $this->payGroup = '';
+        $this->payEditKey = null;
     }
 
     public function removePayment($key): void
     {
         abort_unless($this->canPay(), 403);
+        $this->payGroup = '';
+        $this->payEditKey = null;
         if ($this->commande) {
             $r = \App\Models\ReglementFournisseur::where('commande_fournisseur_id', $this->commande->id)->findOrFail((int) $key);
             \App\Support\Tenant::tryDelete($r);
@@ -548,20 +639,7 @@ class Form extends Component
                 'commande_fournisseur_id' => $cf->id,
             ]);
             $r->applyEffects();
-            // a cheque or an effet also goes to the "Chèques / effets fournisseurs" follow-up, like the Règlements page
-            if (in_array($r->mode, \App\Support\SalesLists::MODES_PAPIER, true)) {
-                \App\Models\ChequeEffetFournisseur::create([
-                    'fournisseur_id' => $cf->fournisseur_id,
-                    'reglement_fournisseur_id' => $r->id,
-                    'numero_cheque' => $r->numero_cheque ?: '—',
-                    'banque' => $r->banque,
-                    'montant' => $r->montant,
-                    'date_emission' => $r->date,
-                    'date_echeance' => $r->date_echeance ?? $r->date,
-                    'status' => 'en_attente',
-                    'notes' => trim(implode(' · ', array_filter([$r->mode === 'effet' ? 'Effet' : null, $r->tireur, $r->notes]))) ?: null,
-                ]);
-            }
+            $this->syncCheque($cf, $r);
         });
     }
 

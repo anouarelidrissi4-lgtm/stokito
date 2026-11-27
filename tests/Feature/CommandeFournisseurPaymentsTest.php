@@ -42,6 +42,17 @@ class CommandeFournisseurPaymentsTest extends TestCase
         $this->assertSame('778899', $ch->numero_cheque);
         $this->assertSame('Attijariwafa bank', $ch->banque);
 
+        // editing: cheque becomes a virement → the pending cheque goes away; amount and treasury follow
+        $cheque = ReglementFournisseur::where('mode', 'cheque')->value('id');
+        Livewire::test(\App\Livewire\CommandeFournisseurs\Form::class, ['commandeId' => $cf->id])
+            ->call('editPayment', $cheque)->assertSet('payGroup', 'papier')->assertSet('payNumero', '778899')->assertSee('Modifier le règlement')
+            ->set('payMode', 'virement')->set('payMontant', 250)->set('payCompte', $caisse->id)->call('addPayment')->assertHasNoErrors();
+        $this->assertSame('virement', ReglementFournisseur::find($cheque)->mode);
+        $this->assertEquals(250, ReglementFournisseur::find($cheque)->montant);
+        $this->assertSame(0, ChequeEffetFournisseur::count());
+        $this->assertEquals(250, MouvementBancaire::where('reference_type', 'reglement_fournisseur')->where('reference_id', $cheque)->sole()->montant);
+        ReglementFournisseur::whereKey($cheque)->update(['mode' => 'cheque']);
+
         // on the saved order a payment is recorded at once, and deleting it cleans up treasury and cheque
         $lw = Livewire::test(\App\Livewire\CommandeFournisseurs\Form::class, ['commandeId' => $cf->id])->assertSee('Transfert cash')->assertSee('778899');
         $lw->call('removePayment', ReglementFournisseur::where('mode', 'transfert')->value('id'));
@@ -49,5 +60,31 @@ class CommandeFournisseurPaymentsTest extends TestCase
         $this->assertSame(0, ReglementFournisseur::count());
         $this->assertSame(0, MouvementBancaire::where('reference_type', 'reglement_fournisseur')->count());
         $this->assertSame(0, ChequeEffetFournisseur::count());
+    }
+
+    public function test_bl_payment_can_be_edited_before_and_after_saving(): void
+    {
+        $this->companyUser('MA');
+        $c = $this->client('Bati Sud');
+        $caisse = TresorerieCompte::create(['name' => 'Caisse', 'type' => 'caisse', 'initial_balance' => 0, 'is_active' => true]);
+        $p = Product::create(['name' => 'Fer 12', 'reference' => 'F12', 'purchase_price' => 5, 'sale_price' => 10, 'stock_qty' => 100, 'unit' => 'piece']);
+
+        $lw = Livewire::test(\App\Livewire\BonLivraisons\Form::class)
+            ->assertSee('Ajouter un règlement')
+            ->call('openPayment', 'versement')->assertSet('payGroup', 'cash')->assertSet('payMode', 'versement')
+            ->set('payMontant', 40)->call('addPayment')
+            ->call('editPayment', 0)->assertSet('payMontant', 40.0)->set('payMontant', 55)->set('payNotes', 'au dépôt')->call('addPayment')
+            ->assertHasNoErrors();
+        $this->assertSame(1, count($lw->get('pendingPayments')));
+        $this->assertEquals(55, $lw->get('pendingPayments')[0]['montant']);
+
+        $r = \App\Models\ReglementClient::create(['client_id' => $c->id, 'montant' => 30, 'date' => now(), 'mode' => 'especes']);
+        $bl = \App\Models\BonLivraison::create(['client_id' => $c->id, 'numero' => 'BL-00001', 'date' => now(), 'status' => 'delivered', 'show_prices' => true, 'tva_rate' => 20, 'remise_type' => 'percent', 'remise_value' => 0, 'total' => 100]);
+        $r->update(['bon_livraison_id' => $bl->id]);
+        Livewire::test(\App\Livewire\BonLivraisons\Form::class, ['bonLivraisonId' => $bl->id])
+            ->call('editPayment', $r->id)->assertSet('payMode', 'especes')
+            ->set('payMontant', 45)->set('payCompte', $caisse->id)->call('addPayment')->assertHasNoErrors();
+        $this->assertEquals(45, $r->fresh()->montant);
+        $this->assertSame(1, MouvementBancaire::where('reference_type', 'reglement_client')->where('reference_id', $r->id)->count());
     }
 }

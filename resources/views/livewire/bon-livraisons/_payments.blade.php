@@ -12,25 +12,36 @@
     $reste = round((float) $this->totalTtc - $regle, 2);
     $field = 'w-full rounded-md border-gray-300 text-sm';
     $modes = $payGroup === 'papier' ? ['cheque' => 'Chèque', 'effet' => 'Effet'] : ['especes' => 'Espèces', 'virement' => 'Virement', 'versement' => 'Versement', 'transfert' => 'Transfert cash'];
+    if ($payMode && ! isset($modes[$payMode])) {
+        $modes[$payMode] = \App\Support\SalesLists::MODES[$payMode] ?? $payMode;   // an older payment edited here keeps its mode
+    }
+    // 2026-11-27: one small button; the payment types show only after a click
+    $choices = ['especes' => 'Espèces', 'virement' => 'Virement', 'versement' => 'Versement', 'transfert' => 'Transfert cash', 'cheque' => 'Chèque', 'effet' => 'Effet'];
+    $editing = $payEditKey !== null;
 @endphp
-<div id="reglements" class="rounded-xl border border-gray-200 bg-white">
+<div id="reglements" class="rounded-xl border border-gray-200 bg-white" x-data="{ choose: false }">
     <div class="p-4 flex flex-wrap items-center justify-between gap-3 border-b border-gray-200">
         <div>
             <h3 class="font-semibold text-gray-900">Règlements</h3>
             <p class="text-xs text-gray-500">{{ $payments ? 'Chaque règlement est enregistré tout de suite.' : ($payLater ?? 'Ils seront enregistrés avec le bon de livraison.') }}</p>
         </div>
+        <button type="button" @click="choose = ! choose" :aria-expanded="choose" data-sp="pay-add" class="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg bg-[#16a34a] text-white text-sm font-semibold hover:bg-[#15803d]">
+            <x-sp-icon name="plus" class="w-4 h-4" /> Ajouter un règlement
+        </button>
+    </div>
+    <div x-show="choose" x-cloak class="px-4 py-3 border-b border-gray-200 bg-gray-50">
+        <p class="text-xs font-medium text-gray-500 mb-2">Type de règlement</p>
         <div class="flex flex-wrap gap-2">
-            <button type="button" wire:click="openPayment('cash')" class="inline-flex items-center gap-1.5 min-h-10 px-4 py-2 rounded-lg bg-[#16a34a] text-white text-sm font-semibold hover:bg-[#15803d]">
-                <x-sp-icon name="plus" class="w-4 h-4" /> Espèces / Virement / Versement / Transfert cash
-            </button>
-            <button type="button" wire:click="openPayment('papier')" class="inline-flex items-center gap-1.5 min-h-10 px-4 py-2 rounded-lg bg-[#ffcc00] text-zinc-900 text-sm font-semibold hover:bg-[#ffd633]">
-                <x-sp-icon name="plus" class="w-4 h-4" /> Chèque / Effet
-            </button>
+            @foreach ($choices as $k => $l)
+                <button type="button" wire:click="openPayment('{{ $k }}')" @click="choose = false"
+                    class="h-9 px-3 rounded-lg text-sm font-semibold border {{ in_array($k, ['cheque', 'effet'], true) ? 'border-[#e6b800] bg-[#ffcc00]/25 text-zinc-900 hover:bg-[#ffcc00]/50' : 'border-[#16a34a]/40 bg-white text-[#15803d] hover:bg-green-50' }}">{{ $l }}</button>
+            @endforeach
         </div>
     </div>
 
     @if ($payGroup)
         <div class="p-4 bg-zinc-50 border-b border-gray-200">
+            <p class="mb-3 text-sm font-semibold text-gray-900">{{ $editing ? 'Modifier le règlement' : 'Nouveau règlement' }}</p>
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
                 <div>
                     <label class="block text-xs font-medium text-gray-500 mb-1">Mode</label>
@@ -84,7 +95,7 @@
             <datalist id="stk-banks">@foreach ($banks as $b)<option value="{{ $b }}"></option>@endforeach</datalist>
             <div class="mt-3 flex justify-end gap-2">
                 <button type="button" wire:click="closePayment" class="px-4 py-2 text-sm text-gray-600">Annuler</button>
-                <button type="button" wire:click="addPayment" class="px-4 py-2 rounded-lg bg-zinc-900 text-white text-sm font-semibold hover:bg-zinc-700">Ajouter le règlement</button>
+                <button type="button" wire:click="addPayment" class="px-4 py-2 rounded-lg bg-zinc-900 text-white text-sm font-semibold hover:bg-zinc-700">{{ $editing ? 'Enregistrer la modification' : 'Ajouter le règlement' }}</button>
             </div>
         </div>
     @endif
@@ -104,7 +115,8 @@
                             @if (! empty($r['obs']))<span class="block text-xs italic text-gray-500">{{ $r['obs'] }}</span>@endif
                         </td>
                         <td class="px-4 py-2.5 text-end font-semibold tabular-nums whitespace-nowrap">{{ $money($r['montant']) }}</td>
-                        <td class="px-2 py-2.5 text-end">
+                        <td class="px-2 py-2.5 text-end whitespace-nowrap">
+                            <button type="button" wire:click="editPayment({{ $r['key'] }})" class="p-1.5 rounded text-gray-500 hover:text-zinc-900 hover:bg-gray-100" title="Modifier" aria-label="Modifier"><x-sp-icon name="pencil" class="w-4 h-4" /></button>
                             <button type="button" wire:click="removePayment({{ $r['key'] }})" wire:confirm="Supprimer ce règlement ?" class="p-1.5 rounded text-gray-400 hover:text-red-600" title="Supprimer"><x-sp-icon name="trash" class="w-4 h-4" /></button>
                         </td>
                     </tr>

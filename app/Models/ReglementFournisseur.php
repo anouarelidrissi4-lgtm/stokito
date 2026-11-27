@@ -32,6 +32,12 @@ class ReglementFournisseur extends Model
         });
     }
 
+    /** undo applyEffects() before an edit */
+    public function removeEffects(): void
+    {
+        MouvementBancaire::where('reference_type', 'reglement_fournisseur')->where('reference_id', $this->id)->delete();
+    }
+
     public function modeLabel(): string
     {
         return \App\Support\SalesLists::MODES[$this->mode] ?? ucfirst((string) $this->mode);
