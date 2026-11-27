@@ -7,13 +7,14 @@
         ['Stokito fonctionne-t-il sur téléphone ?', "Oui. Stokito s'ouvre dans le navigateur de votre ordinateur, de votre tablette ou de votre téléphone. Il n'y a rien à installer."],
         ['Mes factures affichent-elles les identifiants de mon entreprise ?', 'Oui, selon votre pays : SIRET, N° TVA et RCS en France ; ICE, IF, RC, Taxe professionnelle et CNSS au Maroc. Les identifiants du client, la TVA détaillée et le montant en lettres sont aussi imprimés. Faites valider vos mentions par votre comptable.'],
         ['Comment le stock se met-il à jour ?', 'Le stock baisse quand un bon de livraison passe en « Livré » ou quand vous faites une facture directe. Il augmente quand vous marquez une commande fournisseur comme reçue. L’inventaire corrige les écarts.'],
-        ['Puis-je saisir une facture fournisseur en la prenant en photo ?', 'Oui. Dans « Nouveau bon de commande », touchez « Photo ou PDF » : Stokito lit le fournisseur, la date, le numéro et les lignes de la facture, puis retrouve vos produits. Vous vérifiez avant d’enregistrer. 30 factures par mois sont incluses gratuitement.'],
-        ['Qu’est-ce que le Copilot IA ?', 'Un assistant dans Stokito : écrivez en français, en arabe ou en darija. Il répond avec vos chiffres (ventes, factures impayées, stock) et prépare vos devis, factures, bons de livraison et bons de commande. Il ne les enregistre jamais tout seul : le formulaire s’ouvre rempli, vous vérifiez puis vous enregistrez. 150 messages par mois sont inclus gratuitement.'],
+        ['Puis-je saisir une facture fournisseur en la prenant en photo ?', 'Oui. Dans « Nouveau bon de commande », touchez « Photo ou PDF » : Stokito lit le fournisseur, la date, le numéro et les lignes de la facture, puis retrouve vos produits. Vous vérifiez avant d’enregistrer. Inclus dans les plans Pro (30 factures par mois) et Premium (illimité).'],
+        ['Qu’est-ce que le Copilot IA ?', 'Un assistant dans Stokito : écrivez en français, en arabe ou en darija. Il répond avec vos chiffres (ventes, factures impayées, stock) et prépare vos devis, factures, bons de livraison et bons de commande. Il ne les enregistre jamais tout seul : le formulaire s’ouvre rempli, vous vérifiez puis vous enregistrez. Inclus dans les plans Pro (150 messages par mois) et Premium (illimité).'],
         ['Stokito a-t-il une caisse pour vendre au comptoir ?', 'Oui. Activez la caisse dans « Ma Société » : vous scannez ou touchez les produits, encaissez en espèces, carte ou chèque, et le ticket s’imprime. Chaque ticket est numéroté, signé et ne peut plus être modifié ; une erreur se corrige par un ticket d’annulation. Les clôtures Z journalières, mensuelles et annuelles sont automatiques.'],
         ['Plusieurs employés peuvent-ils travailler en même temps ?', 'Oui. Chaque employé a son compte et vous choisissez ce qu’il peut voir : par exemple cacher les prix d’achat et les marges aux vendeurs.'],
         ['Puis-je importer mes produits depuis Excel ?', 'Oui. Exportez la liste pour obtenir le modèle, remplissez-le dans Excel puis importez-le : les catégories manquantes sont créées automatiquement.'],
         ['Mes données sont-elles sauvegardées ?', 'Oui. Une sauvegarde automatique est faite chaque nuit et chaque société ne voit que ses propres données.'],
-        ['Comment obtenir un compte ?', 'Cliquez sur « Créer un compte gratuit », choisissez votre pays et votre espace est prêt. C’est gratuit, sans carte bancaire. Si vous voulez, nous vous aidons à importer vos produits sur WhatsApp.'],
+        ['Combien coûte Stokito ?', 'Le plan Free est gratuit : devis, bons de livraison, stock, caisse et 5 factures par mois. Le plan Pro ajoute les factures illimitées, le Copilot (150 messages par mois) et le scanner (30 factures par mois) : 25 € les 3 mois ou 79 € par an (249 DH ou 799 DH au Maroc). Le plan Premium rend tout illimité : 45 € les 3 mois ou 149 € par an (449 DH ou 1 499 DH).'],
+        ['Comment obtenir un compte ?', 'Cliquez sur « Créer un compte gratuit », choisissez votre pays et votre espace est prêt, sans carte bancaire. Chaque nouveau compte profite de 3 mois du plan Premium offerts. Si vous voulez, nous vous aidons à importer vos produits sur WhatsApp.'],
     ];
     $screens = [
         ['dashboard', 'Tableau de bord'], ['devis_form', 'Devis'], ['factures', 'Factures'], ['inventaire', 'Inventaire'], ['products', 'Produits'],
@@ -153,6 +154,7 @@
             <a href="#caisse" class="hover:text-white">{{ __('Caisse') }}</a>
             <a href="#ecrans" class="hover:text-white">{{ __('Écrans') }}</a>
             <a href="#guide" class="hover:text-white">{{ __('Guide') }}</a>
+            <a href="#tarifs" class="hover:text-white">{{ __('Tarifs') }}</a>
             <a href="#faq" class="hover:text-white">{{ __('Questions') }}</a>
             <a href="{{ route('blog.index') }}" class="hover:text-white">{{ __('Blog') }}</a>
         </nav>
@@ -181,6 +183,7 @@
         <a href="#caisse" class="block py-2.5 border-b border-white/10">{{ __('Caisse') }}</a>
         <a href="#ecrans" class="block py-2.5 border-b border-white/10">{{ __('Écrans') }}</a>
         <a href="#guide" class="block py-2.5 border-b border-white/10">{{ __('Guide') }}</a>
+        <a href="#tarifs" class="block py-2.5 border-b border-white/10">{{ __('Tarifs') }}</a>
         <a href="#faq" class="block py-2.5 border-b border-white/10">{{ __('Questions') }}</a>
         <a href="{{ route('blog.index') }}" class="block py-2.5 border-b border-white/10">{{ __('Blog') }}</a>
         @guest<a href="{{ route('register') }}" class="mt-3 flex h-12 items-center justify-center rounded-lg bg-[#ffcc00] text-zinc-900 font-semibold">{{ __('Créer un compte gratuit') }}</a>@endguest
@@ -487,7 +490,7 @@
                 <a href="{{ route('register') }}" class="ind-btn bg-zinc-900 text-white">{{ __('Créer un compte gratuit') }} <span aria-hidden="true">{{ $rtl ? '←' : '→' }}</span></a>
                 <a href="{{ route('seo.scanner-facture') }}" class="ind-btn bg-white text-zinc-900">{{ __('En savoir plus') }}</a>
             </div>
-            <p class="mt-4 ind-mono text-[11px] text-zinc-500">{{ __('30 factures par mois incluses gratuitement · photo JPG, PNG ou PDF · 10 Mo max.') }}</p>
+            <p class="mt-4 ind-mono text-[11px] text-zinc-500">{{ __('Plans Pro et Premium · 3 mois de Premium offerts à l’inscription · photo JPG, PNG ou PDF · 10 Mo max.') }}</p>
         </div>
 
         {{-- animation: the invoice is read, then the lines appear in the purchase order --}}
@@ -552,7 +555,7 @@
                     __('Devis, factures, bons de livraison et bons de commande préparés en une phrase'),
                     __('Vos ventes du jour ou du mois, les factures impayées, le stock bas'),
                     __('Rien n’est enregistré sans vous : le formulaire s’ouvre rempli, vous vérifiez'),
-                    __('150 messages par mois inclus gratuitement'),
+                    __('Plans Pro (150 messages par mois) et Premium (illimité)'),
                 ] as $pt)
                     <li class="flex gap-3"><span class="mt-0.5 grid place-items-center w-5 h-5 shrink-0 rounded-full bg-[#ffcc00] text-zinc-900 text-[11px] font-bold">✓</span><span>{{ $pt }}</span></li>
                 @endforeach
@@ -732,6 +735,63 @@
 @endif
 
 {{-- ============ FAQ ============ --}}
+{{-- Tarifs (2026-11-27): same plans and prices as App\Support\Plans --}}
+@php
+    $plansP = \App\Support\Plans::PRICES;
+    $eur = fn ($plan, $period) => $plansP[$plan][$period]['EUR'].' €';
+    $dh = fn ($plan, $period) => number_format($plansP[$plan][$period]['MAD'], 0, ',', ' ').' DH';
+    $tiers = [
+        'free' => ['Free', __('Pour démarrer'), [[__('Devis, bons de livraison, stock et caisse'), true], [__('5 factures par mois'), true], [__('Copilot IA'), false], [__('Scanner IA des factures'), false]]],
+        'pro' => ['Pro', __('Pour facturer sans limite'), [[__('Devis, bons de livraison, stock et caisse'), true], [__('Factures illimitées'), true], [__('150 messages Copilot par mois'), true], [__('30 scans de factures par mois'), true]]],
+        'premium' => ['Premium', __('Tout illimité'), [[__('Devis, bons de livraison, stock et caisse'), true], [__('Factures illimitées'), true], [__('Copilot IA illimité'), true], [__('Scanner IA illimité'), true]]],
+    ];
+@endphp
+<section id="tarifs" class="py-20 sm:py-24 scroll-mt-20 bg-white border-y border-zinc-200" x-data="{ period: 'annee' }">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        <div class="text-center max-w-2xl mx-auto">
+            <p class="text-sm font-semibold text-amber-600">{{ __('Tarifs') }}</p>
+            <h2 class="mt-2 text-3xl sm:text-4xl font-bold tracking-tight text-zinc-900">{{ __('Commencez gratuitement, passez à Pro quand vous grandissez') }}</h2>
+            <p class="mt-3 text-zinc-600">{{ __('Chaque nouveau compte profite de 3 mois du plan Premium offerts, sans carte bancaire.') }}</p>
+            <div class="mt-6 inline-flex rounded-xl bg-zinc-100 p-1" role="radiogroup" aria-label="{{ __('Durée') }}">
+                <button type="button" @click="period = 'trimestre'" :class="period === 'trimestre' ? 'bg-white shadow text-zinc-900' : 'text-zinc-500'" class="h-10 px-5 rounded-lg text-sm font-semibold">{{ __('3 mois') }}</button>
+                <button type="button" @click="period = 'annee'" :class="period === 'annee' ? 'bg-white shadow text-zinc-900' : 'text-zinc-500'" class="h-10 px-5 rounded-lg text-sm font-semibold">{{ __('1 an') }} <span class="ms-1 rounded-full bg-[#ffcc00] px-2 py-0.5 text-[11px] font-bold text-zinc-900">{{ __('économique') }}</span></button>
+            </div>
+        </div>
+        <div class="mt-10 grid md:grid-cols-3 gap-5 items-stretch">
+            @foreach ($tiers as $key => [$name, $tag, $feats])
+                @php $top = $key === 'premium'; @endphp
+                <div class="relative flex flex-col rounded-2xl p-7 {{ $top ? 'text-white md:-my-3 md:py-10' : 'border border-zinc-200 bg-white' }}" @if ($top) style="background: radial-gradient(120% 70% at 100% 0%, rgba(212,175,55,.20), transparent 55%), linear-gradient(165deg, #1c1c1e 0%, #0b0b0c 100%); border: 1px solid rgba(212,175,55,.65); box-shadow: 0 0 0 1px rgba(212,175,55,.12) inset, 0 30px 60px -25px rgba(0,0,0,.65);" @endif>
+                    @if ($top)<span class="absolute -top-3 start-7 rounded-full bg-gradient-to-r from-[#f6e27a] via-[#d4af37] to-[#b8862b] px-3 py-1 text-xs font-bold text-zinc-900 shadow">{{ __('3 mois offerts') }}</span>@endif
+                    <p class="text-xl font-extrabold {{ $top ? 'bg-gradient-to-r from-[#f6e27a] via-[#d4af37] to-[#b8862b] bg-clip-text text-transparent' : 'text-zinc-900' }}">{{ $name }}</p>
+                    <p class="text-sm {{ $top ? 'text-zinc-400' : 'text-zinc-500' }}">{{ $tag }}</p>
+                    <div class="mt-5 min-h-[4.5rem]">
+                        @if ($key === 'free')
+                            <p><span class="text-4xl font-extrabold text-zinc-900">0 €</span> <span class="text-sm text-zinc-500">{{ __('pour toujours') }}</span></p>
+                        @else
+                            <p><span class="text-4xl font-extrabold {{ $top ? 'bg-gradient-to-r from-[#f6e27a] via-[#d4af37] to-[#b8862b] bg-clip-text text-transparent' : 'text-zinc-900' }}" x-text="period === 'annee' ? @js($eur($key, 'annee')) : @js($eur($key, 'trimestre'))"></span>
+                               <span class="text-sm {{ $top ? 'text-zinc-400' : 'text-zinc-500' }}" x-text="period === 'annee' ? @js(__('/ an')) : @js(__('/ 3 mois'))"></span></p>
+                            <p class="mt-1 text-sm {{ $top ? 'text-zinc-400' : 'text-zinc-500' }}">{{ __('ou') }} <span x-text="period === 'annee' ? @js($dh($key, 'annee')) : @js($dh($key, 'trimestre'))"></span> {{ __('au Maroc') }}</p>
+                        @endif
+                    </div>
+                    @if ($top)<div class="mt-5 h-px bg-gradient-to-r from-transparent via-[#d4af37]/60 to-transparent"></div>@endif
+                    <ul class="mt-5 space-y-2.5 text-sm flex-1">
+                        @foreach ($feats as [$f, $ok])
+                            <li class="flex items-start gap-2.5 {{ $top ? 'text-zinc-100' : ($ok ? 'text-zinc-800' : 'text-zinc-400 line-through') }}">
+                                <span class="mt-0.5 grid place-items-center w-5 h-5 shrink-0 rounded-full {{ $top ? 'bg-gradient-to-r from-[#f6e27a] via-[#d4af37] to-[#b8862b] text-zinc-900' : ($ok ? 'bg-[#ffcc00] text-zinc-900' : 'bg-zinc-100 text-zinc-400') }}"><x-sp-icon :name="$ok ? 'check' : 'plus'" class="w-3 h-3 {{ $ok ? '' : 'rotate-45' }}" /></span>{{ $f }}
+                            </li>
+                        @endforeach
+                    </ul>
+                    <a href="{{ auth()->check() ? route('abonnement') : route('register') }}"
+                       class="mt-7 flex h-12 items-center justify-center rounded-lg text-sm font-bold {{ $top ? 'bg-gradient-to-r from-[#f6e27a] via-[#d4af37] to-[#b8862b] text-zinc-900 shadow-lg hover:brightness-110' : ($key === 'pro' ? 'bg-[#ffcc00] text-zinc-900 hover:bg-[#ffd633]' : 'border border-zinc-300 text-zinc-900 hover:border-zinc-900') }}">
+                        {{ $key === 'free' ? __('Créer un compte gratuit') : __('Essayer 3 mois gratuits') }}
+                    </a>
+                </div>
+            @endforeach
+        </div>
+        <p class="mt-6 text-center text-sm text-zinc-500">{{ __('Paiement par virement, versement bancaire ou PayPal. Sans engagement : à la fin de la période, votre compte repasse au plan Free et vos données restent là.') }}</p>
+    </div>
+</section>
+
 <section id="faq" class="py-20 sm:py-24 scroll-mt-20 bg-zinc-50">
     <div class="max-w-4xl mx-auto px-4 sm:px-6">
         <p class="text-sm font-semibold text-amber-600">{{ __('Questions') }}</p>

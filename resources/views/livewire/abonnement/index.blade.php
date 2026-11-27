@@ -69,21 +69,21 @@
     <div class="mt-5 grid md:grid-cols-3 gap-4">
         @foreach (['free', 'pro', 'premium'] as $p)
             @php $isCurrent = $p === $plan; $top = $p === 'premium'; @endphp
-            <div class="relative flex flex-col rounded-2xl border bg-white p-6 {{ $top ? 'border-zinc-900 ring-2 ring-[#ffcc00]' : 'border-zinc-200' }}">
-                @if ($top)<span class="absolute -top-3 start-6 rounded-full bg-[#ffcc00] px-3 py-1 text-xs font-bold text-zinc-900">Le plus complet</span>@endif
-                <p class="text-lg font-extrabold text-zinc-900">{{ $L[$p] }}</p>
+            <div class="relative flex flex-col rounded-2xl p-6 {{ $top ? 'text-white' : 'border border-zinc-200 bg-white' }}" @if ($top) style="background: radial-gradient(120% 70% at 100% 0%, rgba(212,175,55,.20), transparent 55%), linear-gradient(165deg, #1c1c1e 0%, #0b0b0c 100%); border: 1px solid rgba(212,175,55,.65); box-shadow: 0 0 0 1px rgba(212,175,55,.12) inset, 0 30px 60px -25px rgba(0,0,0,.65);" @endif>
+                @if ($top)<span class="absolute -top-3 start-6 rounded-full bg-gradient-to-r from-[#f6e27a] via-[#d4af37] to-[#b8862b] px-3 py-1 text-xs font-bold text-zinc-900 shadow">Le plus complet</span>@endif
+                <p class="text-lg font-extrabold {{ $top ? 'bg-gradient-to-r from-[#f6e27a] via-[#d4af37] to-[#b8862b] bg-clip-text text-transparent' : 'text-zinc-900' }}">{{ $L[$p] }}</p>
                 <p class="mt-3 min-h-[3.5rem]">
                     @if ($p === 'free')
                         <span class="text-3xl font-extrabold text-zinc-900">0</span> <span class="text-sm text-zinc-500">pour toujours</span>
                     @else
-                        <span class="text-3xl font-extrabold text-zinc-900" x-text="period === 'annee' ? @js($prices[$p]['annee']) : @js($prices[$p]['trimestre'])"></span>
-                        <span class="text-sm text-zinc-500" x-text="period === 'annee' ? '/ an' : '/ 3 mois'"></span>
+                        <span class="text-3xl font-extrabold {{ $top ? 'bg-gradient-to-r from-[#f6e27a] via-[#d4af37] to-[#b8862b] bg-clip-text text-transparent' : 'text-zinc-900' }}" x-text="period === 'annee' ? @js($prices[$p]['annee']) : @js($prices[$p]['trimestre'])"></span>
+                        <span class="text-sm {{ $top ? 'text-zinc-400' : 'text-zinc-500' }}" x-text="period === 'annee' ? '/ an' : '/ 3 mois'"></span>
                     @endif
                 </p>
                 <ul class="mt-4 space-y-2 text-sm flex-1">
                     @foreach ($features[$p] as [$f, $ok])
-                        <li class="flex items-start gap-2 {{ $ok ? 'text-zinc-800' : 'text-zinc-400 line-through' }}">
-                            <span class="mt-0.5 grid place-items-center w-5 h-5 shrink-0 rounded-full {{ $ok ? 'bg-[#ffcc00] text-zinc-900' : 'bg-zinc-100 text-zinc-400' }}"><x-sp-icon :name="$ok ? 'check' : 'plus'" class="w-3 h-3 {{ $ok ? '' : 'rotate-45' }}" /></span>{{ $f }}
+                        <li class="flex items-start gap-2 {{ $top ? 'text-zinc-100' : ($ok ? 'text-zinc-800' : 'text-zinc-400 line-through') }}">
+                            <span class="mt-0.5 grid place-items-center w-5 h-5 shrink-0 rounded-full {{ $top ? 'bg-gradient-to-r from-[#f6e27a] via-[#d4af37] to-[#b8862b] text-zinc-900' : ($ok ? 'bg-[#ffcc00] text-zinc-900' : 'bg-zinc-100 text-zinc-400') }}"><x-sp-icon :name="$ok ? 'check' : 'plus'" class="w-3 h-3 {{ $ok ? '' : 'rotate-45' }}" /></span>{{ $f }}
                         </li>
                     @endforeach
                 </ul>
@@ -92,13 +92,13 @@
                     @if ($p === 'free')
                         <span class="flex h-11 items-center justify-center rounded-lg border border-zinc-200 text-sm {{ $isCurrent ? 'font-semibold text-zinc-600' : 'text-zinc-400' }}">{{ $isCurrent ? 'Votre plan actuel' : 'Toujours disponible' }}</span>
                     @else
-                        @if ($renew)<p class="mb-2 text-center text-xs font-semibold text-zinc-500">Votre plan actuel</p>@endif
+                        @if ($renew)<p class="mb-2 text-center text-xs font-semibold {{ $top ? 'text-[#d4af37]' : 'text-zinc-500' }}">Votre plan actuel</p>@endif
                         <a :href="period === 'annee' ? @js($wa($p, 'annee')) : @js($wa($p, 'trimestre'))" target="_blank" rel="noopener"
-                           class="flex h-11 items-center justify-center gap-2 rounded-lg text-sm font-semibold {{ $top ? 'bg-zinc-900 text-white hover:bg-zinc-700' : 'bg-[#ffcc00] text-zinc-900 hover:bg-[#ffd633]' }}">
+                           class="flex h-11 items-center justify-center gap-2 rounded-lg text-sm font-semibold {{ $top ? 'bg-gradient-to-r from-[#f6e27a] via-[#d4af37] to-[#b8862b] text-zinc-900 font-bold shadow-lg hover:brightness-110' : 'bg-[#ffcc00] text-zinc-900 hover:bg-[#ffd633]' }}">
                             <x-sp-icon name="whatsapp" class="w-4 h-4" /> {{ $renew ? 'Renouveler' : 'Choisir' }} {{ $L[$p] }}
                         </a>
                         <a :href="period === 'annee' ? @js($paypal($p, 'annee')) : @js($paypal($p, 'trimestre'))" target="_blank" rel="noopener"
-                           class="mt-2 flex h-11 items-center justify-center gap-1.5 rounded-lg border border-zinc-300 bg-white text-sm font-semibold text-zinc-800 hover:border-zinc-900">
+                           class="mt-2 flex h-11 items-center justify-center gap-1.5 rounded-lg border text-sm font-semibold {{ $top ? 'border-[#d4af37]/60 bg-transparent text-[#e9cf6a] hover:border-[#d4af37]' : 'border-zinc-300 bg-white text-zinc-800 hover:border-zinc-900' }}">
                             Payer avec PayPal · <span x-text="period === 'annee' ? @js(\App\Support\Plans::PRICES[$p]['annee']['EUR'].' €') : @js(\App\Support\Plans::PRICES[$p]['trimestre']['EUR'].' €')"></span>
                         </a>
                     @endif

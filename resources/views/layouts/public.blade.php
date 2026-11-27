@@ -46,6 +46,7 @@
                     <a href="{{ $home }}#fonctionnalites" class="hover:text-zinc-900">{{ __('Fonctionnalités') }}</a>
                     <a href="{{ $home }}#ecrans" class="hover:text-zinc-900">{{ __('Écrans') }}</a>
                     <a href="{{ $home }}#guide" class="hover:text-zinc-900">{{ __('Guide') }}</a>
+                    <a href="{{ $home }}#tarifs" class="hover:text-zinc-900">{{ __('Tarifs') }}</a>
                     <a href="{{ $home }}#faq" class="hover:text-zinc-900">{{ __('Questions') }}</a>
                     <a href="{{ route('blog.index') }}" class="{{ request()->routeIs('blog.*') ? 'text-zinc-900' : 'hover:text-zinc-900' }}">{{ __('Blog') }}</a>
                 </nav>
