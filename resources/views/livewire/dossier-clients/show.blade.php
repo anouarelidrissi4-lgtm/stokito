@@ -1,7 +1,7 @@
 {{-- Grand livre client (2026-11-27), like the user's model: client, summary, ledger with running balance --}}
 @php
     $money = fn ($v) => \App\Support\Fmt::money($v);
-    $neg = fn ($v) => $v < -0.009 ? 'text-red-600' : 'text-gray-900';
+    $neg = fn ($v) => $v > 0.009 ? 'text-red-600' : 'text-gray-900';   // positive = the customer owes
     $idLabel = \App\Support\Countries::for(\App\Models\Societe::current())['client'];
     $phones = implode(' / ', array_filter([$client->phone, $client->phone2 ?? null]));
     $field = 'rounded-md border-gray-300 text-sm';

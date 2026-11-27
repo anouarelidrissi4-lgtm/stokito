@@ -35,22 +35,22 @@ class GrandLivreTest extends TestCase
         $this->assertSame(2, $l['documents']);
         $this->assertEquals(401055, $l['debits']);
         $this->assertEquals(152500, $l['credits']);
-        $this->assertEquals(-248555, $l['soldeComptable']);
-        $this->assertEquals([-320000, -308000, -208000, -167500, -248555], array_column($l['rows'], 'balance'));
+        $this->assertEquals(248555, $l['soldeComptable']);
+        $this->assertEquals([320000, 308000, 208000, 167500, 248555], array_column($l['rows'], 'balance'));
         $this->assertSame('Règlement Versement', $l['rows'][1]['element']);
         $this->assertSame('BL 01327/26', $l['rows'][1]['ref']);
 
         // period: what came before is carried over
         $p = GrandLivre::client($c, '2026-11-21');
-        $this->assertEquals(-308000, $p['report']);
-        $this->assertEquals(-248555, $p['soldePeriode']);
+        $this->assertEquals(308000, $p['report']);
+        $this->assertEquals(248555, $p['soldePeriode']);
 
         // paid delivery notes hidden with their payments
         $this->bl($c, 'BL-PAYE', '2026-11-26', 500);
         ReglementClient::create(['client_id' => $c->id, 'bon_livraison_id' => BonLivraison::where('numero', 'BL-PAYE')->value('id'), 'montant' => 500, 'date' => '2026-11-26', 'mode' => 'especes']);
         $h = GrandLivre::client($c, null, null, true);
         $this->assertNotContains('BL-PAYE', array_column($h['rows'], 'ref'));
-        $this->assertEquals(-248555, $h['soldePeriode']);
+        $this->assertEquals(248555, $h['soldePeriode']);
 
         Livewire::test(\App\Livewire\DossierClients\Index::class)->assertSee('MOHAMED CHERAFAT');
         Livewire::test(\App\Livewire\DossierClients\Show::class, ['clientId' => $c->id])->assertSee('Grand livre client')->assertSee('01360/26')->assertSee('Solde comptable');

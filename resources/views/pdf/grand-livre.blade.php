@@ -73,8 +73,8 @@
 <table class="sum">
     <tr><td class="k">Filtre</td><td></td><td></td><td class="v">{{ $filtres ? implode(' · ', $filtres) : 'Toutes les opérations' }}</td></tr>
     <tr><td class="k">Nombre de documents</td><td class="v">{{ $ledger['documents'] }}</td><td class="k">Total ventes</td><td class="v">{{ $money($ledger['debits']) }}</td></tr>
-    <tr><td class="k">Crédits</td><td class="v">{{ $money($ledger['credits']) }}</td><td class="k">Solde période</td><td class="v {{ $ledger['soldePeriode'] < -0.009 ? 'neg' : '' }}">{{ $money($ledger['soldePeriode']) }}</td></tr>
-    <tr><td class="k">Solde comptable</td><td></td><td></td><td class="v {{ $ledger['soldeComptable'] < -0.009 ? 'neg' : '' }}">{{ $money($ledger['soldeComptable']) }}</td></tr>
+    <tr><td class="k">Crédits</td><td class="v">{{ $money($ledger['credits']) }}</td><td class="k">Solde période</td><td class="v {{ $ledger['soldePeriode'] > 0.009 ? 'neg' : '' }}">{{ $money($ledger['soldePeriode']) }}</td></tr>
+    <tr><td class="k">Solde comptable</td><td></td><td></td><td class="v {{ $ledger['soldeComptable'] > 0.009 ? 'neg' : '' }}">{{ $money($ledger['soldeComptable']) }}</td></tr>
 </table>
 
 <table class="items">

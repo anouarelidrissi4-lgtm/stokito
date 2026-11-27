@@ -8,7 +8,7 @@ use Illuminate\Support\Carbon;
 /**
  * Grand livre client (2026-11-27): every sale and every payment of one customer, with a running balance.
  * Same totals as Client::solde(): invoices (not till tickets) + delivery notes not invoiced, minus payments and credit notes.
- * Balance = crédit - débit, so a customer who owes money has a negative balance (like the user's former software).
+ * Balance = débit - crédit: a customer who owes money has a positive balance, like Soldes clients (2026-11-27).
  */
 class GrandLivre
 {
@@ -61,7 +61,7 @@ class GrandLivre
         foreach ($rows as $row) {
             $d = $row['date'];
             if ($from && $d && $d->lt($from)) {
-                $report += $row['credit'] - $row['debit'];
+                $report += $row['debit'] - $row['credit'];
 
                 continue;
             }
@@ -72,7 +72,7 @@ class GrandLivre
         }
         $balance = $report;
         foreach ($period as &$row) {
-            $balance += $row['credit'] - $row['debit'];
+            $balance += $row['debit'] - $row['credit'];
             $row['balance'] = round($balance, 2);
         }
         unset($row);
@@ -87,8 +87,8 @@ class GrandLivre
             'documents' => count(array_filter($period, fn ($r) => in_array($r['kind'], ['facture', 'bl'], true))),
             'debits' => round($debits, 2),
             'credits' => round($credits, 2),
-            'soldePeriode' => round($report + $credits - $debits, 2),
-            'soldeComptable' => round(-$client->solde(), 2),
+            'soldePeriode' => round($report + $debits - $credits, 2),
+            'soldeComptable' => round($client->solde(), 2),
         ];
     }
 }
