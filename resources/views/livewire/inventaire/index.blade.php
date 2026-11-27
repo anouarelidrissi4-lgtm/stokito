@@ -4,7 +4,7 @@
             <h1 class="text-2xl font-bold text-slate-900">Inventaires</h1>
             <p class="text-sm text-slate-500">Comptez votre stock réel et corrigez les écarts en un clic.</p>
         </div>
-        <a href="{{ route('inventaire.create') }}" wire:navigate class="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700">
+        <a href="{{ route('inventaire.create') }}" wire:navigate class="inline-flex items-center gap-1.5 rounded-lg bg-[#16a34a] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#15803d]">
             <x-sp-icon name="plus" class="w-4 h-4" /> Ajouter un inventaire
         </a>
     </div>

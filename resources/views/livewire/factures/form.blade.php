@@ -105,7 +105,7 @@
         <div>
             <div class="flex items-center justify-between mb-2">
                 <label class="block text-sm font-medium text-gray-700">Lignes</label>
-                <button type="button" wire:click="addItem" class="text-sm text-indigo-600 hover:underline">+ Ajouter une ligne</button>
+                <button type="button" wire:click="addItem" class="text-sm !text-[#16a34a] font-semibold hover:underline">+ Ajouter une ligne</button>
             </div>
             @error('items') <p class="text-red-600 text-xs mb-2">{{ $message }}</p> @enderror
 

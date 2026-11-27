@@ -7,7 +7,7 @@
         </div>
         <div class="flex items-center gap-2">
             <a href="{{ route('depenses.index') }}" wire:navigate class="inline-flex items-center gap-1.5 rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm font-semibold text-zinc-700 hover:bg-zinc-50">Toutes les dépenses</a>
-            <button type="button" wire:click="create" class="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700">
+            <button type="button" wire:click="create" class="inline-flex items-center gap-1.5 rounded-lg bg-[#16a34a] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#15803d]">
                 <x-sp-icon name="plus" class="w-4 h-4" /> Ajouter une dépense récurrente
             </button>
         </div>

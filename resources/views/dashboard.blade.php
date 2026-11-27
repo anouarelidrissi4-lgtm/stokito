@@ -27,7 +27,7 @@
                 {{-- one "+ Nouveau" button instead of four (2026-11-24): opens a menu on click --}}
                 <div class="relative" x-data="{ open: false }" @keydown.escape.window="open = false" @click.outside="open = false">
                     <button type="button" @click="open = ! open" :aria-expanded="open" aria-haspopup="true"
-                        class="inline-flex items-center gap-2 bg-zinc-900 text-white px-4 py-2.5 rounded-lg text-sm font-semibold shadow-sm hover:bg-zinc-700">
+                        class="inline-flex items-center gap-2 bg-[#16a34a] text-white px-4 py-2.5 rounded-lg text-sm font-semibold shadow-sm hover:bg-[#15803d]">
                         <x-sp-icon name="plus" class="w-4 h-4" /> {{ __('Ajouter') }}
                         <svg class="w-4 h-4 transition-transform" :class="open && 'rotate-180'" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
                     </button>

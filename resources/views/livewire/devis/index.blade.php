@@ -4,7 +4,7 @@
         all(ids, on) { this.sel = on ? [...new Set([...this.sel, ...ids])] : this.sel.filter(x => !ids.includes(x)) } }">
     <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
         <h1 class="text-2xl font-bold text-gray-900">Devis Clients</h1>
-        <a href="{{ route('devis.create') }}" wire:navigate class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-700">+ Ajouter un devis</a>
+        <a href="{{ route('devis.create') }}" wire:navigate class="bg-[#16a34a] text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-[#15803d]">+ Ajouter un devis</a>
     </div>
 
     @if (session('error'))

@@ -8,7 +8,7 @@
         <div class="flex items-center gap-2">
             <a href="{{ route('depenses.recurrentes') }}" wire:navigate class="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"><x-sp-icon name="clock" class="w-4 h-4" /> Récurrentes</a>
             <button type="button" wire:click="export" class="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">Exporter CSV</button>
-            <button type="button" wire:click="create" class="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700">
+            <button type="button" wire:click="create" class="inline-flex items-center gap-1.5 rounded-lg bg-[#16a34a] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#15803d]">
                 <x-sp-icon name="plus" class="w-4 h-4" /> Ajouter une dépense
             </button>
         </div>
@@ -91,7 +91,7 @@
                     @empty
                         <tr><td colspan="7" class="px-5 py-12 text-center">
                             <div class="text-sm text-slate-500">Aucune dépense sur cette période.</div>
-                            <button type="button" wire:click="create" class="mt-3 text-sm font-semibold text-indigo-600 hover:underline">Ajouter une dépense</button>
+                            <button type="button" wire:click="create" class="mt-3 text-sm font-semibold !text-[#16a34a] font-semibold hover:underline">Ajouter une dépense</button>
                         </td></tr>
                     @endforelse
                 </tbody>

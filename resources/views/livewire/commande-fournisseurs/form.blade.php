@@ -115,7 +115,7 @@
             <div class="flex items-center justify-between mb-2">
                 <label class="block text-sm font-medium text-gray-700">Lignes</label>
                 <div class="flex items-center gap-3">
-                    <button type="button" wire:click="addItem" class="text-sm text-indigo-600 hover:underline">+ Ajouter une ligne</button>
+                    <button type="button" wire:click="addItem" class="text-sm !text-[#16a34a] font-semibold hover:underline">+ Ajouter une ligne</button>
                     <x-barcode-scanner on-scan="onBarcodeScanned" label="Scanner un produit" />
                 </div>
             </div>

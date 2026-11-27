@@ -15,7 +15,7 @@
             <h1 class="text-2xl font-bold text-gray-900">Bons de chargement</h1>
             <p class="mt-1 text-sm text-gray-500">Un bon de chargement est créé automatiquement avec chaque bon de livraison. Vous pouvez aussi en créer un pour plusieurs BL (un camion).</p>
         </div>
-        <button type="button" wire:click="create" data-sp="bc-add" class="inline-flex items-center gap-1.5 h-10 px-4 rounded-lg bg-zinc-900 text-white text-sm font-semibold hover:bg-zinc-700">
+        <button type="button" wire:click="create" data-sp="bc-add" class="inline-flex items-center gap-1.5 h-10 px-4 rounded-lg bg-[#16a34a] text-white text-sm font-semibold hover:bg-[#15803d]">
             <x-sp-icon name="plus" class="w-4 h-4" /> Ajouter un bon de chargement
         </button>
     </div>
@@ -80,7 +80,7 @@
                                     <a href="{{ route('bons-de-chargement.pdf', $bc->id) }}" target="_blank" class="{{ $pdfBtn }}"><x-sp-icon name="printer" class="w-3.5 h-3.5" />PDF</a>
                                     <a href="{{ route('bons-de-chargement.show', $bc->id) }}" wire:navigate class="inline-flex items-center gap-1 border border-gray-300 bg-white px-2 py-1 rounded-md text-xs font-bold text-gray-800 hover:border-zinc-900">Charger</a>
                                     @unless ($bc->bon_livraison_id)
-                                        <button type="button" wire:click="delete({{ $bc->id }})" wire:confirm="Supprimer ce bon de chargement ?" class="p-1 rounded text-gray-400 hover:text-red-600" title="Supprimer"><x-sp-icon name="trash" class="w-4 h-4" /></button>
+                                        <button type="button" wire:click="delete({{ $bc->id }})" wire:confirm="Supprimer ce bon de chargement ?" class="p-1 rounded text-red-600 hover:text-red-700" title="Supprimer"><x-sp-icon name="trash" class="w-4 h-4" /></button>
                                     @endunless
                                 </div>
                             </td>
@@ -107,7 +107,7 @@
                         <a href="{{ route('bons-de-chargement.pdf', $bc->id) }}" target="_blank" class="{{ $pdfBtn }}"><x-sp-icon name="printer" class="w-3.5 h-3.5" />PDF</a>
                         <a href="{{ route('bons-de-chargement.show', $bc->id) }}" wire:navigate class="inline-flex items-center border border-gray-300 bg-white px-2 py-1 rounded-md text-xs font-bold text-gray-800">Charger</a>
                         @unless ($bc->bon_livraison_id)
-                            <button type="button" wire:click="delete({{ $bc->id }})" wire:confirm="Supprimer ce bon de chargement ?" class="p-1 rounded text-gray-400 hover:text-red-600" title="Supprimer"><x-sp-icon name="trash" class="w-4 h-4" /></button>
+                            <button type="button" wire:click="delete({{ $bc->id }})" wire:confirm="Supprimer ce bon de chargement ?" class="p-1 rounded text-red-600 hover:text-red-700" title="Supprimer"><x-sp-icon name="trash" class="w-4 h-4" /></button>
                         @endunless
                     </div>
                 </div>

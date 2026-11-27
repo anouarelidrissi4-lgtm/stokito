@@ -9,7 +9,7 @@
             <button type="button" wire:click="resetToDefault" wire:confirm="Retablir le menu par defaut ? Vos personnalisations non enregistrees seront perdues."
                 class="text-xs font-medium text-gray-500 hover:text-gray-700 px-3 py-2 rounded-lg hover:bg-gray-50">Retablir par défaut</button>
             <button type="button" wire:click="addSection"
-                class="text-xs font-medium text-indigo-600 hover:text-indigo-700 px-3 py-2 rounded-lg hover:bg-[#fff3c4]">+ Ajouter une section</button>
+                class="text-xs font-medium !text-[#16a34a] font-semibold hover:!text-[#15803d] px-3 py-2 rounded-lg hover:bg-[#fff3c4]">+ Ajouter une section</button>
         </div>
     </div>
 

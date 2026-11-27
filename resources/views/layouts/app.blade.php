@@ -146,6 +146,53 @@
                 show();
             })();
         </script>
+        {{-- notifications (2026-11-27): green = done, red = problem. Page-load messages come from the session, actions send "stk-toast". --}}
+        <script>window.stkFlash = @js(array_filter(['success' => is_string(session('success')) ? session('success') : null, 'error' => is_string(session('error')) ? session('error') : null]));</script>
+        <script>
+            (function () {
+                if (window.stkToast) return;
+                var ok = { bg: '#16a34a', icon: '<path d="M5 12.5l4.5 4.5L19 7.5"/>' }, ko = { bg: '#dc2626', icon: '<path d="M12 7v6"/><path d="M12 17h.01"/>' };
+                window.stkToast = function (type, message) {
+                    if (!message) return;
+                    var box = document.getElementById('stk-toasts');
+                    if (!box) {
+                        box = document.createElement('div');
+                        box.id = 'stk-toasts';
+                        box.setAttribute('aria-live', 'polite');
+                        box.style.cssText = 'position:fixed;z-index:9999;top:16px;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:8px;padding:0 16px;pointer-events:none';
+                        document.body.appendChild(box);
+                    }
+                    var t = type === 'error' ? ko : ok, el = document.createElement('div');
+                    el.setAttribute('role', type === 'error' ? 'alert' : 'status');
+                    el.setAttribute('data-stk-toast', type);
+                    el.style.cssText = 'pointer-events:auto;display:flex;align-items:flex-start;gap:10px;max-width:460px;width:100%;background:' + t.bg + ';color:#fff;border-radius:12px;padding:12px 14px;font:600 14px/1.4 inherit;box-shadow:0 10px 25px -5px rgba(0,0,0,.25);opacity:0;transform:translateY(-8px);transition:all .2s ease';
+                    el.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:1px">' + t.icon + '</svg><span style="flex:1"></span><button type="button" aria-label="Fermer" style="flex:none;background:none;border:0;color:#fff;opacity:.8;cursor:pointer;font-size:18px;line-height:1">&times;</button>';
+                    el.querySelector('span').textContent = message;
+                    var close = function () { el.style.opacity = '0'; el.style.transform = 'translateY(-8px)'; setTimeout(function () { el.remove(); }, 200); };
+                    el.querySelector('button').onclick = close;
+                    box.appendChild(el);
+                    requestAnimationFrame(function () { el.style.opacity = '1'; el.style.transform = 'none'; });
+                    setTimeout(close, type === 'error' ? 8000 : 3500);
+                };
+                function showFlash() {
+                    var f = window.stkFlash; window.stkFlash = null;
+                    if (!f) return;
+                    if (f.error) stkToast('error', f.error);
+                    if (f.success) stkToast('success', f.success);
+                }
+                document.addEventListener('livewire:navigated', showFlash);
+                document.addEventListener('livewire:init', function () {
+                    Livewire.on('stk-toast', function (e) { e = Array.isArray(e) ? e[0] : e; stkToast(e.type, e.message); });
+                    Livewire.hook('request', function (r) {
+                        r.fail(function (f) {
+                            if (f.status === 419) return;   // expired session: Livewire asks to reload
+                            f.preventDefault();
+                            stkToast('error', f.status === 403 ? 'Action non autorisée pour votre compte.' : 'Une erreur est survenue (' + f.status + '). Réessayez ou contactez le support.');
+                        });
+                    });
+                });
+            })();
+        </script>
         @livewireScripts
     </body>
 </html>

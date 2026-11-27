@@ -19,6 +19,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        \App\Support\Toasts::register();   // green / red notifications after each action (2026-11-27)
     }
 }

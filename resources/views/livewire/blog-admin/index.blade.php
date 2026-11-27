@@ -3,7 +3,7 @@
         <h1 class="text-2xl font-bold text-gray-900">Blog - Articles</h1>
         <div class="flex items-center gap-2">
             <a href="{{ route('blog.index') }}" target="_blank" class="text-sm text-gray-500 hover:underline">Voir le blog public &rarr;</a>
-            <a href="{{ route('blog-admin.create') }}" wire:navigate class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-700">+ Ajouter un article</a>
+            <a href="{{ route('blog-admin.create') }}" wire:navigate class="bg-[#16a34a] text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-[#15803d]">+ Ajouter un article</a>
         </div>
     </div>
 

@@ -1,7 +1,7 @@
 <div class="py-6 px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between mb-6">
         <h1 class="text-2xl font-bold text-gray-900">Chèques / Effets Fournisseurs</h1>
-        <button wire:click="create" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-700">+ Ajouter un chèque</button>
+        <button wire:click="create" class="bg-[#16a34a] text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-[#15803d]">+ Ajouter un chèque</button>
     </div>
 
     @if (session('error'))
@@ -47,7 +47,7 @@
                                 <button wire:click="markStatus({{ $cheque->id }}, 'encaisse')" class="text-green-600 hover:underline">Encaisse</button>
                                 <button wire:click="markStatus({{ $cheque->id }}, 'rejete')" class="text-red-600 hover:underline">Rejete</button>
                             @endif
-                            <button wire:click="delete({{ $cheque->id }})" wire:confirm="Supprimer ce cheque ?" class="text-gray-500 hover:underline">Supprimer</button>
+                            <button wire:click="delete({{ $cheque->id }})" wire:confirm="Supprimer ce cheque ?" class="text-red-600 hover:underline">Supprimer</button>
                         </td>
                     </tr>
                 @empty
