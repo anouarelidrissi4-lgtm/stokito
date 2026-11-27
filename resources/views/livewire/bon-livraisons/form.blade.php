@@ -107,7 +107,7 @@
             <div class="flex items-center justify-between mb-2">
                 <label class="block text-sm font-medium text-gray-700">Lignes</label>
                 <div class="flex items-center gap-3">
-                    <button type="button" wire:click="addItem" class="text-sm !text-[#16a34a] font-semibold hover:underline">+ Ajouter une ligne</button>
+                    <button type="button" wire:click="addItem" class="inline-flex items-center gap-1.5 h-10 px-4 rounded-lg border-2 border-[#16a34a] bg-transparent text-sm font-semibold !text-[#16a34a] hover:bg-[#16a34a] hover:!text-white transition">+ Ajouter une ligne</button>
                     <x-barcode-scanner on-scan="onBarcodeScanned" label="Scanner un produit" />
                 </div>
             </div>
@@ -118,14 +118,15 @@
 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase min-w-[15rem]">Produit</th>
-                            <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase w-28">Quantité</th>
-                            <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase w-32">Prix U. HT</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase min-w-[13rem]">Produit</th>
+                            <th class="px-2 py-2 text-right text-xs font-medium text-gray-500 uppercase w-24">Quantité</th>
+                            <th class="px-2 py-2 text-right text-xs font-medium text-gray-500 uppercase w-28">Prix U. HT</th>
+                            <th class="px-2 py-2 text-right text-xs font-medium text-gray-500 uppercase w-28">Prix TTC</th>
                             <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase w-20">TVA %</th>
-                            <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase w-36">Réduction</th>
-                            <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase w-32">Total</th>
+                            <th class="px-2 py-2 text-right text-xs font-medium text-gray-500 uppercase w-24">Réduction</th>
+                            <th class="px-2 py-2 text-right text-xs font-medium text-gray-500 uppercase w-24 whitespace-nowrap">Total HT</th>
                             @if (auth()->user()->hasPermission('marges'))
-                            <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase w-28">Marge</th>
+                            <th class="px-2 py-2 text-right text-xs font-medium text-gray-500 uppercase w-20">Marge</th>
                             @endif
                             <th class="w-10"></th>
                         </tr>
@@ -226,7 +227,12 @@
                                     <input wire:model.live="items.{{ $index }}.quantity" type="number" step="0.01" class="w-full min-w-[4.5rem] rounded-md border-gray-300 text-sm text-right">
                                 </td>
                                 <td class="px-2 py-2">
-                                    <input wire:model.live="items.{{ $index }}.unit_price" type="number" step="0.01" class="w-full min-w-[6rem] rounded-md border-gray-300 text-sm text-right">
+                                    <input wire:model.live="items.{{ $index }}.unit_price" type="number" step="0.01" class="w-full min-w-[5.25rem] rounded-md border-gray-300 text-sm text-right">
+                                </td>
+                                <td class="px-2 py-2">
+                                    {{-- Prix TTC saisissable (2026-11-27) : converti en HT avec le taux de la ligne --}}
+                                    @php $ttcLine = round((float) ($item['unit_price'] ?? 0) * (1 + $this->lineRate($item) / 100), 2); @endphp
+                                    <input wire:key="ttc-{{ $index }}-{{ $item['unit_price'] ?? 0 }}-{{ $this->lineRate($item) }}" type="number" step="0.01" min="0" value="{{ number_format($ttcLine, 2, '.', '') }}" @change="$wire.setLinePriceTtc({{ $index }}, $event.target.value)" aria-label="Prix TTC de la ligne" class="w-full min-w-[5.25rem] rounded-md border-gray-300 text-sm text-right">
                                 </td>
                                 <td class="px-1 py-2">
                                     @php $rateOpts = collect($this->vatRateOptions())->push($this->lineRate($item))->map(fn ($r) => (float) $r)->unique()->sortDesc(); @endphp
@@ -235,23 +241,18 @@
                                     </select>
                                 </td>
                                 <td class="px-2 py-2">
-                                    <div class="flex gap-1">
-                                        <select wire:model.live="items.{{ $index }}.remise_type" class="rounded-md border-gray-300 text-xs ps-2 pe-7" aria-label="Type de réduction">
-                                            <option value="percent">%</option>
-                                            <option value="fixed">{{ \App\Models\Societe::current()->currency }}</option>
-                                        </select>
-                                        <input wire:model.live.debounce.400ms="items.{{ $index }}.remise_value" type="number" step="0.01" min="0" placeholder="0" aria-label="Réduction de la ligne" class="w-full min-w-[4.5rem] rounded-md border-gray-300 text-sm text-right">
-                                    </div>
+                                    {{-- un seul champ « 0 ou 0% » comme Stokio : 10% = pourcentage, 10 = montant --}}
+                                    <input wire:key="rem-{{ $index }}-{{ $item['remise_type'] ?? 'percent' }}-{{ $item['remise_value'] ?? 0 }}" type="text" inputmode="decimal" value="{{ $this->ligneRemiseTexte($item) }}" placeholder="0 ou 0%" @change="$wire.setLineRemise({{ $index }}, $event.target.value)" aria-label="Réduction de la ligne (10% ou montant)" class="w-full min-w-[4.75rem] rounded-md border-gray-300 text-sm text-right">
                                     @error("items.{$index}.remise_value") <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
                                 </td>
-                                <td class="px-4 py-2 text-right text-sm text-gray-900">
+                                <td class="px-2 py-2 text-right text-sm text-gray-900 whitespace-nowrap">
                                     {{ \App\Support\Fmt::money($this->ligneTotal($item)) }}
                                     @if ($this->ligneRemiseMontant($item) > 0)
                                         <span class="block text-xs text-red-600">- {{ \App\Support\Fmt::money($this->ligneRemiseMontant($item)) }}</span>
                                     @endif
                                 </td>
                                 @if (auth()->user()->hasPermission('marges'))
-                                <td class="px-4 py-2 text-right text-sm text-green-700">
+                                <td class="px-2 py-2 text-right text-sm text-green-700 whitespace-nowrap">
                                     @php
                                         $itemProduct = $products->firstWhere('id', $item['product_id'] ?: null);
                                         $itemMarge = ((float) ($item['unit_price'] ?? 0) - (float) ($itemProduct->purchase_price ?? 0)) * (float) ($item['quantity'] ?? 0) - $this->ligneRemiseMontant($item);

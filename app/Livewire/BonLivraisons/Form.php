@@ -246,6 +246,42 @@ class Form extends Component
         $this->items[$index]['unit_price'] = round($ttc / (1 + $this->productRate($product) / 100), 2);
     }
 
+    /** "Prix TTC" typed on a line (2026-11-27): the line stays HT, the TTC is converted with the line's VAT rate. */
+    public function setLinePriceTtc($index, $value): void
+    {
+        if (! isset($this->items[$index])) {
+            return;
+        }
+        $ttc = max(0, (float) str_replace([' ', ','], ['', '.'], (string) $value));
+        $this->items[$index]['unit_price'] = round($ttc / (1 + $this->lineRate($this->items[$index]) / 100), 2);
+    }
+
+    /** One "0 ou 0%" field like Stokio: "10%" = 10 percent, "10" = an amount. */
+    public function setLineRemise($index, $text): void
+    {
+        if (! isset($this->items[$index])) {
+            return;
+        }
+        $t = str_replace([' ', ','], ['', '.'], trim((string) $text));
+        $percent = str_ends_with($t, '%');
+        $v = max(0, (float) rtrim($t, '%'));
+        $this->items[$index]['remise_type'] = $percent || $v == 0 ? 'percent' : 'fixed';
+        $this->items[$index]['remise_value'] = $v;
+        $this->resetValidation("items.{$index}.remise_value");
+    }
+
+    /** Text shown in the "0 ou 0%" field. */
+    public function ligneRemiseTexte(array $item): string
+    {
+        $v = (float) ($item['remise_value'] ?? 0);
+        if ($v <= 0) {
+            return '';
+        }
+        $n = rtrim(rtrim(number_format($v, 2, ',', ''), '0'), ',');
+
+        return ($item['remise_type'] ?? 'percent') === 'fixed' ? $n : $n.'%';
+    }
+
     // --- Recherche d'un BL existant par numero ---
     public function searchByNumero()
     {

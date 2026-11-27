@@ -72,6 +72,21 @@ class BlLineDiscountTest extends TestCase
             ->assertSet('items.0.remise_value', 10.0)->assertSet('items.1.remise_type', 'fixed');
     }
 
+    public function test_ttc_price_and_single_discount_field(): void
+    {
+        $this->companyUser('MA');
+        $p = $this->product('COR-25', 58.1, 30, 54);
+        $p->update(['tva_rate' => 20]);
+        $c = Livewire::test(BlForm::class)->set('items.0.product_id', $p->id)
+            ->assertSee('Prix TTC')->assertSee('0 ou 0%')
+            ->call('setLinePriceTtc', 0, '42,00')->assertSet('items.0.unit_price', 35.0)
+            ->call('setLineRemise', 0, '10%')->assertSet('items.0.remise_type', 'percent')->assertSet('items.0.remise_value', 10.0)
+            ->call('setLineRemise', 0, '2,5')->assertSet('items.0.remise_type', 'fixed')->assertSet('items.0.remise_value', 2.5)
+            ->call('setLineRemise', 0, '')->assertSet('items.0.remise_value', 0.0);
+        $this->assertSame('2,5', $c->instance()->ligneRemiseTexte(['remise_type' => 'fixed', 'remise_value' => 2.5]));
+        $this->assertSame('10%', $c->instance()->ligneRemiseTexte(['remise_type' => 'percent', 'remise_value' => 10]));
+    }
+
     public function test_percent_line_discount_cannot_exceed_100(): void
     {
         $this->companyUser('MA');
