@@ -8,6 +8,7 @@ Allow: /scanner-facture-fournisseur
 Allow: /logiciel-de-caisse-gratuit
 Allow: /modele-bon-de-commande
 Allow: /generateur-code-barre
+Allow: /code-barre-pays
 Allow: /js/code-barre.js
 Allow: /build/
 Allow: /livewire/livewire.min.js

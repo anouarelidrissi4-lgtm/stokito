@@ -87,5 +87,5 @@
     </div>
 
     <script type="application/json" id="lbl-data">@json($payload)</script>
-    <script src="/js/etiquettes.js?v=20261126"></script>
+    <script src="/js/etiquettes.js?v=20261127"></script>
 </x-app-layout>

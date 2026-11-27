@@ -45,10 +45,10 @@
     $digits = [
         ['0 ou 1', 'États-Unis et Canada (codes UPC)'],
         ['2', 'Usage interne : magasin, entrepôt, produits vendus au poids'],
-        ['3', 'France et Monaco (300 à 379), Bulgarie (380), Slovénie (383), Croatie (385)'],
+        ['3', 'France et Monaco (300 à 379), Bulgarie (380), Kosovo (381), Slovénie (383), Croatie (385)'],
         ['4', 'Allemagne (400 à 440), Japon (450 à 459 et 490 à 499), Russie (460 à 469), Hong Kong (489)'],
         ['5', 'Royaume-Uni (500 à 509), Grèce (520-521), Belgique et Luxembourg (540 à 549), Portugal (560), Danemark (570 à 579), Pologne (590)'],
-        ['6', 'Afrique du Sud (600-601), Maroc (611), Algérie (613), Tunisie (619), Égypte (622), Arabie saoudite (628), Finlande (640 à 649), Chine (690 à 699)'],
+        ['6', 'Afrique du Sud (600-601), Sénégal (604), Maroc (611), Algérie (613), Cameroun (617), Côte d’Ivoire (618), Tunisie (619), Égypte (622), Finlande (640 à 649), Chine (680-681 et 690 à 699)'],
         ['7', 'Norvège (700 à 709), Israël (729), Suède (730 à 739), Mexique (750), Canada (754-755), Suisse (760 à 769), Brésil (789-790)'],
         ['8', 'Italie (800 à 839), Espagne (840 à 849), Turquie (868-869), Pays-Bas (870 à 879), Corée du Sud (880), Inde (890)'],
         ['9', 'Autriche (900 à 919), Australie (930 à 939), Nouvelle-Zélande (940 à 949), presse ISSN (977), livres ISBN (978-979)'],
@@ -259,7 +259,7 @@
                 </div>
             @endforeach
         </div>
-        <p class="mb-5">Pour un préfixe précis, collez le code dans l’outil de <a href="#verification" class="{{ $a }}">vérification</a> ci-dessus : il affiche le pays correspondant. Un préfixe 611 correspond au Maroc, 619 à la Tunisie, 613 à l’Algérie.</p>
+        <p class="mb-5">Pour un préfixe précis, collez le code dans l’outil de <a href="#verification" class="{{ $a }}">vérification</a> ci-dessus : il affiche le pays correspondant. Un préfixe 611 correspond au Maroc, 619 à la Tunisie, 613 à l’Algérie. Tous les préfixes, pays par pays : <a href="{{ route('seo.code-barre-pays') }}" class="{{ $a }}">code barre pays, la liste complète</a>.</p>
 
         <h2 id="gs1" class="{{ $h2 }}">Faut-il acheter ses codes barres chez GS1 ?</h2>
         <p class="mb-5">Un générateur dessine les barres d’un numéro ; il ne vous donne pas ce numéro. Dans un EAN-13, les premiers chiffres après le préfixe pays identifient l’entreprise, et ce sont les organisations GS1 (GS1 France, GS1 Maroc, etc.) qui les attribuent.</p>
@@ -298,5 +298,5 @@
         </div>
     </article>
 </div>
-<script src="/js/code-barre.js?v=20261126" defer></script>
+<script src="/js/code-barre.js?v=20261127" defer></script>
 @endcomponent
