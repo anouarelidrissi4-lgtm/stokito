@@ -22,6 +22,7 @@
                 <li><a href="{{ route('seo.code-barre-pays') }}" class="hover:text-white">{{ __('Code barre pays') }}</a></li>
                 <li><a href="{{ route('seo.scanner-code-barre') }}" class="hover:text-white">{{ __('Scanner code barre en ligne') }}</a></li>
                 <li><a href="{{ route('seo.etiquette-code-barre') }}" class="hover:text-white">{{ __('Étiquette code barre') }}</a></li>
+                <li><a href="{{ route('seo.stock-excel') }}" class="hover:text-white">{{ __('Gestion de stock Excel') }}</a></li>
                 <li><a href="{{ $home }}#parcours" class="hover:text-white">{{ __('Comment ça marche') }}</a></li>
                 <li><a href="{{ $home }}#fonctionnalites" class="hover:text-white">{{ __('Fonctionnalités') }}</a></li>
                 <li><a href="{{ $home }}#ecrans" class="hover:text-white">{{ __('Écrans') }}</a></li>

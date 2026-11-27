@@ -24,6 +24,7 @@ Route::view('generateur-code-barre', 'seo.code-barre')->name('seo.code-barre');
 Route::view('code-barre-pays', 'seo.code-barre-pays')->name('seo.code-barre-pays');
 Route::view('scanner-code-barre-en-ligne', 'seo.scanner-code-barre')->name('seo.scanner-code-barre');
 Route::view('etiquette-code-barre', 'seo.etiquette-code-barre')->name('seo.etiquette-code-barre');
+Route::view('gestion-de-stock-excel', 'seo.gestion-de-stock-excel')->name('seo.stock-excel');
 
 // old guide file names (before the Stokito rebrand, 2026-11-24) -> new ones
 Route::get('docs/guide-stockpilot-{lang}.pdf', fn (string $lang) => redirect('/docs/guide-stokito-'.$lang.'.pdf', 301))->where('lang', 'fr|ar|en');
@@ -40,6 +41,7 @@ $sitemapXml = function () {
         ['loc' => route('seo.code-barre-pays'), 'lastmod' => '2026-11-27', 'changefreq' => 'monthly', 'priority' => '0.8'],
         ['loc' => route('seo.scanner-code-barre'), 'lastmod' => '2026-11-27', 'changefreq' => 'monthly', 'priority' => '0.9'],
         ['loc' => route('seo.etiquette-code-barre'), 'lastmod' => '2026-11-27', 'changefreq' => 'monthly', 'priority' => '0.9'],
+        ['loc' => route('seo.stock-excel'), 'lastmod' => '2026-11-27', 'changefreq' => 'monthly', 'priority' => '0.9'],
         ['loc' => route('blog.index'), 'lastmod' => now()->format('Y-m-d'), 'changefreq' => 'daily', 'priority' => '0.8'],
     ]);
 

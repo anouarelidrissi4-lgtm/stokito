@@ -167,7 +167,7 @@
         <div class="my-12 bg-zinc-900 text-white shadow-sm">
             <div class="p-7">
                 <p class="!mb-2 ind-h text-xl leading-none text-white">Essayez Stokito gratuitement</p>
-                <p class="!mb-5 text-zinc-300">Votre espace est prêt en une minute. Choisissez votre pays, ajoutez vos produits ou importez votre fichier Excel.</p>
+                <p class="!mb-5 text-zinc-300">Votre espace est prêt en une minute. Choisissez votre pays, ajoutez vos produits ou importez votre fichier Excel (pas encore de fichier ? <a href="{{ route('seo.stock-excel') }}" class="underline decoration-amber-400 decoration-2 underline-offset-4">modèle de gestion de stock Excel gratuit</a>).</p>
                 <div class="flex flex-wrap gap-3">
                     <a href="{{ route('register') }}" class="ind-btn bg-[#ffcc00] !text-[#111] !no-underline">Créer un compte gratuit</a>
                     <a href="{{ route('demo.login') }}" class="ind-btn bg-white !text-[#111] !no-underline">Tester la démo</a>

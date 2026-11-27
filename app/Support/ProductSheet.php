@@ -206,7 +206,12 @@ class ProductSheet
         $out = [];
         foreach ($reader->getSheetIterator() as $sheet) {
             foreach ($sheet->getRowIterator() as $row) {
-                $out[] = array_map(fn ($v) => $v instanceof \DateTimeInterface ? $v->format('Y-m-d') : $v, $row->toArray());
+                // a formula cell gives its last computed value (Excel saves it), not the formula text (2026-11-27)
+                $out[] = array_map(function ($cell) {
+                    $v = $cell instanceof \OpenSpout\Common\Entity\Cell\FormulaCell ? $cell->getComputedValue() : $cell->getValue();
+
+                    return $v instanceof \DateTimeInterface ? $v->format('Y-m-d') : $v;
+                }, $row->getCells());
             }
             break; // first sheet only
         }
