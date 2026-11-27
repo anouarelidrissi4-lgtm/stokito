@@ -203,7 +203,7 @@
             <div class="mt-8 grid lg:grid-cols-[1fr_1fr] gap-10 items-start">
                 <div>
                     <p class="text-sm font-semibold text-amber-300">Liste des préfixes GS1 · mise à jour novembre 2026</p>
-                    <h1 class="mt-3 text-4xl sm:text-5xl font-extrabold tracking-tight leading-[1.05]">Code barre : <span class="text-amber-300">quel pays ?</span></h1>
+                    <h1 class="mt-3 text-4xl sm:text-5xl font-extrabold tracking-tight leading-[1.05]">Code barre&nbsp;: <span class="text-amber-300 whitespace-nowrap">quel pays&nbsp;?</span></h1>
                     <p class="mt-5 text-lg text-zinc-300 leading-relaxed">Les trois premiers chiffres d’un code barre EAN-13 forment le <strong class="text-white">préfixe GS1</strong>. 300 à 379 : France. 611 : Maroc. 690 à 699 : Chine. Tapez un code ou ses premiers chiffres pour trouver le pays.</p>
                 </div>
                 <div class="rounded-2xl bg-white text-zinc-900 p-5 sm:p-7 shadow-2xl shadow-black/40" x-data="gs1Lookup(@js($gs1))">
