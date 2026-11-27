@@ -142,7 +142,7 @@
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                         @foreach ($items as $index => $item)
-                            <tr wire:key="item-{{ $scanRun }}-{{ $index }}">
+                            <tr class="align-top" wire:key="item-{{ $scanRun }}-{{ $index }}">
                                 <td class="px-4 py-2 sp-line-main" data-label="Produit">
                                     <div class="flex gap-1">
                                         <button type="button" wire:click="openProductModal({{ $index }})" title="Ajouter un produit" class="shrink-0 h-9 w-9 flex items-center justify-center rounded-md border border-gray-300 text-gray-600 hover:bg-gray-50">+</button>
@@ -236,10 +236,10 @@
                                 <td class="px-4 py-2" data-label="Prix Achat U.">
                                     <input wire:model.live="items.{{ $index }}.unit_price" type="number" step="0.01" class="w-full rounded-md border-gray-300 text-sm text-right">
                                 </td>
-                                <td class="px-4 py-2 text-right text-sm text-gray-900" data-label="Total">
+                                <td class="px-4 py-2 text-right text-sm text-gray-900 pt-[1.05rem]" data-label="Total">
                                     {{ \App\Support\Fmt::money((float) ($item['quantity'] ?? 0) * (float) ($item['unit_price'] ?? 0)) }}
                                 </td>
-                                <td class="px-4 py-2 text-center" data-label="">
+                                <td class="px-4 py-2 text-center pt-[1.05rem]" data-label="">
                                     <button type="button" wire:click="removeItem({{ $index }})" class="text-red-500 hover:text-red-700">&times;</button>
                                 </td>
                             </tr>

@@ -146,7 +146,7 @@
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                         @foreach ($items as $index => $item)
-                            <tr wire:key="item-{{ $index }}">
+                            <tr class="align-top" wire:key="item-{{ $index }}">
                                 <td class="px-4 py-2 sp-line-main" data-label="Produit">
                                     <div class="flex gap-1">
                                         <button type="button" wire:click="openProductModal({{ $index }})" title="Ajouter un produit" class="shrink-0 h-9 w-9 flex items-center justify-center rounded-md border border-gray-300 text-gray-600 hover:bg-gray-50">+</button>
@@ -258,14 +258,14 @@
                                     <input wire:key="rem-{{ $index }}-{{ $item['remise_type'] ?? 'percent' }}-{{ $item['remise_value'] ?? 0 }}" type="text" inputmode="decimal" value="{{ $this->ligneRemiseTexte($item) }}" placeholder="0 ou 0%" @change="$wire.setLineRemise({{ $index }}, $event.target.value)" aria-label="Réduction de la ligne (10% ou montant)" class="w-full min-w-[4.75rem] rounded-md border-gray-300 text-sm text-right">
                                     @error("items.{$index}.remise_value") <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
                                 </td>
-                                <td class="px-2 py-2 text-right text-sm text-gray-900 whitespace-nowrap" data-label="Total HT">
+                                <td class="px-2 py-2 text-right text-sm text-gray-900 whitespace-nowrap pt-[1.05rem]" data-label="Total HT">
                                     {{ \App\Support\Fmt::money($this->ligneTotal($item)) }}
                                     @if ($this->ligneRemiseMontant($item) > 0)
                                         <span class="block text-xs text-red-600">- {{ \App\Support\Fmt::money($this->ligneRemiseMontant($item)) }}</span>
                                     @endif
                                 </td>
                                 @if (auth()->user()->hasPermission('marges'))
-                                <td class="px-2 py-2 text-right text-sm text-green-700 whitespace-nowrap" data-label="Marge">
+                                <td class="px-2 py-2 text-right text-sm text-green-700 whitespace-nowrap pt-[1.05rem]" data-label="Marge">
                                     @php
                                         $itemProduct = $products->firstWhere('id', $item['product_id'] ?: null);
                                         $itemMarge = ((float) ($item['unit_price'] ?? 0) - (float) ($itemProduct->purchase_price ?? 0)) * (float) ($item['quantity'] ?? 0) - $this->ligneRemiseMontant($item);
@@ -273,7 +273,7 @@
                                     {{ \App\Support\Fmt::money($itemMarge) }}
                                 </td>
                                 @endif
-                                <td class="px-4 py-2 text-center" data-label="">
+                                <td class="px-4 py-2 text-center pt-[1.05rem]" data-label="">
                                     <button type="button" wire:click="removeItem({{ $index }})" class="text-red-500 hover:text-red-700">&times;</button>
                                 </td>
                             </tr>

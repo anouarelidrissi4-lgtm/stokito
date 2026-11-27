@@ -134,7 +134,7 @@
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                         @foreach ($items as $index => $item)
-                            <tr wire:key="item-{{ $index }}">
+                            <tr class="align-top" wire:key="item-{{ $index }}">
                                 <td class="px-4 py-2 sp-line-main" data-label="Produit">
                                     <div class="flex gap-1">
                                         <button type="button" wire:click="openProductModal({{ $index }})" title="Ajouter un produit" class="shrink-0 h-9 w-9 flex items-center justify-center rounded-md border border-gray-300 text-gray-600 hover:bg-gray-50">+</button>
@@ -223,11 +223,11 @@
                                         @foreach ($rateOpts as $r)<option value="{{ \App\Support\DocTotals::key($r) }}">{{ \App\Support\DocTotals::label($r) }}</option>@endforeach
                                     </select>
                                 </td>
-                                <td class="px-4 py-2 text-right text-sm text-gray-900" data-label="Total">
+                                <td class="px-4 py-2 text-right text-sm text-gray-900 pt-[1.05rem]" data-label="Total">
                                     {{ \App\Support\Fmt::money((float) ($item['quantity'] ?? 0) * (float) ($item['unit_price'] ?? 0)) }}
                                 </td>
                                 @if (auth()->user()->hasPermission('marges'))
-                                <td class="px-4 py-2 text-right text-sm text-green-700" data-label="Marge">
+                                <td class="px-4 py-2 text-right text-sm text-green-700 pt-[1.05rem]" data-label="Marge">
                                     @php
                                         $itemProduct = $products->firstWhere('id', $item['product_id'] ?: null);
                                         $itemMarge = ((float) ($item['unit_price'] ?? 0) - (float) ($itemProduct->purchase_price ?? 0)) * (float) ($item['quantity'] ?? 0);
@@ -235,7 +235,7 @@
                                     {{ \App\Support\Fmt::money($itemMarge) }}
                                 </td>
                                 @endif
-                                <td class="px-4 py-2 text-center" data-label="">
+                                <td class="px-4 py-2 text-center pt-[1.05rem]" data-label="">
                                     <button type="button" wire:click="removeItem({{ $index }})" class="text-red-500 hover:text-red-700">&times;</button>
                                 </td>
                             </tr>
