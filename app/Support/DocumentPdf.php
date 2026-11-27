@@ -121,17 +121,17 @@ class DocumentPdf
             'partyLabel' => 'Client',
             'party' => $bl->client,
             'items' => $bl->items->map(fn ($i) => [
-                'name' => ($i->product->name ?? '-').($societe->show_ref_bl && ($i->product->reference ?? null) ? ' ('.$i->product->reference.')' : ''),
+                'name' => ($i->product->name ?? '-').($societe->show_ref_bl && ($i->product->reference ?? null) ? ' ('.$i->product->reference.')' : '').($prices && $i->remiseLabel() ? ' · '.$i->remiseLabel() : ''),
                 'unit' => $i->product->unit ?? '',
                 'quantity' => $i->quantity,
                 'unit_price' => $i->unit_price,
                 'tva_rate' => $i->tva_rate ?? $bl->tva_rate,
-                'total' => $i->unit_price !== null ? $i->quantity * $i->unit_price : null,
+                'total' => $i->unit_price !== null ? $i->net() : null,
             ]),
             'showPrices' => $prices,
             'totals' => $prices ? [
-                'brut' => $bl->montantBrutHt(),
-                'remise' => $bl->montantRemise(),
+                'brut' => $bl->montantApresLignes(),      // lines already net of their own discount
+                'remise' => $bl->montantRemiseGlobale(),
                 'ht' => $bl->total_ht,
                 'tva_rate' => $bl->tva_rate,
                 'groups' => $bl->vatTotals()['groups'],

@@ -136,7 +136,7 @@ class Form extends Component
             $this->items = $bl->items->map(fn ($i) => [
                 'product_id' => $i->product_id,
                 'quantity' => (float) $i->quantity,
-                'unit_price' => (float) ($i->unit_price ?? 0),
+                'unit_price' => $i->netUnitPrice(),      // a line discount of the BL is carried in the net unit price
                 'tva_rate' => $i->tva_rate !== null ? (float) $i->tva_rate : (float) $this->tva_rate,
             ])->toArray();
         } elseif ($ticketId = (int) request()->query('ticket')) {

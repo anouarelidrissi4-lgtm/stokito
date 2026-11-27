@@ -83,25 +83,40 @@ class BonLivraison extends Model
         return (float) $this->items->sum(fn ($i) => (float) $i->quantity * (float) ($i->unit_price ?? 0));
     }
 
-    public function montantRemise(): float
+    /** Sum of the lines' own discounts (2026-11-27). */
+    public function montantRemiseLignes(): float
     {
-        $brut = $this->montantBrutHt();
+        return (float) $this->items->sum(fn ($i) => $i->remiseMontant());
+    }
+
+    /** Lines after their own discounts ("Sous-total"). */
+    public function montantApresLignes(): float
+    {
+        return round($this->montantBrutHt() - $this->montantRemiseLignes(), 2);
+    }
+
+    /** Document discount ("Remise"), applied after the lines' discounts. */
+    public function montantRemiseGlobale(): float
+    {
+        $base = $this->montantApresLignes();
 
         if ($this->remise_type === 'percent') {
-            return round($brut * ((float) $this->remise_value) / 100, 2);
+            return round($base * ((float) $this->remise_value) / 100, 2);
         }
 
-        return min((float) $this->remise_value, $brut);
+        return min((float) $this->remise_value, $base);
+    }
+
+    /** Lines' discounts + document discount. */
+    public function montantRemise(): float
+    {
+        return $this->montantRemiseLignes() + $this->montantRemiseGlobale();
     }
 
     public function recalculateTotals(): void
     {
-        $brutHt = $this->montantBrutHt();
-        $remise = $this->remise_type === 'percent'
-            ? round($brutHt * ((float) $this->remise_value) / 100, 2)
-            : min((float) $this->remise_value, $brutHt);
-
-        $totalHt = $brutHt - $remise;
+        $this->load('items');
+        $totalHt = $this->montantApresLignes() - $this->montantRemiseGlobale();
         $totalTtc = $this->vatTotals()['ttc'];
 
         $this->update(['total_ht' => $totalHt, 'total' => $totalTtc]);

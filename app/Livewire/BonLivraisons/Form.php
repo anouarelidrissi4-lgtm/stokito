@@ -118,6 +118,8 @@ class Form extends Component
                 'product_id' => $i->product_id,
                 'quantity' => (float) $i->quantity,
                 'unit_price' => (float) $i->unit_price,
+                'remise_type' => $i->remise_type ?? 'percent',
+                'remise_value' => (float) ($i->remise_value ?? 0),
                 'tva_rate' => $i->tva_rate !== null ? (float) $i->tva_rate : (float) $this->tva_rate,
             ])->toArray();
         } else {
@@ -129,7 +131,7 @@ class Form extends Component
 
     public function addItem()
     {
-        $this->items[] = ['product_id' => '', 'quantity' => 1, 'unit_price' => 0, 'tva_rate' => (float) $this->tva_rate];
+        $this->items[] = ['product_id' => '', 'quantity' => 1, 'unit_price' => 0, 'remise_type' => 'percent', 'remise_value' => 0, 'tva_rate' => (float) $this->tva_rate];
     }
 
     public function removeItem($index)
@@ -226,8 +228,22 @@ class Form extends Component
             'product_id' => $product->id,
             'quantity' => 1,
             'unit_price' => $this->priceForProduct($product),
+            'remise_type' => 'percent',
+            'remise_value' => 0,
             'tva_rate' => $this->productRate($product),
         ];
+    }
+
+    /** "Prix détail" / "Prix gros" under a line (2026-11-27): puts that catalogue price on the line. */
+    public function applyPrice($index, string $which): void
+    {
+        $item = $this->items[$index] ?? null;
+        $product = $item && ! empty($item['product_id']) ? Product::find($item['product_id']) : null;
+        if (! $product) {
+            return;
+        }
+        $ttc = $which === 'gros' && $product->wholesale_price !== null ? (float) $product->wholesale_price : (float) $product->sale_price;
+        $this->items[$index]['unit_price'] = round($ttc / (1 + $this->productRate($product) / 100), 2);
     }
 
     // --- Recherche d'un BL existant par numero ---
@@ -326,6 +342,8 @@ class Form extends Component
                 'product_id' => $product->id,
                 'quantity' => 1,
                 'unit_price' => $this->priceForProduct($product),
+                'remise_type' => 'percent',
+                'remise_value' => 0,
                 'tva_rate' => $this->productRate($product),
             ];
         }
@@ -339,9 +357,29 @@ class Form extends Component
         return collect($this->items)->sum(fn ($i) => (float) ($i['quantity'] ?? 0) * (float) ($i['unit_price'] ?? 0));
     }
 
+    /** Discount of one line (2026-11-27), same rules as the saved line. */
+    public function ligneRemiseMontant(array $item): float
+    {
+        $brut = (float) ($item['quantity'] ?? 0) * (float) ($item['unit_price'] ?? 0);
+
+        return \App\Models\BonLivraisonItem::remiseFor($brut, (string) ($item['remise_type'] ?? 'percent'), (float) ($item['remise_value'] ?? 0));
+    }
+
+    /** "Total ligne": the line after its own discount (also used by HasLineVat). */
+    public function ligneTotal(array $item): float
+    {
+        return round((float) ($item['quantity'] ?? 0) * (float) ($item['unit_price'] ?? 0) - $this->ligneRemiseMontant($item), 2);
+    }
+
+    public function getMontantRemiseLignesProperty()
+    {
+        return collect($this->items)->sum(fn ($i) => $this->ligneRemiseMontant($i));
+    }
+
+    /** Document discount, on the lines after their own discounts. */
     public function getMontantRemiseProperty()
     {
-        $brut = $this->brutHt;
+        $brut = $this->brutHt - $this->montantRemiseLignes;
 
         if ($this->remise_type === 'percent') {
             return round($brut * ((float) ($this->remise_value ?: 0)) / 100, 2);
@@ -352,7 +390,7 @@ class Form extends Component
 
     public function getTotalHtProperty()
     {
-        return $this->brutHt - $this->montantRemise;
+        return $this->brutHt - $this->montantRemiseLignes - $this->montantRemise;
     }
 
     public function getTotalTtcProperty()
@@ -377,7 +415,7 @@ class Form extends Component
 
             $purchase = (float) ($purchasePrices[$i['product_id']] ?? 0);
 
-            return ((float) ($i['unit_price'] ?? 0) - $purchase) * (float) ($i['quantity'] ?? 0);
+            return ((float) ($i['unit_price'] ?? 0) - $purchase) * (float) ($i['quantity'] ?? 0) - $this->ligneRemiseMontant($i);
         });
     }
 
@@ -587,8 +625,17 @@ class Form extends Component
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.quantity' => 'required|numeric|min:0.01',
             'items.*.unit_price' => 'required|numeric|min:0',
+            'items.*.remise_type' => 'nullable|in:percent,fixed',
+            'items.*.remise_value' => 'nullable|numeric|min:0',
             'items.*.tva_rate' => 'nullable|numeric|min:0|max:100',
-        ]);
+        ], [], ['items.*.remise_value' => 'réduction']);
+        foreach ($this->items as $index => $item) {
+            if (($item['remise_type'] ?? 'percent') === 'percent' && (float) ($item['remise_value'] ?? 0) > 100) {
+                $this->addError("items.{$index}.remise_value", 'La réduction ne peut pas dépasser 100 %.');
+
+                return;
+            }
+        }
 
         if (! $this->checkStockAvailability()) {
             return;
@@ -617,6 +664,9 @@ class Form extends Component
                 'product_id' => $item['product_id'],
                 'quantity' => $item['quantity'],
                 'unit_price' => $item['unit_price'],
+                'remise_type' => ($item['remise_type'] ?? 'percent') === 'fixed' ? 'fixed' : 'percent',
+                'remise_value' => (float) ($item['remise_value'] ?? 0) ?: 0,
+                'total' => $this->ligneTotal($item),
                 'tva_rate' => $this->lineRate($item),
             ]);
         }
@@ -643,7 +693,7 @@ class Form extends Component
     {
         return view('livewire.bon-livraisons.form', [
             'clients' => Client::orderBy('name')->get(),
-            'products' => Product::with('brand')->orderBy('name')->get(),
+            'products' => Product::with(['brand', 'category'])->orderBy('name')->get(),
             'categories' => \App\Models\Category::orderBy('name')->get(),
             'brands' => \App\Models\Brand::orderBy('name')->get(),
             'fournisseurs' => \App\Models\Fournisseur::orderBy('name')->get(),
