@@ -270,7 +270,7 @@
         </ul>
 
         <h2 id="stokito" class="{{ $h2 }}">Scanner vos codes barres dans Stokito</h2>
-        <p class="mb-5">Une fois vos étiquettes collées, il faut que le code serve à quelque chose. Dans <a href="{{ url('/') }}" class="{{ $a }}">Stokito</a>, chaque produit a son code barre :</p>
+        <p class="mb-5">Une fois vos étiquettes collées, il faut que le code serve à quelque chose. Dans <a href="{{ url('/') }}" class="{{ $a }}">Stokito</a>, chaque produit a son code barre. Pour lire un code tout de suite, sans compte, utilisez le <a href="{{ route('seo.scanner-code-barre') }}" class="{{ $a }}">scanner de code barre en ligne</a> avec la caméra de votre téléphone. Dans Stokito :</p>
         <ul class="mb-6 list-disc ps-6 space-y-2">
             <li>la <strong class="text-zinc-900">caméra du téléphone</strong> scanne le code pour retrouver le produit dans le catalogue ou remplir le champ code barre d’un nouvel article ;</li>
             <li>dans un devis, un bon de livraison, une facture ou un bon de commande fournisseur, un scan ajoute la ligne ;</li>

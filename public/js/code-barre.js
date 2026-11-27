@@ -480,7 +480,14 @@
         }
         vIn.addEventListener('input', verify);
 
-        setType('ean13', true);
+        /* ?type=ean13&code=… (lien « Créer l'étiquette » du scanner en ligne) */
+        var qs = null;
+        try { qs = new URLSearchParams(location.search); } catch (e) { /* vieux navigateur */ }
+        var qCode = qs && qs.get('code'), qType = qs && qs.get('type');
+        if (qCode && ['ean13', 'ean8', 'upca', 'code128'].indexOf(qType) >= 0 && B.prepare(qType, qCode.slice(0, 48)).ok) {
+            input.value = qCode.slice(0, 48);
+            setType(qType, true);
+        } else setType('ean13', true);
         fillQty();
         renderSheet();
     }

@@ -9,7 +9,10 @@ Allow: /logiciel-de-caisse-gratuit
 Allow: /modele-bon-de-commande
 Allow: /generateur-code-barre
 Allow: /code-barre-pays
+Allow: /scanner-code-barre-en-ligne
 Allow: /js/code-barre.js
+Allow: /js/scanner-code-barre.js
+Allow: /js/zxing-0.21.3.min.js
 Allow: /build/
 Allow: /livewire/livewire.min.js
 Allow: /images/

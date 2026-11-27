@@ -269,6 +269,7 @@
                 </li>
             @endforeach
         </ol>
+        <p class="mb-5">Le code est sur un produit devant vous ? Le <a href="{{ route('seo.scanner-code-barre') }}" class="{{ $a }}">scanner de code barre en ligne</a> le lit avec la caméra du téléphone et affiche directement le pays du préfixe.</p>
 
         <div class="my-8 rounded-xl border-l-4 border-amber-300 bg-[#fff8db] px-5 py-4 text-[16px]">
             <strong class="text-zinc-900">Attention : le préfixe n’est pas le pays de fabrication.</strong>
