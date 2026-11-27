@@ -7,8 +7,6 @@
             <a href="{{ route('caisse.tickets') }}" wire:navigate class="border border-zinc-200 bg-white px-3 py-1.5 hover:bg-zinc-100 rounded-lg">Tickets</a>
         </div>
     </div>
-    @if (session('success'))<div class="mb-4 border border-zinc-200 bg-[#dff3e6] px-4 py-2 text-sm font-semibold rounded-lg">{{ session('success') }}</div>@endif
-    @if (session('error'))<div class="mb-4 border border-zinc-200 bg-[#fde3e3] px-4 py-2 text-sm font-semibold rounded-lg">{{ session('error') }}</div>@endif
 
     <div class="grid md:grid-cols-2 gap-4 mb-5">
         <div class="border border-zinc-200 bg-white p-4 rounded-xl">

@@ -29,12 +29,6 @@
         </div>
     </div>
 
-    @if (session('error'))
-        <div class="mb-4 bg-red-50 text-red-700 px-4 py-2 rounded-lg text-sm print:hidden">{{ session('error') }}</div>
-    @endif
-    @if (session('success'))
-        <div class="mb-4 bg-green-50 text-green-700 px-4 py-2 rounded-lg text-sm print:hidden">{{ session('success') }}</div>
-    @endif
 
     <div class="bg-white shadow rounded-lg overflow-hidden">
         <div class="p-4 border-b flex flex-col lg:flex-row lg:items-center justify-between gap-3 print:hidden">

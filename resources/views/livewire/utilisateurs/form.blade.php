@@ -4,12 +4,6 @@
         <a href="{{ route('utilisateurs.index') }}" wire:navigate class="text-sm text-gray-500 hover:underline">&larr; Retour</a>
     </div>
 
-    @if (session('error'))
-        <div class="mb-4 bg-red-50 text-red-700 px-4 py-2 rounded-lg text-sm print:hidden">{{ session('error') }}</div>
-    @endif
-    @if (session('success'))
-        <div class="mb-4 bg-green-50 text-green-700 px-4 py-2 rounded-lg text-sm">{{ session('success') }}</div>
-    @endif
 
     <div class="bg-white shadow rounded-lg p-6 space-y-6">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">

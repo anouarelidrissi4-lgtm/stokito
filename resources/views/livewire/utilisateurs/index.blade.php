@@ -4,12 +4,6 @@
         <a href="{{ route('utilisateurs.create') }}" wire:navigate class="bg-[#16a34a] text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-[#15803d]">+ Ajouter un utilisateur</a>
     </div>
 
-    @if (session('success'))
-        <div class="mb-4 bg-green-50 text-green-700 px-4 py-2 rounded-lg text-sm">{{ session('success') }}</div>
-    @endif
-    @if (session('error'))
-        <div class="mb-4 bg-red-50 text-red-700 px-4 py-2 rounded-lg text-sm">{{ session('error') }}</div>
-    @endif
 
     <div class="bg-white shadow rounded-lg overflow-hidden">
         <div class="overflow-x-auto">

@@ -8,9 +8,6 @@
         <button type="button" onclick="window.print()" class="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 print:hidden">Imprimer</button>
     </div>
 
-    @if (session('success'))
-        <div class="mb-4 bg-green-50 text-green-700 px-4 py-2 rounded-lg text-sm print:hidden">{{ session('success') }}</div>
-    @endif
     @if ($inv->notes)
         <div class="mb-4 rounded-lg bg-slate-50 border border-slate-200 px-4 py-3 text-sm text-slate-700">{{ $inv->notes }}</div>
     @endif

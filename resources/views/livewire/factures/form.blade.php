@@ -4,12 +4,6 @@
         <a href="{{ route('factures.index') }}" wire:navigate class="text-sm text-gray-500 hover:underline">&larr; Retour</a>
     </div>
 
-    @if (session('error'))
-        <div class="mb-4 bg-red-50 text-red-700 px-4 py-2 rounded-lg text-sm print:hidden">{{ session('error') }}</div>
-    @endif
-    @if (session('success'))
-        <div class="mb-4 bg-green-50 text-green-700 px-4 py-2 rounded-lg text-sm">{{ session('success') }}</div>
-    @endif
     {{-- plan Free: 5 invoices a month (2026-11-27) --}}
     @if (! $facture && ! \App\Support\Plans::canCreateFacture())
         <div class="mb-4 flex flex-wrap items-center gap-3 rounded-lg border border-amber-300 bg-[#ffcc00]/20 px-4 py-3 text-sm text-zinc-900">

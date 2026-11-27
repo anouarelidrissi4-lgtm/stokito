@@ -9,9 +9,6 @@
             @endif
         </div>
     </div>
-    @if (session('success'))
-        <div class="mb-4 border border-zinc-200 bg-[#dff3e6] px-4 py-2 text-sm font-semibold rounded-lg">{{ session('success') }}</div>
-    @endif
 
     <div class="flex flex-wrap items-end gap-3 mb-3">
         <label class="text-sm">Jour<input type="date" wire:model.live="date" class="block mt-1 border border-zinc-200 px-2 py-1.5 text-sm rounded-lg"></label>

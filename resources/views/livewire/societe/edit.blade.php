@@ -1,12 +1,6 @@
 <div class="py-6 px-4 sm:px-6 lg:px-8 max-w-4xl">
     <h1 class="text-2xl font-bold text-gray-900 mb-6">Ma Société</h1>
 
-    @if (session('error'))
-        <div class="mb-4 bg-red-50 text-red-700 px-4 py-2 rounded-lg text-sm print:hidden">{{ session('error') }}</div>
-    @endif
-    @if (session('success'))
-        <div class="mb-4 bg-green-50 text-green-700 px-4 py-2 rounded-lg text-sm">{{ session('success') }}</div>
-    @endif
 
     <div class="bg-white shadow rounded-lg overflow-hidden divide-y divide-gray-100">
 

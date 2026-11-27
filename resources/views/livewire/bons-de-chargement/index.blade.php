@@ -20,12 +20,6 @@
         </button>
     </div>
 
-    @if (session('error'))
-        <div class="mb-4 bg-red-50 text-red-700 px-4 py-2 rounded-lg text-sm">{{ session('error') }}</div>
-    @endif
-    @if (session('success'))
-        <div class="mb-4 bg-green-50 text-green-700 px-4 py-2 rounded-lg text-sm">{{ session('success') }}</div>
-    @endif
 
     <div class="bg-white shadow rounded-lg overflow-hidden">
         <div class="p-4 border-b border-gray-200">

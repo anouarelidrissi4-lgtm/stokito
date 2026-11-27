@@ -151,7 +151,8 @@
         <script>
             (function () {
                 if (window.stkToast) return;
-                var ok = { bg: '#16a34a', icon: '<path d="M5 12.5l4.5 4.5L19 7.5"/>' }, ko = { bg: '#dc2626', icon: '<path d="M12 7v6"/><path d="M12 17h.01"/>' };
+                var ok = { bg: 'rgba(220,252,231,.82)', border: 'rgba(22,163,74,.35)', fg: '#166534', icon: '<path d="M5 12.5l4.5 4.5L19 7.5"/>' },
+                    ko = { bg: 'rgba(254,226,226,.85)', border: 'rgba(220,38,38,.35)', fg: '#991b1b', icon: '<path d="M12 7v6"/><path d="M12 17h.01"/>' };
                 window.stkToast = function (type, message) {
                     if (!message) return;
                     var box = document.getElementById('stk-toasts');
@@ -165,8 +166,8 @@
                     var t = type === 'error' ? ko : ok, el = document.createElement('div');
                     el.setAttribute('role', type === 'error' ? 'alert' : 'status');
                     el.setAttribute('data-stk-toast', type);
-                    el.style.cssText = 'pointer-events:auto;display:flex;align-items:flex-start;gap:10px;max-width:460px;width:100%;background:' + t.bg + ';color:#fff;border-radius:12px;padding:12px 14px;font:600 14px/1.4 inherit;box-shadow:0 10px 25px -5px rgba(0,0,0,.25);opacity:0;transform:translateY(-8px);transition:all .2s ease';
-                    el.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:1px">' + t.icon + '</svg><span style="flex:1"></span><button type="button" aria-label="Fermer" style="flex:none;background:none;border:0;color:#fff;opacity:.8;cursor:pointer;font-size:18px;line-height:1">&times;</button>';
+                    el.style.cssText = 'pointer-events:auto;display:flex;align-items:flex-start;gap:10px;max-width:460px;width:100%;background:' + t.bg + ';color:' + t.fg + ';border:1px solid ' + t.border + ';-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-radius:12px;padding:12px 14px;font:600 14px/1.4 inherit;box-shadow:0 8px 20px -8px rgba(0,0,0,.18);opacity:0;transform:translateY(-8px);transition:all .2s ease';
+                    el.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:1px">' + t.icon + '</svg><span style="flex:1"></span><button type="button" aria-label="Fermer" style="flex:none;background:none;border:0;color:inherit;opacity:.6;cursor:pointer;font-size:18px;line-height:1">&times;</button>';
                     el.querySelector('span').textContent = message;
                     var close = function () { el.style.opacity = '0'; el.style.transform = 'translateY(-8px)'; setTimeout(function () { el.remove(); }, 200); };
                     el.querySelector('button').onclick = close;
