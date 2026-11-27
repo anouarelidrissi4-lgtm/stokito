@@ -118,7 +118,7 @@ class SalesLists
     {
         $items = $doc->items->map(fn ($i) => ['product_id' => $i->product_id, 'quantity' => (float) $i->quantity,
             'unit_price' => (float) $i->unit_price, 'tva_rate' => $i->tva_rate !== null ? (float) $i->tva_rate : (float) $doc->tva_rate]
-            + ($i instanceof \App\Models\BonLivraisonItem ? ['remise_type' => $i->remise_type ?? 'percent', 'remise_value' => (float) ($i->remise_value ?? 0)] : []))->values()->all();
+            + ($i->getAttribute('remise_type') !== null ? ['remise_type' => $i->remise_type, 'remise_value' => (float) ($i->remise_value ?? 0)] : []))->values()->all();
         $key = Str::random(24);
         Cache::put('copilot:'.auth()->id().':'.$key, ['form' => $formClass, 'party_field' => 'client_id', 'party_id' => $doc->client_id,
             'items' => $items, 'notes' => (string) ($doc->notes ?? ''), 'props' => $props, 'message' => $message], now()->addHours(6));

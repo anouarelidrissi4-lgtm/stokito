@@ -14,6 +14,7 @@ class Form extends Component
     use RequiresPermission;
     use \App\Livewire\Concerns\CopilotPrefill;
     use \App\Livewire\Concerns\HasLineVat;
+    use \App\Livewire\Concerns\HasLineTools;
 
     public ?Facture $facture = null;
 
@@ -123,6 +124,8 @@ class Form extends Component
                 'product_id' => $i->product_id,
                 'quantity' => (float) $i->quantity,
                 'unit_price' => (float) $i->unit_price,
+                'remise_type' => $i->remise_type ?? 'percent',
+                'remise_value' => (float) ($i->remise_value ?? 0),
                 'tva_rate' => $i->tva_rate !== null ? (float) $i->tva_rate : (float) $this->tva_rate,
             ])->toArray();
         } elseif ($blId) {
@@ -136,7 +139,9 @@ class Form extends Component
             $this->items = $bl->items->map(fn ($i) => [
                 'product_id' => $i->product_id,
                 'quantity' => (float) $i->quantity,
-                'unit_price' => $i->netUnitPrice(),      // a line discount of the BL is carried in the net unit price
+                'unit_price' => (float) ($i->unit_price ?? 0),
+                'remise_type' => $i->remise_type ?? 'percent',      // the BL's line discount is kept on the invoice line
+                'remise_value' => (float) ($i->remise_value ?? 0),
                 'tva_rate' => $i->tva_rate !== null ? (float) $i->tva_rate : (float) $this->tva_rate,
             ])->toArray();
         } elseif ($ticketId = (int) request()->query('ticket')) {
@@ -170,7 +175,7 @@ class Form extends Component
             $this->tva_rate = (float) $devis->tva_rate;
             $this->remise_type = $devis->remise_type ?? 'percent';
             $this->remise_value = (float) ($devis->remise_value ?? 0);
-            $this->items = $devis->linesForConversion();
+            $this->items = $devis->linesForConversion();      // a line discount of the quote is carried in the net unit price
         } else {
             $this->tva_rate = $this->defaultVatRate();
             $this->addItem();
@@ -180,7 +185,7 @@ class Form extends Component
 
     public function addItem()
     {
-        $this->items[] = ['product_id' => '', 'quantity' => 1, 'unit_price' => 0, 'tva_rate' => (float) $this->tva_rate];
+        $this->items[] = ['product_id' => '', 'quantity' => 1, 'unit_price' => 0, 'remise_type' => 'percent', 'remise_value' => 0, 'tva_rate' => (float) $this->tva_rate];
     }
 
     public function removeItem($index)
@@ -351,9 +356,10 @@ class Form extends Component
         return collect($this->items)->sum(fn ($i) => (float) ($i['quantity'] ?? 0) * (float) ($i['unit_price'] ?? 0));
     }
 
+    /** Document discount, on the lines after their own discounts (2026-11-27). */
     public function getMontantRemiseProperty()
     {
-        $brut = $this->brutHt;
+        $brut = $this->brutHt - $this->montantRemiseLignes;
 
         if ($this->remise_type === 'percent') {
             return round($brut * ((float) ($this->remise_value ?: 0)) / 100, 2);
@@ -364,7 +370,7 @@ class Form extends Component
 
     public function getTotalHtProperty()
     {
-        return $this->brutHt - $this->montantRemise;
+        return $this->brutHt - $this->montantRemiseLignes - $this->montantRemise;
     }
 
     public function getTotalTtcProperty()
@@ -389,7 +395,7 @@ class Form extends Component
 
             $purchase = (float) ($purchasePrices[$i['product_id']] ?? 0);
 
-            return ((float) ($i['unit_price'] ?? 0) - $purchase) * (float) ($i['quantity'] ?? 0);
+            return ((float) ($i['unit_price'] ?? 0) - $purchase) * (float) ($i['quantity'] ?? 0) - $this->ligneRemiseMontant($i);
         });
     }
 
@@ -448,8 +454,13 @@ class Form extends Component
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.quantity' => 'required|numeric|min:0.01',
             'items.*.unit_price' => 'required|numeric|min:0',
+            'items.*.remise_type' => 'nullable|in:percent,fixed',
+            'items.*.remise_value' => 'nullable|numeric|min:0',
             'items.*.tva_rate' => 'nullable|numeric|min:0|max:100',
-        ]);
+        ], [], ['items.*.remise_value' => 'réduction']);
+        if (! $this->lineDiscountsValid()) {
+            return;
+        }
 
         if (! $this->checkStockAvailability()) {
             return;
@@ -481,11 +492,13 @@ class Form extends Component
         }
 
         foreach ($this->items as $item) {
-            $total = (float) $item['quantity'] * (float) $item['unit_price'];
+            $total = $this->ligneTotal($item);      // after the line's own discount
             $this->facture->items()->create([
                 'product_id' => $item['product_id'],
                 'quantity' => $item['quantity'],
                 'unit_price' => $item['unit_price'],
+                'remise_type' => ($item['remise_type'] ?? 'percent') === 'fixed' ? 'fixed' : 'percent',
+                'remise_value' => (float) ($item['remise_value'] ?? 0) ?: 0,
                 'tva_rate' => $this->lineRate($item),
                 'total' => $total,
             ]);
@@ -508,7 +521,7 @@ class Form extends Component
     {
         return view('livewire.factures.form', [
             'clients' => Client::orderBy('name')->get(),
-            'products' => Product::with('brand')->orderBy('name')->get(),
+            'products' => Product::with(['brand', 'category'])->orderBy('name')->get(),
             'categories' => \App\Models\Category::orderBy('name')->get(),
             'brands' => \App\Models\Brand::orderBy('name')->get(),
             'fournisseurs' => \App\Models\Fournisseur::orderBy('name')->get(),

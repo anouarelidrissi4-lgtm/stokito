@@ -121,13 +121,15 @@
 <table class="sp-lines min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase min-w-[12rem]">Produit</th>
-                            <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase w-28">Quantité</th>
-                            <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase w-32">Prix U. HT</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase min-w-[13rem]">Produit</th>
+                            <th class="px-2 py-2 text-right text-xs font-medium text-gray-500 uppercase w-24">Quantité</th>
+                            <th class="px-2 py-2 text-right text-xs font-medium text-gray-500 uppercase w-28">Prix U. HT</th>
+                            <th class="px-2 py-2 text-right text-xs font-medium text-gray-500 uppercase w-28">Prix TTC</th>
                             <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase w-20">TVA %</th>
-                            <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase w-32">Total</th>
+                            <th class="px-2 py-2 text-right text-xs font-medium text-gray-500 uppercase w-24">Réduction</th>
+                            <th class="px-2 py-2 text-right text-xs font-medium text-gray-500 uppercase w-24 whitespace-nowrap">Total HT</th>
                             @if (auth()->user()->hasPermission('marges'))
-                            <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase w-28">Marge</th>
+                            <th class="px-2 py-2 text-right text-xs font-medium text-gray-500 uppercase w-20">Marge</th>
                             @endif
                             <th class="w-10"></th>
                         </tr>
@@ -145,6 +147,7 @@
                                                     'id' => $p->id,
                                                     'name' => $p->name,
                                                     'reference' => $p->reference ?? '',
+                                                    'meta' => collect([$p->category->name ?? 'Sans catégorie', $p->brand->name ?? 'Aucune marque', $p->unit ?: null])->filter()->implode(' / '),
                                                     'search' => mb_strtolower($p->name.' '.($p->reference ?? '').' '.($p->brand->name ?? '')),
                                                 ])->values()),
                                                 open: false,
@@ -200,8 +203,8 @@
                                                             @mouseenter="highlighted = idx"
                                                             :class="{ 'bg-[#fff3c4] font-medium': idx === highlighted }"
                                                             class="px-3 py-2 text-sm hover:bg-[#fff3c4] cursor-pointer">
-                                                            <span x-text="p.name"></span>
-                                                            <span class="text-gray-400 text-xs" x-text="p.reference"></span>
+                                                            <span class="block font-semibold text-gray-900"><span x-show="p.reference" x-text="p.reference + ' - '"></span><span x-text="p.name"></span></span>
+                                                            <span class="block text-xs text-gray-500" x-text="p.meta"></span>
                                                         </div>
                                                     </template>
                                                     <div x-show="filtered.length === 0" class="px-3 py-2 text-sm text-gray-400">Aucun produit.</div>
@@ -210,12 +213,29 @@
                                         </div>
                                     </div>
                                     @error("items.{$index}.product_id") <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
+                                    @php $lp = ! empty($item['product_id']) ? $products->firstWhere('id', $item['product_id']) : null; @endphp
+                                    @if ($lp)
+                                        {{-- stock + prix du catalogue (TTC) sous la ligne, comme dans Stokio (2026-11-27) --}}
+                                        <p class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-gray-500">
+                                            <span class="{{ (float) $lp->stock_qty < (float) ($item['quantity'] ?? 0) ? 'text-red-600 font-semibold' : '' }}">Stock actuel : <b class="tabular-nums">{{ rtrim(rtrim(number_format((float) $lp->stock_qty, 2, ',', ' '), '0'), ',') }}</b>{{ $lp->unit ? ' '.$lp->unit : '' }}</span>
+                                            <button type="button" wire:click="applyPrice({{ $index }}, 'detail')" title="Mettre le prix de détail sur la ligne" class="hover:text-gray-900 hover:underline">Prix détail : <b class="tabular-nums">{{ \App\Support\Fmt::money($lp->sale_price) }}</b></button>
+                                            @if ($lp->wholesale_price !== null)
+                                                <button type="button" wire:click="applyPrice({{ $index }}, 'gros')" title="Mettre le prix de gros sur la ligne" class="hover:text-gray-900 hover:underline">Prix gros : <b class="tabular-nums">{{ \App\Support\Fmt::money($lp->wholesale_price) }}</b></button>
+                                            @endif
+                                            <span class="text-gray-400">TTC</span>
+                                        </p>
+                                    @endif
                                 </td>
-                                <td class="px-4 py-2" data-label="Quantité">
-                                    <input wire:model.live="items.{{ $index }}.quantity" type="number" step="0.01" class="w-full rounded-md border-gray-300 text-sm text-right">
+                                <td class="px-2 py-2" data-label="Quantité">
+                                    <input wire:model.live="items.{{ $index }}.quantity" type="number" step="0.01" class="w-full min-w-[4.5rem] rounded-md border-gray-300 text-sm text-right">
                                 </td>
-                                <td class="px-4 py-2" data-label="Prix U. HT">
-                                    <input wire:model.live="items.{{ $index }}.unit_price" type="number" step="0.01" class="w-full rounded-md border-gray-300 text-sm text-right">
+                                <td class="px-2 py-2" data-label="Prix U. HT">
+                                    <input wire:model.live="items.{{ $index }}.unit_price" type="number" step="0.01" class="w-full min-w-[5.25rem] rounded-md border-gray-300 text-sm text-right">
+                                </td>
+                                <td class="px-2 py-2" data-label="Prix TTC">
+                                    {{-- Prix TTC saisissable (2026-11-27) : converti en HT avec le taux de la ligne --}}
+                                    @php $ttcLine = round((float) ($item['unit_price'] ?? 0) * (1 + $this->lineRate($item) / 100), 2); @endphp
+                                    <input wire:key="ttc-{{ $index }}-{{ $item['unit_price'] ?? 0 }}-{{ $this->lineRate($item) }}" type="number" step="0.01" min="0" value="{{ number_format($ttcLine, 2, '.', '') }}" @change="$wire.setLinePriceTtc({{ $index }}, $event.target.value)" aria-label="Prix TTC de la ligne" class="w-full min-w-[5.25rem] rounded-md border-gray-300 text-sm text-right">
                                 </td>
                                 <td class="px-1 py-2" data-label="TVA %">
                                     @php $rateOpts = collect($this->vatRateOptions())->push($this->lineRate($item))->map(fn ($r) => (float) $r)->unique()->sortDesc(); @endphp
@@ -223,14 +243,22 @@
                                         @foreach ($rateOpts as $r)<option value="{{ \App\Support\DocTotals::key($r) }}">{{ \App\Support\DocTotals::label($r) }}</option>@endforeach
                                     </select>
                                 </td>
-                                <td class="px-4 py-2 text-right text-sm text-gray-900 pt-[1.05rem]" data-label="Total">
-                                    {{ \App\Support\Fmt::money((float) ($item['quantity'] ?? 0) * (float) ($item['unit_price'] ?? 0)) }}
+                                <td class="px-2 py-2" data-label="Réduction">
+                                    {{-- un seul champ « 0 ou 0% » comme Stokio : 10% = pourcentage, 10 = montant --}}
+                                    <input wire:key="rem-{{ $index }}-{{ $item['remise_type'] ?? 'percent' }}-{{ $item['remise_value'] ?? 0 }}" type="text" inputmode="decimal" value="{{ $this->ligneRemiseTexte($item) }}" placeholder="0 ou 0%" @change="$wire.setLineRemise({{ $index }}, $event.target.value)" aria-label="Réduction de la ligne (10% ou montant)" class="w-full min-w-[4.75rem] rounded-md border-gray-300 text-sm text-right">
+                                    @error("items.{$index}.remise_value") <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
+                                </td>
+                                <td class="px-2 py-2 text-right text-sm text-gray-900 whitespace-nowrap pt-[1.05rem]" data-label="Total HT">
+                                    {{ \App\Support\Fmt::money($this->ligneTotal($item)) }}
+                                    @if ($this->ligneRemiseMontant($item) > 0)
+                                        <span class="block text-xs text-red-600">- {{ \App\Support\Fmt::money($this->ligneRemiseMontant($item)) }}</span>
+                                    @endif
                                 </td>
                                 @if (auth()->user()->hasPermission('marges'))
-                                <td class="px-4 py-2 text-right text-sm text-green-700 pt-[1.05rem]" data-label="Marge">
+                                <td class="px-2 py-2 text-right text-sm text-green-700 whitespace-nowrap pt-[1.05rem]" data-label="Marge">
                                     @php
                                         $itemProduct = $products->firstWhere('id', $item['product_id'] ?: null);
-                                        $itemMarge = ((float) ($item['unit_price'] ?? 0) - (float) ($itemProduct->purchase_price ?? 0)) * (float) ($item['quantity'] ?? 0);
+                                        $itemMarge = ((float) ($item['unit_price'] ?? 0) - (float) ($itemProduct->purchase_price ?? 0)) * (float) ($item['quantity'] ?? 0) - $this->ligneRemiseMontant($item);
                                     @endphp
                                     {{ \App\Support\Fmt::money($itemMarge) }}
                                 </td>
@@ -280,15 +308,23 @@
             </div>
 
             <div class="w-full sm:w-64 space-y-2">
-                @if ($this->montantRemise > 0)
+                @if ($this->montantRemise > 0 || $this->montantRemiseLignes > 0)
                     <div class="flex items-center justify-between text-sm">
                         <span class="text-gray-500">Total brut HT</span>
                         <span class="font-medium text-gray-900">{{ \App\Support\Fmt::money($this->brutHt) }}</span>
                     </div>
+                    @if ($this->montantRemiseLignes > 0)
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-500">Réductions des lignes</span>
+                        <span class="font-medium text-red-600">- {{ \App\Support\Fmt::money($this->montantRemiseLignes) }}</span>
+                    </div>
+                    @endif
+                    @if ($this->montantRemise > 0)
                     <div class="flex items-center justify-between text-sm">
                         <span class="text-gray-500">Remise</span>
                         <span class="font-medium text-red-600">- {{ \App\Support\Fmt::money($this->montantRemise) }}</span>
                     </div>
+                    @endif
                 @endif
                 <div class="flex items-center justify-between text-sm">
                     <span class="text-gray-500">Total HT</span>

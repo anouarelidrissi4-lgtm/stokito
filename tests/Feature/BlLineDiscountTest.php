@@ -62,10 +62,20 @@ class BlLineDiscountTest extends TestCase
         $this->assertEquals(13.6, (float) $d['totals']['remise']);
         $this->assertEquals(146.88, (float) $d['totals']['ttc']);
 
-        // the invoice made from this BL keeps the amount (line discount in the net unit price)
+        // the invoice made from this BL keeps the same prices and line discounts (invoices have line discounts too)
         $f = Livewire::test(FactureForm::class, ['blId' => $bl->id]);
-        $this->assertEquals([40.5, 18.33], array_map(fn ($i) => (float) $i['unit_price'], $f->get('items')));
-        $this->assertEqualsWithDelta(146.88, $f->instance()->totalTtc, 0.05);
+        $this->assertEquals([45.0, 20.0], array_map(fn ($i) => (float) $i['unit_price'], $f->get('items')));
+        $this->assertEquals(['percent', 'fixed'], array_map(fn ($i) => $i['remise_type'], $f->get('items')));
+        $this->assertEquals(146.88, $f->instance()->totalTtc);
+        $f->call('save')->assertHasNoErrors();
+        $fac = \App\Models\Facture::latest('id')->first();
+        $this->assertEquals(122.4, (float) $fac->total_ht);
+        $this->assertEquals(146.88, (float) $fac->total_ttc);
+        $this->assertEquals([81.0, 55.0], $fac->items()->orderBy('id')->pluck('total')->map(fn ($v) => (float) $v)->all());
+        $pdf = DocumentPdf::factureData($fac->fresh());
+        $this->assertStringContainsString('remise 10 %', $pdf['items'][0]['name']);
+        $this->assertEquals(136.0, (float) $pdf['totals']['brut']);
+        $this->assertEquals(13.6, (float) $pdf['totals']['remise']);
 
         // editing the BL reloads the discounts
         Livewire::test(BlForm::class, ['bonLivraisonId' => $bl->id])

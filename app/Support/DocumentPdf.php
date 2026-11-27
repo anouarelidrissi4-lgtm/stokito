@@ -65,7 +65,7 @@ class DocumentPdf
             'partyLabel' => 'Client',
             'party' => $facture->client,
             'items' => $facture->items->map(fn ($i) => [
-                'name' => ($i->product->name ?? '-').($societe->show_ref_facture && ($i->product->reference ?? null) ? ' ('.$i->product->reference.')' : ''),
+                'name' => ($i->product->name ?? '-').($societe->show_ref_facture && ($i->product->reference ?? null) ? ' ('.$i->product->reference.')' : '').($i->remiseLabel() ? ' · '.$i->remiseLabel() : ''),
                 'unit' => $i->product->unit ?? '',
                 'quantity' => $i->quantity,
                 'unit_price' => $i->unit_price,

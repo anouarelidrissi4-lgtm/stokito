@@ -13,6 +13,7 @@ class Form extends Component
     use RequiresPermission;
     use \App\Livewire\Concerns\CopilotPrefill;
     use \App\Livewire\Concerns\HasLineVat;
+    use \App\Livewire\Concerns\HasLineTools;
 
     public ?BonLivraison $bonLivraison = null;
 
@@ -234,54 +235,6 @@ class Form extends Component
         ];
     }
 
-    /** "Prix détail" / "Prix gros" under a line (2026-11-27): puts that catalogue price on the line. */
-    public function applyPrice($index, string $which): void
-    {
-        $item = $this->items[$index] ?? null;
-        $product = $item && ! empty($item['product_id']) ? Product::find($item['product_id']) : null;
-        if (! $product) {
-            return;
-        }
-        $ttc = $which === 'gros' && $product->wholesale_price !== null ? (float) $product->wholesale_price : (float) $product->sale_price;
-        $this->items[$index]['unit_price'] = round($ttc / (1 + $this->productRate($product) / 100), 2);
-    }
-
-    /** "Prix TTC" typed on a line (2026-11-27): the line stays HT, the TTC is converted with the line's VAT rate. */
-    public function setLinePriceTtc($index, $value): void
-    {
-        if (! isset($this->items[$index])) {
-            return;
-        }
-        $ttc = max(0, (float) str_replace([' ', ','], ['', '.'], (string) $value));
-        $this->items[$index]['unit_price'] = round($ttc / (1 + $this->lineRate($this->items[$index]) / 100), 2);
-    }
-
-    /** One "0 ou 0%" field like Stokio: "10%" = 10 percent, "10" = an amount. */
-    public function setLineRemise($index, $text): void
-    {
-        if (! isset($this->items[$index])) {
-            return;
-        }
-        $t = str_replace([' ', ','], ['', '.'], trim((string) $text));
-        $percent = str_ends_with($t, '%');
-        $v = max(0, (float) rtrim($t, '%'));
-        $this->items[$index]['remise_type'] = $percent || $v == 0 ? 'percent' : 'fixed';
-        $this->items[$index]['remise_value'] = $v;
-        $this->resetValidation("items.{$index}.remise_value");
-    }
-
-    /** Text shown in the "0 ou 0%" field. */
-    public function ligneRemiseTexte(array $item): string
-    {
-        $v = (float) ($item['remise_value'] ?? 0);
-        if ($v <= 0) {
-            return '';
-        }
-        $n = rtrim(rtrim(number_format($v, 2, ',', ''), '0'), ',');
-
-        return ($item['remise_type'] ?? 'percent') === 'fixed' ? $n : $n.'%';
-    }
-
     // --- Recherche d'un BL existant par numero ---
     public function searchByNumero()
     {
@@ -391,25 +344,6 @@ class Form extends Component
     public function getBrutHtProperty()
     {
         return collect($this->items)->sum(fn ($i) => (float) ($i['quantity'] ?? 0) * (float) ($i['unit_price'] ?? 0));
-    }
-
-    /** Discount of one line (2026-11-27), same rules as the saved line. */
-    public function ligneRemiseMontant(array $item): float
-    {
-        $brut = (float) ($item['quantity'] ?? 0) * (float) ($item['unit_price'] ?? 0);
-
-        return \App\Models\BonLivraisonItem::remiseFor($brut, (string) ($item['remise_type'] ?? 'percent'), (float) ($item['remise_value'] ?? 0));
-    }
-
-    /** "Total ligne": the line after its own discount (also used by HasLineVat). */
-    public function ligneTotal(array $item): float
-    {
-        return round((float) ($item['quantity'] ?? 0) * (float) ($item['unit_price'] ?? 0) - $this->ligneRemiseMontant($item), 2);
-    }
-
-    public function getMontantRemiseLignesProperty()
-    {
-        return collect($this->items)->sum(fn ($i) => $this->ligneRemiseMontant($i));
     }
 
     /** Document discount, on the lines after their own discounts. */
@@ -665,12 +599,8 @@ class Form extends Component
             'items.*.remise_value' => 'nullable|numeric|min:0',
             'items.*.tva_rate' => 'nullable|numeric|min:0|max:100',
         ], [], ['items.*.remise_value' => 'réduction']);
-        foreach ($this->items as $index => $item) {
-            if (($item['remise_type'] ?? 'percent') === 'percent' && (float) ($item['remise_value'] ?? 0) > 100) {
-                $this->addError("items.{$index}.remise_value", 'La réduction ne peut pas dépasser 100 %.');
-
-                return;
-            }
+        if (! $this->lineDiscountsValid()) {
+            return;
         }
 
         if (! $this->checkStockAvailability()) {

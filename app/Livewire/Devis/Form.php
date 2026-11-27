@@ -13,6 +13,7 @@ class Form extends Component
     use RequiresPermission;
     use \App\Livewire\Concerns\CopilotPrefill;
     use \App\Livewire\Concerns\HasLineVat;
+    use \App\Livewire\Concerns\HasLineTools;   // Prix TTC, « 0 ou 0% », prix détail / gros (2026-11-27)
 
     public ?Devis $devis = null;
 
@@ -557,7 +558,7 @@ class Form extends Component
     {
         return view('livewire.devis.form', [
             'clients' => Client::orderBy('name')->get(),
-            'products' => Product::with('brand')->orderBy('name')->get(),
+            'products' => Product::with(['brand', 'category'])->orderBy('name')->get(),
             'categories' => \App\Models\Category::orderBy('name')->get(),
             'brands' => \App\Models\Brand::orderBy('name')->get(),
             'fournisseurs' => \App\Models\Fournisseur::orderBy('name')->get(),
