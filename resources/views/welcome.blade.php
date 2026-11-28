@@ -311,7 +311,7 @@
             </button>
         </div>
     </div>
-    <script type="application/ld+json">{"@@context":"https://schema.org","@type":"VideoObject","name":"Stokito en 50 secondes","description":"Présentation de Stokito : produits et stock, devis, factures, encaissements, caisse, scanner de factures fournisseurs et Copilot, sur de vraies captures de l’application.","thumbnailUrl":"https://stokito.com/images/video/stokito-presentation.jpg","uploadDate":"2026-11-26","duration":"PT49S","contentUrl":"https://stokito.com/videos/stokito-presentation.mp4","inLanguage":"fr"}</script>
+    <script type="application/ld+json">{"@@context":"https://schema.org","@type":"VideoObject","name":"Stokito en 50 secondes","description":"Présentation de Stokito : produits et stock, devis, factures, encaissements, caisse, scanner de factures fournisseurs et Copilot, sur de vraies captures de l’application.","thumbnailUrl":"https://stokito.com/images/video/stokito-presentation.jpg","uploadDate":"2026-11-26T12:00:00+01:00","duration":"PT49S","contentUrl":"https://stokito.com/videos/stokito-presentation.mp4","inLanguage":"fr"}</script>
 </section>
 
 <section id="parcours" class="py-20 sm:py-24 scroll-mt-20 bg-zinc-50">
