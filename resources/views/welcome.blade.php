@@ -659,9 +659,9 @@
 {{-- ============ GUIDE (2026-11-25: three booklets FR / AR / EN fanned out, download rows) ============ --}}
 @php
     $guides = [
-        ['code' => 'FR', 'href' => '/docs/guide-stokito-fr.pdf', 'name' => 'Français', 'meta' => 'PDF · 51 pages', 'cover' => "Guide d'utilisation", 'dir' => 'ltr'],
-        ['code' => 'ع', 'href' => '/docs/guide-stokito-ar.pdf', 'name' => 'العربية', 'meta' => 'PDF · 51 صفحة', 'cover' => 'دليل الاستخدام', 'dir' => 'rtl'],
-        ['code' => 'EN', 'href' => '/docs/guide-stokito-en.pdf', 'name' => 'English', 'meta' => 'PDF · 49 pages', 'cover' => 'User guide', 'dir' => 'ltr'],
+        ['code' => 'FR', 'href' => '/docs/guide-stokito-fr.pdf', 'name' => 'Français', 'meta' => 'PDF · 58 pages', 'cover' => "Guide d'utilisation", 'dir' => 'ltr'],
+        ['code' => 'ع', 'href' => '/docs/guide-stokito-ar.pdf', 'name' => 'العربية', 'meta' => 'PDF · 58 صفحة', 'cover' => 'دليل الاستخدام', 'dir' => 'rtl'],
+        ['code' => 'EN', 'href' => '/docs/guide-stokito-en.pdf', 'name' => 'English', 'meta' => 'PDF · 57 pages', 'cover' => 'User guide', 'dir' => 'ltr'],
     ];
 @endphp
 <section id="guide" class="py-20 sm:py-24 scroll-mt-20 bg-white border-y border-zinc-200 overflow-hidden">
