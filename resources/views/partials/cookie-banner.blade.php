@@ -4,11 +4,11 @@
 @php
     $loc = app()->getLocale();
     $t = [
-        'fr' => ['Nous aimerions mesurer l’audience du site avec Google Analytics, pour savoir quelles pages vous aident. Rien n’est déposé sans votre accord.', 'En savoir plus', 'Refuser', 'Accepter'],
-        'ar' => ['نود قياس عدد زوار الموقع عبر Google Analytics لمعرفة الصفحات المفيدة لكم. لا شيء يُحفظ دون موافقتكم.', 'اعرف المزيد', 'رفض', 'قبول'],
-        'en' => ['We would like to measure the site audience with Google Analytics, to know which pages help you. Nothing is stored without your consent.', 'Learn more', 'Refuse', 'Accept'],
+        'fr' => ['Nous aimerions mesurer l’audience du site (Google Analytics) et l’efficacité de nos publicités (Meta : Facebook, Instagram). Rien n’est déposé sans votre accord.', 'En savoir plus', 'Refuser', 'Accepter'],
+        'ar' => ['نود قياس عدد زوار الموقع (Google Analytics) وفعالية إعلاناتنا (Meta: فيسبوك، إنستغرام). لا شيء يُحفظ دون موافقتكم.', 'اعرف المزيد', 'رفض', 'قبول'],
+        'en' => ['We would like to measure the site audience (Google Analytics) and how well our ads work (Meta: Facebook, Instagram). Nothing is stored without your consent.', 'Learn more', 'Refuse', 'Accept'],
     ][$loc] ?? null;
-    $t ??= ['Nous aimerions mesurer l’audience du site avec Google Analytics, pour savoir quelles pages vous aident. Rien n’est déposé sans votre accord.', 'En savoir plus', 'Refuser', 'Accepter'];
+    $t ??= ['Nous aimerions mesurer l’audience du site (Google Analytics) et l’efficacité de nos publicités (Meta : Facebook, Instagram). Rien n’est déposé sans votre accord.', 'En savoir plus', 'Refuser', 'Accepter'];
 @endphp
 <div id="stk-cookie" hidden role="dialog" aria-live="polite" aria-label="Cookies" class="fixed z-[60] bottom-3 inset-x-3 sm:inset-x-auto sm:end-4 sm:bottom-4 sm:max-w-sm rounded-xl border border-zinc-200 bg-white p-4 text-zinc-800 shadow-2xl">
     <p class="text-sm leading-relaxed">{{ $t[0] }} <a href="{{ route('legal.privacy') }}#cookies" class="font-semibold text-zinc-900 underline decoration-[#ffcc00] decoration-2 underline-offset-2">{{ $t[1] }}</a></p>
@@ -19,15 +19,15 @@
 </div>
 <script>
     window.stkConsent = {
-        get: function () { try { return localStorage.getItem('stk_consent'); } catch (e) { return null; } },
+        get: function () { try { return localStorage.getItem('stk_consent_v2'); } catch (e) { return null; } },
         set: function (v) {
-            try { localStorage.setItem('stk_consent', v); } catch (e) {}
+            try { localStorage.setItem('stk_consent_v2', v); } catch (e) {}
             document.getElementById('stk-cookie').hidden = true;
             if (v === 'granted') { window.stkLoadGtm && window.stkLoadGtm(); return; }
-            if (window.gtag) gtag('consent', 'update', { analytics_storage: 'denied' });
-            document.cookie.split(';').forEach(function (c) {            // remove Google Analytics cookies already set
+            if (window.gtag) gtag('consent', 'update', { analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' });
+            document.cookie.split(';').forEach(function (c) {            // remove Google Analytics and Meta cookies already set
                 var n = c.split('=')[0].trim();
-                if (/^_ga/.test(n)) ['', '.' + location.hostname.replace(/^www\./, '')].forEach(function (d) {
+                if (/^(_ga|_fbp|_fbc)/.test(n)) ['', '.' + location.hostname.replace(/^www\./, '')].forEach(function (d) {
                     document.cookie = n + '=; Max-Age=0; path=/' + (d ? '; domain=' + d : '');
                 });
             });
