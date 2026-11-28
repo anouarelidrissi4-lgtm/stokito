@@ -2,11 +2,14 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /** Every URL of the sitemap must be allowed by public/robots.txt (which disallows everything else) (2026-11-28). */
 class RobotsSitemapTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_every_sitemap_url_is_allowed_by_robots_txt(): void
     {
         $robots = file_get_contents(public_path('robots.txt'));
